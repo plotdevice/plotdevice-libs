@@ -17,7 +17,7 @@ __license__   = "MIT"
 #
 # Controls:
 #
-# 1) Pressing the mouse anywhere on the canvas adds a new point to the path. 
+# 1) Pressing the mouse anywhere on the canvas adds a new point to the path.
 #    You can instantly drag its control handle to create a curve.
 #    Clicking on the path inserts a point.
 # 2) Select a point by clicking on it. You can drag its control handles, move the point
@@ -34,7 +34,7 @@ __license__   = "MIT"
 #    the whole freehand path will be removed.
 # 9) Use the LEFT, RIGHT, UP and DOWN keys to move the path around on the canvas.
 #
-# The path you are creating is automatically stored in an SVG file for which you can 
+# The path you are creating is automatically stored in an SVG file for which you can
 # supply a name. The file is constantly updated with your changes.
 # You can then import the file with the SVG library in other NodeBox projects to do all sorts
 # of fun and programmatic things with your path. You can also import the SVG file in Illustrator
@@ -42,9 +42,10 @@ __license__   = "MIT"
 
 ######################################################################################################
 
-from nodebox.graphics import MOVETO, LINETO, CURVETO, CLOSE, CENTER, Point, PathElement, BezierPath
+from plotdevice.grobs import MOVETO, LINETO, CURVETO, CLOSE, CENTER, Point, PathElement, BezierPath
 from math import sin, cos, atan, pi, degrees, radians, sqrt, pow
 
+from plotdevice.grobs import KEY_BACKSPACE, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN
 KEY_TAB = 48
 KEY_ESC = 53
 
@@ -53,53 +54,53 @@ INFINITY = 1e20
 #### MAGNETIC GRID ###################################################################################
 
 class MagneticGrid:
-    
+
     def __init__(self, padding=10):
-        
+
         self.padding = padding
         self.stroke = _ctx.color(0.8)
         self.strokewidth = 0.5
-        
+
     def draw(self):
-        
+
         _ctx.nofill()
         _ctx.stroke(self.stroke)
         _ctx.strokewidth(self.strokewidth)
         _ctx.autoclosepath(False)
         _ctx.beginpath(0,0)
-        
+
         for x in range(_ctx.WIDTH):
             _ctx.moveto(x*self.padding, 0)
             _ctx.lineto(x*self.padding, _ctx.HEIGHT)
-                
+
         for y in range(_ctx.HEIGHT/self.padding):
             _ctx.moveto(0, y*self.padding)
             _ctx.lineto(_ctx.WIDTH, y*self.padding)
-        
+
         _ctx.endpath()
-        
+
     def snap(self, x, y, treshold=0.4):
-        
+
         l = x - (x%self.padding)
         t = y - (y%self.padding)
         r = l + self.padding
         b = t + self.padding
-        
+
         treshold *= self.padding
         gx, gy = x, y
         if x-l < treshold and y-t < treshold: gx, gy = l, t # snap top left
         if r-x < treshold and y-t < treshold: gx, gy = r, t # snap top right
         if r-x < treshold and b-y < treshold: gx, gy = r, b # snap bottom right
         if x-l < treshold and b-y < treshold: gx, gy = l, b # snap bottom left
-        
+
         return gx, gy
 
 #### BEZIER PATH EDITOR ##############################################################################
 
 class BezierPathEditor:
-    
+
     def __init__(self, path=None, file="path", freehand=False):
-        
+
         if path != None:
             self.path = path
             self._points = list(path)
@@ -111,121 +112,121 @@ class BezierPathEditor:
         else:
             self.path = None
             self._points = []
-        
+
         # These variables discern between different
         # modes of interaction.
         # In add-mode, new contains the last point added.
         # In edit-mode, edit contains the index of the point
         # in the path being edited.
-        
+
         self.new = None
         self.edit = None
         self.editing = False
         self.insert = False
         self.inserting = False
-        
+
         self.drag_point = False
         self.drag_handle1 = False
         self.drag_handle2 = False
-        
+
         self.freehand = freehand
         self.freehand_move = True
-        
+
         # Colors used to draw interface elements.
-        
+
         self.strokewidth = 0.75
         self.path_color = _ctx.color(0.2)
         self.path_fill = _ctx.color(0,0,0,0)
         self.handle_color = _ctx.color(0.6)
         self.new_color = _ctx.color(0.8)
-        
+
         # Checks whether the SVG export file
         # should be updated based on the user's edits.
-        
+
         self._dirty = False
         self.file = file
-        
+
         # Different states for button actions.
         # When delete contains a number,
         # delete that index from the path.
         # When moveto contains True,
         # do a MOVETO before adding the next new point.
-        
+
         self.delete = None
         self.moveto = None
         self.last_moveto = None
         self.btn_r = 5
         self.btn_x = -5-1
         self.btn_y = -5*2
-        
+
         # Magnetic grid to snap to when enabled.
-        
+
         self.grid = MagneticGrid()
         self.show_grid = False
-        
+
         # Keyboard keys pressed.
-        
+
         self.last_key = None
         self.last_keycode = None
-        
+
         # A message to flash on the screen.
-        
+
         self.msg = ""
         self.msg_alpha = 1.0
-        
+
     def overlap(self, x1, y1, x2, y2, r=5):
-        
+
         """ Returns True when point 1 and point 2 overlap.
-        
+
         There is an r treshold in which point 1 and point 2
         are considered to overlap.
-        
+
         """
-        
+
         if abs(x2-x1) < r and abs(y2-y1) < r:
             return True
         else:
             return False
-    
+
     def reflect(self, x0, y0, x, y):
-        
+
         """ Reflects the point x, y through origin x0, y0.
         """
-                
+
         rx = x0 - (x-x0)
         ry = y0 - (y-y0)
         return rx, ry
 
     def angle(self, x0, y0, x1, y1):
-        
+
         """ Calculates the angle between two points.
         """
-    
+
         a = degrees( atan((y1-y0) / (x1-x0+0.00001)) ) + 360
         if x1-x0 < 0: a += 180
         return a
 
     def distance(self, x0, y0, x1, y1):
-    
+
         """ Calculates the distance between two points.
         """
-    
+
         return sqrt(pow(x1-x0, 2) + pow(y1-y0, 2))
-        
+
     def coordinates(self, x0, y0, distance, angle):
-        
+
         """ Calculates the coordinates of a point from the origin.
         """
-        
+
         x = x0 + cos(radians(angle)) * distance
         y = y0 + sin(radians(angle)) * distance
         return Point(x, y)
-    
+
     def contains_point(self, x, y, d=2):
-        
+
         """ Returns true when x, y is on the path stroke outline.
         """
-        
+
         if self.path != None and len(self.path) > 1 \
         and self.path.contains(x, y):
             # If all points around the mouse are also part of the path,
@@ -245,19 +246,19 @@ class BezierPathEditor:
         return False
 
     def insert_point(self, x, y):
-        
+
         """ Inserts a point on the path at the mouse location.
-        
+
         We first need to check if the mouse location is on the path.
         Inserting point is time intensive and experimental.
-        
+
         """
-        
-        try: 
+
+        try:
             bezier = _ctx.ximport("bezier")
         except:
             from nodebox.graphics import bezier
-        
+
         # Do a number of checks distributed along the path.
         # Keep the one closest to the actual mouse location.
         # Ten checks works fast but leads to imprecision in sharp corners
@@ -265,7 +266,7 @@ class BezierPathEditor:
         # I prefer the slower but more stable approach.
         n = 100
         closest = None
-        dx0 = float(INFINITY) 
+        dx0 = float(INFINITY)
         dy0 = float(INFINITY)
         for i in range(n):
             t = float(i)/n
@@ -282,11 +283,11 @@ class BezierPathEditor:
         # we need to scan between 0.1 and 0.3 for a better
         # approximation. If 1.5 was the best guess, scan
         # 1.40, 1.41 ... 1.59 and so on.
-        # Each decimal precision takes 20 iterations.                
+        # Each decimal precision takes 20 iterations.
         decimals = [3,4]
         for d in decimals:
             d = 1.0/pow(10,d)
-            
+
             for i in range(20):
                 t = closest-d + float(i)*d*0.1
                 if t < 0.0: t = 1.0+t
@@ -298,8 +299,8 @@ class BezierPathEditor:
                     dx0 = dx
                     dy0 = dy
                     closest_precise = t
-            
-            closest = closest_precise   
+
+            closest = closest_precise
 
         # Update the points list with the inserted point.
         p = bezier.insert_point(self.path, closest_precise)
@@ -316,27 +317,27 @@ class BezierPathEditor:
         self._points[i-1].ctrl1 = Point(p[i-1].ctrl1.x, p[i-1].ctrl1.y)
         self._points[i+1].ctrl1 = Point(p[i+1].ctrl1.x, p[i+1].ctrl1.y)
         self._points[i+1].ctrl2 = Point(p[i+1].ctrl2.x, p[i+1].ctrl2.y)
-    
+
     def update(self):
-        
+
         """ Update runs each frame to check for mouse interaction.
-        
+
         Alters the path by allowing the user to add new points,
         drag point handles and move their location.
         Updates are automatically stored as SVG
         in the given filename.
-        
+
         """
-        
+
         x, y = mouse()
         if self.show_grid:
             x, y = self.grid.snap(x, y)
-        
+
         if _ctx._ns["mousedown"] \
         and not self.freehand:
-            
+
             self._dirty = True
-            
+
             # Handle buttons first.
             # When pressing down on a button, all other action halts.
             # Buttons appear near a point being edited.
@@ -359,11 +360,11 @@ class BezierPathEditor:
                    self.overlap(dx, dy, x, y, r=self.btn_r):
                     self.moveto = self.edit
                     return
-                    
+
             if self.insert:
                 self.inserting = True
                 return
-            
+
             # When not dragging a point or the handle of a point,
             # i.e. the mousebutton was released and then pressed again,
             # check to see if a point on the path is pressed.
@@ -381,7 +382,7 @@ class BezierPathEditor:
                     and self.overlap(x, y, pt.x, pt.y) \
                     and self.new == None:
                         # Don't select a point if in fact
-                        # it is at the same location of the first handle 
+                        # it is at the same location of the first handle
                         # of the point we are currently editing.
                         if self.edit == i+1 \
                         and self.overlap(self._points[i+1].ctrl1.x,
@@ -391,7 +392,7 @@ class BezierPathEditor:
                             self.edit = i
                             self.editing = True
                             break
-            
+
             # When the mouse button is down,
             # edit mode continues as long as
             # a point or handle is dragged.
@@ -405,7 +406,7 @@ class BezierPathEditor:
                         self.editing = True
                     else:
                         self.edit = None
-                    
+
             # When not in edit mode, there are two options.
             # Either no new point is defined and the user is
             # clicking somewhere on the canvas (add a new point)
@@ -445,12 +446,12 @@ class BezierPathEditor:
                     # the path bulges upwards.
                     rx, ry = self.reflect(self.new.x, self.new.y, x, y)
                     self.new.ctrl2 = Point(rx, ry)
-            
+
             # Edit mode
             elif self.new == None:
-            
+
                 pt = self._points[self.edit]
-            
+
                 # The user is pressing the mouse on a point,
                 # enter drag-point mode.
                 if self.overlap(pt.x, pt.y, x, y) \
@@ -477,7 +478,7 @@ class BezierPathEditor:
                     self.drag_point = False
                     self.drag_handle1 = False
                     self.drag_handle2 = True
-                
+
                 # In drag-point mode,
                 # the point is located at the mouse coordinates.
                 # The handles move relatively to the new location
@@ -507,8 +508,8 @@ class BezierPathEditor:
                         prev = self._points[self.edit-1]
                         d = self.distance(prev.x, prev.y, prev.ctrl2.x, prev.ctrl2.y)
                         a = self.angle(prev.x, prev.y, pt.ctrl1.x, pt.ctrl1.y)
-                        prev.ctrl2 = self.coordinates(prev.x, prev.y, d, a+180)                        
-                if self.drag_handle2 == True:   
+                        prev.ctrl2 = self.coordinates(prev.x, prev.y, d, a+180)
+                if self.drag_handle2 == True:
                     pt.ctrl2 = Point(x, y)
                     if self.edit < len(self._points)-1 \
                     and self.last_key != "x":
@@ -516,16 +517,16 @@ class BezierPathEditor:
                         d = self.distance(pt.x, pt.y, next.ctrl1.x, next.ctrl1.y)
                         a = self.angle(pt.x, pt.y, pt.ctrl2.x, pt.ctrl2.y)
                         next.ctrl1 = self.coordinates(pt.x, pt.y, d, a+180)
-        
+
         elif not self.freehand:
-            
+
             # The mouse button is released
             # so we are not dragging anything around.
             self.new = None
             self.drag_point = False
             self.drag_handle1 = False
             self.drag_handle2 = False
-            
+
             # The delete button for a point was clicked.
             if self.delete != None and len(self._points) > 0:
                 i = self.delete
@@ -564,7 +565,7 @@ class BezierPathEditor:
             elif isinstance(self.moveto, int):
                 self.moveto = True
                 self.edit = None
-            
+
             # We are not editing a node and
             # the mouse is hovering over the path outline stroke:
             # it is possible to insert a point here.
@@ -573,20 +574,20 @@ class BezierPathEditor:
                 self.insert = True
             else:
                 self.insert = False
-            
+
             # Commit insert of new point.
             if self.inserting \
-            and self.contains_point(x, y, d=2): 
+            and self.contains_point(x, y, d=2):
                 self.insert_point(x, y)
                 self.insert = False
             self.inserting = False
-            
+
             # No modifications are being made right now
             # and the SVG file needs to be updated.
             if self._dirty == True:
                 self.export_svg()
                 self._dirty = False
-        
+
         # Keyboard interaction.
         if _ctx._ns["keydown"]:
             self.last_key = _ctx._ns["key"]
@@ -608,24 +609,24 @@ class BezierPathEditor:
             if self.last_keycode == KEY_ESC:
                 self.edit = None
             # When BACKSPACE is pressed, delete current point.
-            if self.last_keycode == _ctx.KEY_BACKSPACE \
+            if self.last_keycode == KEY_BACKSPACE \
             and self.edit != None:
                 self.delete = self.edit
             self.last_key = None
             self.last_code = None
-        
+
         # Using the keypad you can scroll the screen.
         if _ctx._ns["keydown"]:
             dx = 0
             dy = 0
             keycode = _ctx._ns["keycode"]
-            if keycode == _ctx.KEY_LEFT:
+            if keycode == KEY_LEFT:
                 dx = -10
-            elif keycode == _ctx.KEY_RIGHT:
+            elif keycode == KEY_RIGHT:
                 dx = 10
-            if keycode == _ctx.KEY_UP:
+            if keycode == KEY_UP:
                 dy = -10
-            elif keycode == _ctx.KEY_DOWN:
+            elif keycode == KEY_DOWN:
                 dy = 10
             if dx != 0 or dy != 0:
                 for pt in self._points:
@@ -637,31 +638,31 @@ class BezierPathEditor:
                     pt.ctrl2.y += dy
 
     def draw(self):
-        
+
         """ Draws the editable path and interface elements.
         """
-                
+
         # Enable interaction.
         self.update()
         x, y = mouse()
-        
+
         # Snap to grid when enabled.
         # The grid is enabled with the TAB key.
         if self.show_grid:
             self.grid.draw()
             x, y = self.grid.snap(x, y)
-        
+
         _ctx.strokewidth(self.strokewidth)
         if self.freehand:
             self.draw_freehand()
-        
+
         r = 4
         _ctx.nofill()
         if len(self._points) > 0:
-            
-            first = True            
+
+            first = True
             for i in range(len(self._points)):
-                
+
                 # Construct the path.
                 pt = self._points[i]
                 if first:
@@ -675,8 +676,8 @@ class BezierPathEditor:
                     elif pt.cmd == LINETO:
                         _ctx.lineto(pt.x, pt.y)
                     elif pt.cmd == CURVETO:
-                        _ctx.curveto(pt.ctrl1.x, pt.ctrl1.y, 
-                                     pt.ctrl2.x, pt.ctrl2.y, 
+                        _ctx.curveto(pt.ctrl1.x, pt.ctrl1.y,
+                                     pt.ctrl2.x, pt.ctrl2.y,
                                      pt.x, pt.y)
                 # In add- or edit-mode,
                 # display the current point's handles.
@@ -715,7 +716,7 @@ class BezierPathEditor:
                         next = self._points[i+1]
                         if next.cmd == CURVETO:
                             _ctx.line(next.ctrl1.x, next.ctrl1.y, pt.x, pt.y)
-                
+
                 # When hovering over a point,
                 # highlight it.
                 elif self.overlap(x, y, pt.x, pt.y) \
@@ -724,7 +725,7 @@ class BezierPathEditor:
                     _ctx.nofill()
                     _ctx.stroke(self.handle_color)
                     _ctx.oval(pt.x-r, pt.y-r, r*2, r*2)
-                
+
                 # Provide visual coordinates
                 # for points being dragged, moved or hovered.
                 _ctx.fontsize(9)
@@ -733,7 +734,7 @@ class BezierPathEditor:
                 if (i == self.edit and self.new == None) \
                 or pt == self.new \
                 and not pt.freehand:
-                    _ctx.text(txt, pt.x+r, pt.y+2)                                       
+                    _ctx.text(txt, pt.x+r, pt.y+2)
                 elif self.overlap(x, y, pt.x, pt.y) \
                 and not pt.freehand:
                     _ctx.text(txt, pt.x+r, pt.y+2)
@@ -748,21 +749,21 @@ class BezierPathEditor:
                         _ctx.stroke(self.path_color)
                         _ctx.nofill()
                     _ctx.oval(pt.x-r/2, pt.y-r/2, r, r)
-                
+
             # Draw the current path,
             # update the path property.
             _ctx.stroke(self.path_color)
             _ctx.fill(self.path_fill)
-            _ctx.autoclosepath(False)    
+            _ctx.autoclosepath(False)
             p = _ctx.endpath()
             self.path = p
-            
+
             # Possible to insert a point here.
             if self.insert:
                 _ctx.stroke(self.handle_color)
                 _ctx.nofill()
                 _ctx.oval(x-r*0.8, y-r*0.8, r*1.6, r*1.6)
-                
+
             # When not editing a node,
             # prospect how the curve will continue
             # when adding a new point.
@@ -788,7 +789,7 @@ class BezierPathEditor:
                 except:
                     pass
                 _ctx.drawpath(p)
-        
+
             # When doing a MOVETO,
             # show the new point hovering at the mouse location.
             elif self.edit == None \
@@ -797,7 +798,7 @@ class BezierPathEditor:
                 _ctx.stroke(self.new_color)
                 _ctx.nofill()
                 _ctx.oval(x-r*0.8, y-r*0.8, r*1.6, r*1.6)
-            
+
             # Draws button for a point being edited.
             # The first button deletes the point.
             # The second button, which appears only on the last point
@@ -824,10 +825,10 @@ class BezierPathEditor:
                     _ctx.fill(1)
                     _ctx.rect(x+r*2+2-2.25, y-r+3, 1.5, r-1)
                     _ctx.rect(x+r*2+2+0.75, y-r+3, 1.5, r-1)
-        
+
         # Handle onscreen notifications.
         # Any text in msg is displayed in a box in the center
-        # and slowly fades away, after which msg is cleared.    
+        # and slowly fades away, after which msg is cleared.
         if self.msg != "":
             self.msg_alpha -= 0.1
             _ctx.nostroke()
@@ -837,29 +838,29 @@ class BezierPathEditor:
             w = _ctx.textwidth(self.msg)
             _ctx.rect(_ctx.WIDTH/2-w/2-9, _ctx.HEIGHT/2-27, w+18, 36, roundness=0.4)
             _ctx.fill(1,1,1, 0.8)
-            _ctx.align(CENTER) 
+            _ctx.align(CENTER)
             _ctx.text(self.msg, 0, _ctx.HEIGHT/2, width=_ctx.WIDTH)
         if self.msg_alpha <= 0.0:
             self.msg = ""
             self.msg_alpha = 1.0
-    
+
     def draw_freehand(self):
-        
+
         """ Freehand sketching.
         """
-        
+
         if _ctx._ns["mousedown"]:
-            
+
             x, y = mouse()
             if self.show_grid:
                 x, y = self.grid.snap(x, y)
-            
+
             if self.freehand_move == True:
                 cmd = MOVETO
                 self.freehand_move = False
             else:
                 cmd = LINETO
-            
+
             # Add a new LINETO to the path,
             # except when starting to draw,
             # then a MOVETO is added to the path.
@@ -874,7 +875,7 @@ class BezierPathEditor:
             pt.ctrl1 = Point(x,y)
             pt.ctrl2 = Point(x,y)
             self._points.append(pt)
-            
+
             # Draw the current location of the cursor.
             r = 4
             _ctx.nofill()
@@ -883,9 +884,9 @@ class BezierPathEditor:
             _ctx.fontsize(9)
             _ctx.fill(self.handle_color)
             _ctx.text(" ("+str(int(pt.x))+", "+str(int(pt.y))+")", pt.x+r, pt.y)
-        
+
             self._dirty = True
-        
+
         else:
 
             # Export the updated drawing,
@@ -895,17 +896,17 @@ class BezierPathEditor:
                 self._points[-1].freehand = False
                 self.export_svg()
                 self._dirty = False
-                
+
     def export_svg(self):
-        
+
         """ Exports the path as SVG.
-        
+
         Uses the filename given when creating this object.
         The file is automatically updated to reflect
         changes to the path.
-        
+
         """
-        
+
         d = ""
         if len(self._points) > 0:
             d += "M "+str(self._points[0].x)+" "+str(self._points[0].y)+" "
@@ -919,19 +920,19 @@ class BezierPathEditor:
                     d += str(pt.ctrl1.x)+" "+str(pt.ctrl1.y)+" "
                     d += str(pt.ctrl2.x)+" "+str(pt.ctrl2.y)+" "
                     d += str(pt.x)+" "+str(pt.y)+" "
-        
+
         c = "rgb("
         c += str(int(self.path_color.r*255)) + ","
         c += str(int(self.path_color.g*255)) + ","
         c += str(int(self.path_color.b*255)) + ")"
-        
+
         s  = '<?xml version="1.0"?>\n'
         s += '<svg width="'+str(_ctx.WIDTH)+'pt" height="'+str(_ctx.HEIGHT)+'pt">\n'
         s += '<g>\n'
         s += '<path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="'+str(self.strokewidth)+'" />\n'
         s += '</g>\n'
         s += '</svg>\n'
-        
+
         f = open(self.file+".svg", "w")
         f.write(s)
         f.close()
@@ -941,7 +942,7 @@ class BezierPathEditor:
 def mouse():
 
     x = _ctx._ns["MOUSEX"]
-    y = _ctx._ns["MOUSEY"]    
+    y = _ctx._ns["MOUSEY"]
     return (x, y)
 
 def start(path=None, filename="path", freehand=None):
