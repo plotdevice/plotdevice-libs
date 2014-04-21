@@ -254,10 +254,7 @@ class BezierPathEditor:
 
         """
 
-        try:
-            bezier = _ctx.ximport("bezier")
-        except:
-            from nodebox.graphics import bezier
+        from plotdevice.lib import pathmatics
 
         # Do a number of checks distributed along the path.
         # Keep the one closest to the actual mouse location.
@@ -303,8 +300,8 @@ class BezierPathEditor:
             closest = closest_precise
 
         # Update the points list with the inserted point.
-        p = bezier.insert_point(self.path, closest_precise)
-        i, t, pt = bezier._locate(self.path, closest_precise)
+        p = pathmatics.insert_point(self.path, closest_precise)
+        i, t, pt = pathmatics._locate(self.path, closest_precise)
         i += 1
         pt = PathElement()
         pt.cmd = p[i].cmd
