@@ -1,0 +1,222 @@
+<?xml version="1.0"?><api><query><normalized><n from="computer_graphics" to="Computer graphics" /></normalized><pages><page pageid="18567210" ns="0" title="Computer graphics"><revisions><rev xml:space="preserve">:''This article is about graphics created using computers. For the article about the scientific study of computer graphics, see [[Computer graphics (computer science)]]. For other uses, see [[Computer graphics (disambiguation)]].''
+[[Image:Blender 2.45 screenshot.jpg|thumb|256px|A [[Blender (software)|Blender]] 2.45 screenshot.]]
+[[Image:5-cell.gif|thumb|256px|A 2D projection of a 3D projection of a 4D [[Pentachoron]] performing a [[SO(4)#Geometry of 4D rotations|double rotation]] about two [[orthogonal]] [[plane (geometry)|planes]].]]
+'''Computer graphics''' are [[graphics]] created using [[computer]]s and, more generally, the [[representation]] and [[manipulation]] of [[pictorial]] [[data]] by a [[computer]]. 
+
+The development of computer graphics, or simply referred to as CG, has made computers easier to interact with, and better for understanding and interpreting many types of data. Developments in computer graphics have had a profound impact on many types of media and have revolutionized the [[animation]] and [[video game]] industry.
+
+== Overview ==
+The term computer graphics since the 1990s can include &quot;almost everything on computers that is not text or sound&quot;&lt;ref&gt;[http://www.graphics.cornell.edu/online/tutorial/ What is Computer Graphics?],  
+Cornell University Program of Computer Graphics. Last updated 04/15/98. Accessed Nov 17, 2009.&lt;/ref&gt;, but is normally considered different from [[photography]]. Still nowadays the term ''computer graphics'' can related to several different things:
+* the [[representation]] and [[manipulation]] of [[pictorial]] [[data]] by a [[computer]]
+* the various [[technologies]] used to create and manipulate such pictorial data
+* the [[image]]s so produced, and 
+* the sub-field of [[computer science]] which studies methods for digitally synthesizing and manipulating visual content, see [[Computer graphics (computer science)|study of computer graphics]]
+
+Today computers and computer-generated images touch many aspects of our daily life. Computer imagery is found on television, in newspapers, for example in their weather reports, or for example in all kinds of medical investigation and surgical procedures. A well-constructed [[graph]] can present complex statistics in a form that is easier to understand and interpret. In the media &quot;such graphs are used to illustrate papers, reports, theses&quot;, and other presentation material.&lt;ref name=&quot;ISS02&quot;&gt; University of Leeds ISS (2002). [http://iss.leeds.ac.uk/info/306/graphics/215/overview_of_computer_graphics/2 &quot;What are computer graphics?&quot;]. Last updated: 22 Sep 2008 &lt;/ref&gt; 
+
+Nowadays &quot;a range of tools and facilities are available to enable users to visualize their data&quot;.&lt;ref name=&quot;ISS02&quot;/&gt; The computer graphic images can be divided in three types: 2D, 3D, and animated graphics. These are increasingly created by means of 3D computer graphics, though 2D computer graphics are still widely used. In science a specialized sub-field of [[computer science]] has emerged which studies methods for digitally synthesizing and manipulating visual content. This [[Computer graphics (computer science)|study of computer graphics]] is also called just&quot;&quot;computer graphics&quot;. Since the last decennia other special fields are developing like [[information visualization]], and [[scientific visualization]] more concerned with &quot;the [[visualization]] of [[Three-dimensional space|three dimensional|3-D+]] phenomena (architectural, meterological, medical, [[Biological Data Visualization|biological]], etc.), where the emphasis is on realistic renderings of volumes, surfaces, illumination sources, and so forth, perhaps with a dynamic (time) component&quot;.&lt;ref name = &quot;MF08&quot;&gt; [[Michael Friendly]] (2008). [http://www.math.yorku.ca/SCS/Gallery/milestone/milestone.pdf &quot;Milestones in the history of thematic cartography, statistical graphics, and data visualization&quot;].&lt;/ref&gt;
+
+== History ==
+The phrase “Computer Graphics” was coined in 1960 by [[William Fetter]], a graphic designer for [[Boeing]].&lt;ref name= &quot;WC03&quot;&gt; Wayne Carlson (2003) [http://accad.osu.edu/~waynec/history/lessons.html A Critical History of Computer Graphics and Animation]. The Ohio State University&lt;/ref&gt;  The field of computer graphics developed with the emergence of computer graphics hardware. Early projects like the [[Whirlwind (computer)|Whirlwind]] and [[SAGE Project]]s introduced the [[Cathode ray tube |CRT]] as a viable [[visual display unit |display]] and interaction interface and introduced the [[light pen]] as an [[input device]]. 
+
+[[Image:SAGE control room.png|thumb|right|[[SAGE Project|SAGE]] Sector Control Room.]] 
+Further advances in computing led to greater advancements in interactive computer graphics. In 1959, the [[TX-2]] computer was developed at [[Lincoln Laboratory |MIT's Lincoln Laboratory]]. The TX-2 integrated a number of new man-machine interfaces. A light pen could be used to draw sketches on the computer using [[Ivan Sutherland]]'s revolutionary [[Sketchpad |Sketchpad software]].  The development of Sketchpad made Ivan Sutherland the &quot;grandfather&quot; of interactive computer graphics and [[graphical user interface]]s.&lt;ref name= &quot;WC03&quot;/&gt;  
+
+The research at MIT &quot;would help shape the early computer and computer graphics industries&quot;&lt;ref name=&quot;HOCG&quot;&gt;[http://hem.passagen.se/des/hocg/hocg_1960.htm HISTORY OF COMPUTER GRAPHICS 1960-69]. Retrieved July 23, 2008.&lt;/ref&gt;.  Major corporations soon became interested in the technology. IBM quickly responded &quot;by releasing the IBM 2250 graphics terminal, the first commercially available graphics computer&quot;.&lt;ref name=&quot;HOCG&quot;/&gt; Several computer graphics companies were founded in the mid 1960s including [[TRW]], [[Lockheed]]-Georgia, [[General Electric]] and [[Sperry Rand]]. 
+
+In 1969, the [[Association for Computing Machinery |ACM]] initiated A Special Interest Group in Graphics ([[SIGGRAPH]]) which organizes [[List of computer science conferences#Computer graphics |conferences]], graphics standards, and publications within the field of computer graphics. In 1973, the first annual SIGGRAPH conference was held, which has become one of the focuses of the organization. SIGGRAPH has grown in size and importance as the field of computer graphics has expanded over time.
+Many of the most important early breakthroughs in computer graphics research occurred at the [[University of Utah]] in the 1970s.
+
+In the 1980s, artists and graphic designers began to see the personal computer, particularly the [[Commodore Amiga]] and [[Apple Macintosh|Macintosh]], as a serious design tool, one that could save time and draw more accurately than other methods. In the late 1980s, [[Silicon Graphics|SGI]] computers were used to create some of the first fully computer-generated [[short film]]s at [[Pixar]]. The Macintosh remains a highly popular tool for computer graphics among graphic design studios and businesses. Modern computers, dating from the 1980s often use [[graphical user interfaces]] (GUI) to present data and information with symbols, icons and pictures, rather than text. Graphics are one of the five key elements of [[multimedia]] technology.
+
+[[3D graphics]] became more popular in the 1990s in [[Video game|gaming]], [[multimedia]] and [[animation]]. In 1996, [[Quake]], one of the first fully 3D [[game]]s, was released. In 1995, [[Toy Story]], the first full-length computer-generated animation film, was released in cinemas worldwide. Since then, computer graphics have only become more detailed and realistic, due to more powerful graphics hardware and 3D modeling software.
+
+== Image types ==
+=== 2D computer graphics === 
+[[Image:Blit dot.gif|thumb|[[Raster graphics|Raster graphic]] [[Sprite (computer graphics)|sprite]]s (left) and masks (right)]]
+[[2D computer graphics]] are the computer-based generation of [[digital image]]s&amp;mdash;mostly from two-dimensional models, such as [[2D geometric model]]s, text, and digital images, and by techniques specific to them. The word may stand for the branch of [[computer science]] that comprises such techniques, or for the models themselves.
+
+2D computer graphics are mainly used in applications that were originally developed upon traditional [[printing]] and [[drawing]] technologies, such as  [[typography]], [[cartography]], [[technical drawing]], [[advertising]], etc..  In those applications, the two-dimensional [[image]] is not just a representation of a real-world object, but an independent artifact with added semantic value; two-dimensional models are therefore preferred, because they give more direct control of the image than [[3D computer graphics]], whose approach is more akin to [[photography]] than to [[typography]].
+
+==== Pixel art ====
+[[Pixel art]] is a form of [[digital art]], created through the use of [[raster graphics]] [[software]], where images are edited on the [[pixel]] level. Graphics in most old (or relatively limited) computer and video games, [[graphing calculator]] games, and many [[mobile phone]] games are mostly pixel art.
+
+==== Vector graphics ====
+[[Image:VectorBitmapExample.png|thumb|Example showing effect of vector graphics versus raster (bitmap) graphics.]] 
+[[Vector graphics]] formats are complementary to [[raster graphics]], which is the representation of images as an array of [[pixel]]s, as it is typically used for the representation of photographic images.&lt;ref&gt;{{cite book | title = Processing: Creative Coding and Computational Art | author = Ira Greenberg | publisher = Apress | year = 2007 | isbn = 159059617X | url = http://books.google.com/books?id=WTl_7H5HUZAC&amp;pg=PA115&amp;dq=raster+vector+graphics+photographic&amp;lr=&amp;as_brr=0&amp;ei=llOVR5LKCJL0iwGZ8-ywBw&amp;sig=YEjfPOYSUDIf1CUbL5S5Jbzs7M8 }}&lt;/ref&gt; There are instances when working with vector tools and formats is best practice, and instances when working with raster tools and formats is best practice. There are times when both formats come together. An understanding of the advantages and limitations of each technology and the relationship between them is most likely to result in efficient and effective use of tools.
+
+=== 3D computer graphics ===
+[[3D computer graphics]] in contrast to [[2D computer graphics]] are graphics that use a [[Cartesian coordinate system#Three-dimensional coordinate system|three-dimensional]] representation of geometric data that is stored in the computer for the purposes of performing calculations and rendering 2D images. Such images may be for later display or for real-time viewing. 
+
+Despite these differences, 3D computer graphics rely on many of the same [[algorithm]]s as 2D computer [[vector graphics]] in the [[wire frame model]] and 2D computer [[raster graphics]] in the final rendered display. In computer graphics software, the distinction between 2D and 3D is occasionally blurred; 2D applications may use 3D techniques to achieve effects such as lighting, and primarily 3D may use 2D rendering techniques. 
+
+3D computer graphics are often referred to as [[3D models]]. Apart from the rendered graphic, the model is contained within the graphical data file.  However, there are differences. A 3D model is the [[Mathematics|mathematical]] representation of any [[Three-dimensional space|three-dimensional]] object (either inanimate or living).  A model is not technically a graphic until it is visually displayed. Due to [[3D printing]], 3D models are not confined to virtual space. A model can be displayed visually as a two-dimensional image through a process called ''[[3D rendering]],'' or used in non-graphical [[computer simulation]]s and calculations.
+
+=== Computer animation ===
+[[image:Activemarker2.PNG|right|thumb|An example of Computer animation produced using [[Motion capture]]]]
+[[Computer animation]] is the art of creating moving images via the use of [[computer]]s. It is a subfield of computer graphics and [[animation]]. Increasingly it is created by means of [[3D computer graphics]], though [[2D computer graphics]] are still widely used for stylistic, low bandwidth, and faster real-time rendering needs.  Sometimes the target of the animation is the computer itself, but sometimes the target is another [[Recording medium|medium]], such as [[film]]. It is also referred to as CGI ([[Computer-generated imagery]] or computer-generated imaging), especially when used in films.
+
+Virtual entities may contain and be controlled by assorted attributes, such as transform values (location, orientation, scale; see [[Cartesian coordinate system]]) stored in an object's [[transformation matrix]]. Animation is the change of an attribute over time. Multiple methods of achieving animation exist; the rudimentary form is based on the creation and editing of [[keyframe|keyframes]], each storing a value at a given time, per attribute to be animated. The 2D/3D graphics software will [[interpolation|interpolate]] between keyframes, creating an editable curve of a value mapped over time, resulting in animation. Other methods of animation include [[procedural animation|procedural]] and [[Expression (mathematics)|expression]]-based techniques: the former consolidates related elements of animated entities into sets of attributes, useful for creating [[particle system|particle]] effects and [[Crowd simulation|crowd simulations]]; the latter allows an evaluated result returned from a user-defined logical expression, coupled with mathematics, to automate animation in a predictable way (convenient for controlling bone behavior beyond what a [[hierarchy]] offers in [[skeletal animation|skeletal system]] set up).
+
+To create the illusion of movement, an image is displayed on the computer [[computer display|screen]] then quickly replaced by a new image that is similar to the previous image, but shifted slightly. This technique is identical to the illusion of movement in [[television]] and [[film|motion pictures]].
+
+== Concepts and Principles ==
+
+=== Image ===
+In common usage, an [[image]] or [[picture]] is an artifact, usually two-dimensional, that has a similar appearance to some [[subject (philosophy)|subject]]&amp;mdash;usually a physical object or a [[person]]. Images may be two-[[dimension]]al, such as a [[photograph]], screen display, and as well as a three-dimensional, such as a [[statue]]. They may be ''captured'' by [[optics|optical]] devices&amp;mdash;such as [[camera]]s, [[mirror]]s, [[Lens (optics)|lenses]], [[telescope]]s, [[microscope]]s, etc. and natural objects and phenomena, such as the human [[eye]] or water surfaces.
+
+A [[digital image]] is a representation of a two-dimensional [[image]] using ones and zeros (binary). Depending on whether or not the [[image resolution]] is fixed, it may be of [[vector graphics|vector]] or [[raster graphics|raster]] type. Without qualifications, the term &quot;digital image&quot; usually refers to raster images.
+
+=== Pixel ===
+[[Image:Pixel-example.png|thumb|right|In the enlarged portion of the image individual pixels are rendered as squares and can be easily seen.]]
+In digital imaging, a [[pixel]] (or picture element&lt;ref&gt;{{Cite book
+  | author=Rudolf F. Graf | date=1999 | publisher=Newnes
+  | title=Modern Dictionary of Electronics | location=Oxford
+  | isbn=0-7506-43315|page=569|url=http://books.google.com/&lt;!--
+  --&gt;books?id=o2I1JWPpdusC&amp;pg=PA569&amp;dq=pixel+intitle:&lt;!--
+  --&gt;%22Modern+Dictionary+of+Electronics%22+inauthor:graf&amp;&lt;!--
+  --&gt;lr=&amp;as_brr=0&amp;ei=5ygASM3qHoSgiwH45-GIDA&amp;&lt;!--
+  --&gt;sig=7tg-LuGdu6Njypaawi2bbkeq8pw}}&lt;/ref&gt;) is a single point in a [[raster image]]. Pixels are normally arranged in a regular 2-dimensional grid, and are often represented using dots or squares. Each pixel is a [[sample (signal)|sample]] of an original image, where more samples typically provide a more accurate representation of the original.  The [[Intensity (physics)|intensity]] of each pixel is variable; in color systems, each pixel has typically three or four components such as [[RGB color model|red, green, and blue]], or [[CMYK color model|cyan, magenta, yellow, and black]].
+
+=== Graphics ===
+[[Graphics]] are [[visual]] presentations on some surface, such as a wall, [[canvas]], computer screen, paper, or stone to [[brand]], inform, illustrate, or entertain. Examples are [[photograph]]s, [[drawings]], [[line art]], [[graphics|graphs]], [[diagrams]], [[typography]], [[number]]s, [[symbols]], [[geometric]] designs, [[maps]], [[engineering drawings]], or other [[image]]s. Graphics often combine [[character (computer)|text]], [[illustration]], and [[color]]. Graphic design may consist of the deliberate selection, creation, or arrangement of typography alone, as in a brochure, flier, poster, web site, or book without any other element. Clarity or effective communication may be the objective, association with other cultural elements may be sought, or merely, the creation of a distinctive style.
+
+=== Rendering ===
+[[Rendering (computer graphics)|Rendering]] is the process of generating an image from a [[3D model|model]], by means of computer programs. The model is a description of three dimensional objects in a strictly defined language or data structure. It would contain geometry, viewpoint, [[texture mapping|texture]], [[lighting]], and [[shading]] information. The image is a [[digital image]] or [[raster graphics]] [[image]]. The term may be by analogy with an &quot;artist's rendering&quot; of a scene. 'Rendering' is also used to describe the process of calculating effects in a video editing file to produce final video output.
+
+;3D projection
+:[[3D projection]] is a method of mapping three dimensional points to a two dimensional plane. As most current methods for displaying graphical data are based on planar two dimensional media, the use of this type of projection is widespread, especially in computer graphics, engineering and drafting.
+
+;Ray tracing
+:[[Ray tracing (graphics)|Ray tracing]] is a technique for generating an [[digital image|image]] by tracing the path of [[light]] through [[pixel|pixels]] in an [[image plane]]. The technique is capable of producing a very high degree of [[photorealism]]; usually higher than that of typical [[scanline rendering]] methods, but at a greater [[computation time|computational cost]].
+
+;Shading
+[[Image:Shading1.jpg|thumb|right|Example of shading.]]
+:[[Shading]] refers to [[wikt:depicting|depicting]] depth in [[3D model]]s or illustrations by varying levels of [[darkness]]. It is a process used in drawing for depicting levels of darkness on paper by applying media more densely or with a darker shade for darker areas, and less densely or with a lighter shade for lighter areas. There are various techniques of shading including [[Hatching|cross hatching]] where perpendicular lines of varying closeness are drawn in a grid pattern to shade an area. The closer the lines are together, the darker the area appears. Likewise, the farther apart the lines are, the lighter the area appears. The term has been recently generalized to mean that [[shader]]s are applied.
+
+;Texture mapping
+:[[Texture mapping]] is a method for adding detail, surface texture, or colour to a [[computer-generated imagery|computer-generated graphic]] or [[3D model]]. Its application to 3D graphics was pioneered by Dr [[Edwin Catmull]] in 1974. A texture map is applied (mapped) to the surface of a shape, or polygon. This process is akin to applying patterned paper to a plain white box. Multitexturing is the use of more than one texture at a time on a polygon.&lt;ref&gt;Blythe, David. ''[http://www.opengl.org/resources/code/samples/sig99/advanced99/notes/notes.html Advanced Graphics Programming Techniques Using OpenGL].'' Siggraph 1999. (see: [http://www.opengl.org/resources/code/samples/sig99/advanced99/notes/node60.html Multitexture])&lt;/ref&gt; [[Procedural textures]] (created from adjusting parameters of an underlying algorithm that produces an output texture), and [[bitmap|bitmap textures]] (created in an [[image editing]] application) are, generally speaking, common methods of implementing texture definition from a 3D animation program, while intended placement of textures onto a model's surface often requires a technique known as [[UV mapping]].
+
+=== Volume rendering ===
+[[Image:CTWristImage.png|thumb|Volume rendered [[Computed tomography|CT]] scan of a forearm with different colour schemes for muscle, fat, bone, and blood.]]
+[[Volume rendering]] is a technique used to display a [[3D projection|2D projection]] of a 3D discretely [[Sampling (signal processing)|sampled]] [[data set]]. A typical 3D data set is a group of 2D slice images acquired by a [[computed axial tomography|CT]] or [[magnetic resonance imaging|MRI]] scanner. 
+
+Usually these are acquired in a regular pattern (e.g., one slice every millimeter) and usually have a regular number of image [[pixel]]s in a regular pattern.  This is an example of a regular volumetric grid, with each volume element, or [[voxel]] represented by a single value that is obtained by sampling the immediate area surrounding the voxel.
+
+=== 3D modeling ===
+[[3D modeling]] is the process of developing a mathematical, [[wire frame model|wireframe]] representation of any three-dimensional object, called a &quot;3D model&quot;, via specialized software. Models may be created automatically or manually; the manual modeling process of preparing geometric data for 3D computer graphics is similar to [[plastic arts]] such as [[sculpting]]. 3D models may be created using multiple approaches: use of [[Nonuniform rational B-spline|NURBS]] curves to generate accurate and smooth surface patches, [[Polygonal modeling|polygonal mesh modeling]] (manipulation of faceted geometry), or polygonal mesh [[Subdivision surface|subdivision]] (advanced tessellation of polygons, resulting in smooth surfaces similar to NURBS models). A 3D model can be displayed as a two-dimensional image through a process called ''[[3D rendering]]'', used in a [[computer]] [[simulation]] of physical phenomena, or animated directly for other purposes. The model can also be physically created using [[3D Printing]] devices.
+
+== Pioneers in graphic design ==
+&lt;!-- this is just a first selection. --&gt;
+;Charles Csuri
+:[[Charles Csuri]] is a pioneer in computer animation and digital fine art and created the first computer art in 1964. Csuri was recognized by ''[[Smithsonian (magazine)|Smithsonian]]'' as the father of digital art and computer animation, and as a pioneer of computer animation by the [[Museum of Modern Art]] (MoMA) and ([[ACM]]-[[SIGGRAPH]]). 
+
+;Donald P. Greenberg
+:[[Donald P. Greenberg]] is a leading innovator in computer graphics. Greenberg has authored hundreds of articles and served as a teacher and mentor to many prominent computer graphic artists, animators, and researchers such as [[Robert L. Cook]], [[Marc Levoy]], and [[Wayne Lytle]]. Many of his former students have won Academy Awards for technical achievements and several have won the [[SIGGRAPH]] Achievement Award. Greenberg was the founding director of the NSF Center for Computer Graphics and Scientific Visualization.
+
+;A. Michael Noll 
+:[[A. Michael Noll|Noll]] was one of the first researchers to use a [[digital]] [[computer]] to create artistic patterns and to formalize the use of random processes in the creation of [[visual arts]]. He began creating digital computer art in 1962, making him one of the earliest digital computer artists. In 1965, Noll along with Frieder Nake and Georg Nees were the first to publicly exhibit their computer art. During April 1965, the Howard Wise Gallery exhibited Noll's computer art along with random-dot patterns by [[Bela Julesz]].
+
+[[Image:utah teapot simple 2.png|thumb|A modern render of the [[Utah teapot]], an iconic model in 3D computer graphics created by [[Martin Newell (computer scientist)|Martin Newell]], 1975.]]
+;Other pioneers
+* [[Benoît B. Mandelbrot]]
+* [[Henri Gouraud]]
+* [[Bui Tuong Phong]]
+* [[Pierre Bézier]]
+* [[Paul de Casteljau]]
+* [[Daniel J. Sandin]]
+* [[Alvy Ray Smith]]
+* [[Ivan Sutherland]]
+* [[Steve Russell]]
+
+== The study of computer graphics ==
+The [[Computer graphics (computer science)|study of computer graphics]] is a sub-field of [[computer science]] which studies methods for digitally synthesizing and manipulating visual content.  Although the term often refers to three-dimensional computer graphics, it also encompasses two-dimensional graphics and [[image processing]].
+
+As an [[academic]] discipline, computer graphics studies the manipulation of visual and geometric information using computational techniques.  It focuses on the ''mathematical'' and ''computational'' foundations of image generation and processing rather than purely [[aesthetic]] issues.  Computer graphics is often differentiated from the field of [[visualization (graphic)|visualization]], although the two fields have many similarities.
+
+== Applications ==
+{{portal|Computer graphics|5-cell.gif}}
+{{portal|Computer Science|Internet map 1024.jpg}}
+* [[Computational biology]]
+* [[Computational physics]]
+* [[Computer-aided design]]
+* [[Computer simulation]] 
+* [[Digital art]] 
+* [[Education]]
+* [[Graphic design]]
+* [[Infographics]]
+* [[Information visualization]]
+* [[Rational drug design]]
+* [[Scientific visualization]]
+* [[Video Games]]
+* [[Virtual reality]]
+* [[Web design]]
+
+== References ==
+{{reflist}}
+
+== Further reading ==
+&lt;!-- This section just gives a first impression of the many books in this field. Please don't just add another book here. --&gt;
+* James D. Foley, Andries Van Dam, Steven K. Feiner and John F. Hughes (1995). ''Computer Graphics: Principles and Practice''. Addison-Wesley
+* Donald Hearn and M. Pauline Baker (1994). ''Computer Graphics''. Prentice-Hall.
+* Francis S. Hill (2001). ''Computer Graphics''. Prentice Hall. 
+* John Lewell (1985). ''Computer Graphics: A Survey of Current Techniques and Applications''. Van Nostrand Reinhold.
+* Jeffrey J. McConnell (2006). ''Computer Graphics: Theory Into Practice''.  Jones &amp; Bartlett Publishers. 
+* R. D. Parslow, R. W. Prowse, Richard Elliot Green (1969). ''Computer Graphics: Techniques and Applications''. 
+* Peter Shirley and others. (2005). ''Fundamentals of computer graphics''. A.K. Peters, Ltd.
+* M. Slater, A. Steed, Y. Chrysantho (2002). ''Computer graphics and virtual environments: from realism to real-time''. Addison-Wesley
+
+== External links ==
+{{commonscat|Computer graphics}} 
+{{Wiktionarypar|computer graphics}}
+*[http://accad.osu.edu/~waynec/history/lessons.html A Critical History of Computer Graphics and Animation] 
+*[http://hem.passagen.se/des/hocg/hocg_1960.htm ''History of Computer Graphics'' series of articles]
+*[http://www.gmparticles.com 2D effects using particle systems]
+
+{{visualization}}
+
+[[Category:Computer graphics|*]]
+
+{{Link FA|de}}
+
+[[ar:رسوميات حاسوبية]]
+[[az:Kompüter qrafikası]]
+[[bn:কম্পিউটার গ্রাফিক্‌স]]
+[[bs:Računarska grafika]]
+[[bg:Компютърна графика]]
+[[ca:Infografia]]
+[[cs:Počítačová grafika]]
+[[da:Computergrafik]]
+[[de:Computergrafik]]
+[[el:Γραφικά υπολογιστών]]
+[[es:Computación gráfica]]
+[[eo:Komputila grafiko]]
+[[fa:گرافیک رایانه‌ای]]
+[[fr:Infographie]]
+[[ko:컴퓨터 그래픽스]]
+[[hr:Računalna grafika]]
+[[id:Grafika komputer]]
+[[it:Computer grafica]]
+[[he:גרפיקה ממוחשבת]]
+[[lt:Kompiuterinė grafika]]
+[[hu:Számítógépes grafika]]
+[[nl:Computergraphics]]
+[[ja:コンピュータグラフィックス]]
+[[no:Datagrafikk]]
+[[pl:Grafika komputerowa]]
+[[pt:Computação gráfica]]
+[[ro:Grafica computerizată]]
+[[ru:Компьютерная графика]]
+[[scn:Computer Grafica]]
+[[simple:Computer graphics]]
+[[sk:Počítačová grafika]]
+[[sr:Рачунарска графика]]
+[[fi:Tietokonegrafiikka]]
+[[sv:Datorgrafik]]
+[[th:คอมพิวเตอร์กราฟิกส์]]
+[[tk:Kompýuter grafikasy]]
+[[uk:Комп'ютерна графіка]]
+[[ur:شمارندی تخطیط]]
+[[vi:Đồ họa máy tính]]
+[[zh:计算机图形学]]</rev></revisions></page></pages></query></api>

@@ -1,0 +1,6 @@
+<library name="Web" formatVersion="0.8" type="python" module="webwrapper">
+    <type name="flickrImage" outputType="grob_image" method="flickrImage">
+        <description>Search for images on Flickr.</description>
+        <parameter type="string" name="query" defaultValue="flower"/>
+    </type>
+</library>
