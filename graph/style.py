@@ -268,6 +268,10 @@ def node_label(s, node, alpha=1.0):
             s.text.a * alpha
         )
 
+        s._ctx.push()
+        s._ctx.translate(node.x, node.y)
+        s._ctx.scale(alpha)
+
         # Cache an outlined label text and translate it.
         # This enhances the speed and avoids wiggling text.
         try: p = node._textpath
@@ -293,9 +297,6 @@ def node_label(s, node, alpha=1.0):
             try: __colors.shadow(dx=2, dy=4, blur=5, alpha=0.3*alpha)
             except: pass
 
-        s._ctx.push()
-        s._ctx.translate(node.x, node.y)
-        s._ctx.scale(alpha)
         s._ctx.drawpath(p)
         s._ctx.pop()
 
