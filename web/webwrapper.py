@@ -1,6 +1,6 @@
 import sys
 sys.path.append('/Users/fdb/Java/jython2.5b0/Lib')
-from net.nodebox import graphics
+from plotdevice.grobs import Image
 import flickr
 
 def flickrImage(query):
@@ -8,4 +8,4 @@ def flickrImage(query):
     if len(images) == 0: return None
     img = images[0]
     img.download(size="small")
-    return graphics.Image(img.path, 0, 0)
+    return Image(img.path, 0, 0)

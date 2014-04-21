@@ -10,20 +10,20 @@ __license__   = "GPL"
 
 ### NODEBOX WEB LIBRARY #############################################################################
 
-# The NodeBox Web library offers a collection of services to retrieve content from the internet. 
-# You can use the library to query Yahoo! for links, images, news and spelling suggestions, 
-# to read RSS and Atom newsfeeds, to retrieve articles from Wikipedia, to collect quality images 
-# from morgueFile, to get color themes from kuler , to browse through HTML documents, to clean up HTML, 
-# to validate URL's, to create GIF images from math equations using mimeTeX, to get ironic word 
+# The NodeBox Web library offers a collection of services to retrieve content from the internet.
+# You can use the library to query Yahoo! for links, images, news and spelling suggestions,
+# to read RSS and Atom newsfeeds, to retrieve articles from Wikipedia, to collect quality images
+# from morgueFile, to get color themes from kuler , to browse through HTML documents, to clean up HTML,
+# to validate URL's, to create GIF images from math equations using mimeTeX, to get ironic word
 # definitions from Urban Dictionary.
 
-# The NodeBox Web library works with a caching mechanism that stores things you download from the web, 
-# so they can be retrieved faster the next time. Many of the services also work asynchronously. 
-# This means you can use the library in an animation that keeps on running while new content is downloaded 
+# The NodeBox Web library works with a caching mechanism that stores things you download from the web,
+# so they can be retrieved faster the next time. Many of the services also work asynchronously.
+# This means you can use the library in an animation that keeps on running while new content is downloaded
 # in the background.
 
-# The library bundles Leonard Richardson's BeautifulSoup to parse HTM, 
-# Mark Pilgrim's Universal Feed Parser for newsfeeds, a connection to John Forkosh's mimeTeX server, 
+# The library bundles Leonard Richardson's BeautifulSoup to parse HTM,
+# Mark Pilgrim's Universal Feed Parser for newsfeeds, a connection to John Forkosh's mimeTeX server,
 # Leif K-Brooks entity replace algorithm, Bob Ippolito's simplejson.
 
 ######################################################################################################
@@ -33,14 +33,13 @@ import cache
 import url
 import html
 import page
-import simplejson
-import json # wrapper for simplejson, backward compatibility.
+import json
 
 packages = [
-    "yahoo", "google", 
-    "newsfeed", 
-    "wikipedia", 
-    "morguefile", "flickr", 
+    "yahoo", "google",
+    "newsfeed",
+    "wikipedia",
+    "morguefile", "flickr",
     "kuler", "colr",
     "mimetex", #deprecated
     "mathtex",
@@ -62,7 +61,7 @@ def download(url_, wait=60, cache=None, type=".html"):
     return url.retrieve(url_, wait, False, cache, type).data
 
 def save(url_, path="", wait=60):
-    if hasattr(url_, "url"): 
+    if hasattr(url_, "url"):
         url_ = url_.url
     if len(path) < 5 or "." not in path[-5:-3]:
         file = url.parse(str(url_)).filename
@@ -75,7 +74,7 @@ def clear_cache():
     for p in packages:
         try: exec("%s.clear_cache()" % p)
         except NameError:
-            pass    
+            pass
 
 # 1.9.4.5
 # cache.py closes files after reading and writing.
@@ -91,7 +90,7 @@ def clear_cache():
 # Added set_proxy() command.
 # Added Serafeim Zanikolas' patches & examples for Debian.
 # Added Serafeim Zanikolas' html=False attribute to WikipediaPage.
-    
+
 # 1.9.4
 # Added simplejson for improved unicode support.
 # Added google.py module.

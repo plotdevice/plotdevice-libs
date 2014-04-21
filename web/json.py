@@ -1,4 +1,4 @@
-import simplejson
+import json
 
 def read(str):
-	return simplejson.loads(str)
+	return json.loads(str)
