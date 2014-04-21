@@ -11,7 +11,7 @@ try:
 except ImportError:
     wordnet = ximport("__init__")
     reload(wordnet)
-    
+
 # Start with any noun that's in WordNet.
 the_word = "dictator"
 # Traverse up the tree to a more general meaning
@@ -28,4 +28,4 @@ the_definition = wordnet.noun_gloss(word_hyponym[0])
 
 # Display it on screen by concatenating the strings.
 text("%s: %s." % (the_word, the_definition), 10, 48, width=WIDTH-20,
-     fontsize=38, font="Helvetica-Bold", fill=1)
+     fontsize=38, face="Helvetica-Bold", fill=1)
