@@ -29,7 +29,7 @@ registered = u"\u00AE"
 
 def superscript(i):
     s = str(i)
-    digits = [u"\u2070", u"\u00B9", u"\u00B2", u"\u00B3", u"\u2074", 
+    digits = [u"\u2070", u"\u00B9", u"\u00B2", u"\u00B3", u"\u2074",
               u"\u2075", u"\u2076", u"\u2077", u"\u2078", u"\u2079"]
     for i, digit in enumerate(digits):
         s = s.replace(str(i), digits[i])
@@ -40,20 +40,20 @@ def superscript(i):
 class _placeholder:
 
     def __init__(self):
-        
+
         self.str = """
-            lorem ipsum dolor sit amet consectetur adipisicing elit sed do 
-            eiusmod tempor incididunt ut labore et dolore magna aliqua ut 
-            enim ad minim veniam quis nostrud exercitation ullamco laboris 
-            nisi ut aliquip ex ea commodo consequat duis aute irure dolor in 
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat 
-            nulla pariatur excepteur sint occaecat cupidatat non proident 
+            lorem ipsum dolor sit amet consectetur adipisicing elit sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua ut
+            enim ad minim veniam quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur excepteur sint occaecat cupidatat non proident
             sunt in culpa qui officia deserunt mollit anim id est laborum
         """
         self.str = self.str.replace("\n", "")
         self.str = self.str.replace("   ", "")
         self.words = self.str.split(" ")
-       
+
     def sentence(self, n=6):
         """ Generates a placeholder sentence with n words.
         The first character is uppercase and the sentence ends with a point.
@@ -67,12 +67,12 @@ class _placeholder:
             s += w
             # If it's not the first or the last word,
             # there's a 10% chance we add a comma for realistic purposes.
-            if not comma and 0 < i < n-2 and random() > 0.9: 
+            if not comma and 0 < i < n-2 and random() > 0.9:
                 comma = True
                 s += ","
             s += " "
         return s.capitalize().strip() + "."
-    
+
     def paragraph(self, n=10, first=False):
         """ Generates a placeholder paragraph with n sentences.
         """
@@ -100,13 +100,13 @@ class _placeholder:
             s += "\n\n"
             first = False
         return s
-        
+
     __call__ = text
 
     def kant(self):
         """ Kant Generator, readable placeholder text.
         """
-        from nodebox.util import autotext
+        from plotdevice.util import autotext
         from os.path import dirname, join
         s = autotext(join(dirname(__file__), "kant.xml"))
         s = s.replace("    ", "\n").strip()
@@ -159,10 +159,10 @@ def split(txt, width, height, widows=1, orphans=1, forward=True):
     """Splits a text with the first half fitting width and height, given the current font.
     Returns a 2-tuple of (block, remainder).
     """
-    
+
     if width == 0 or height < _ctx.textheight(" "):
         return ("", txt)
-    if height > _ctx.textheight(txt, width): 
+    if height > _ctx.textheight(txt, width):
         return (txt.rstrip("\n"), "")
 
     i, j, m = len(txt), 0, 2
@@ -186,12 +186,12 @@ def split(txt, width, height, widows=1, orphans=1, forward=True):
     # Expand word per word.
     while i < len(txt) and _ctx.textheight(txt[:i], width) <= height:
         i += 1
-        while i < len(txt) and txt[i] != " ": 
+        while i < len(txt) and txt[i] != " ":
             i += 1
     # Decrease word per word.
     while i > 1 and _ctx.textheight(txt[:i], width) > height:
         i -= 1
-        while i > 1 and txt[i] != " ": 
+        while i > 1 and txt[i] != " ":
             i -= 1
 
     block = txt[:i].lstrip()
@@ -200,11 +200,11 @@ def split(txt, width, height, widows=1, orphans=1, forward=True):
     # Widow/orphan control.
     if widows > 0 or orphans > 0:
         block, remainder = keep_together(
-            block, 
-            remainder, 
-            width, 
-            widows, 
-            orphans, 
+            block,
+            remainder,
+            width,
+            widows,
+            orphans,
             forward
         )
 
@@ -233,12 +233,12 @@ def legible_width(txt, chars=70):
     fs = _ctx.fontsize()
     _ctx.fontsize(10)
     str = ""
-    for i in range(chars): 
+    for i in range(chars):
         str += choice("abcdefghijklmnopqrstuvwxyz ")
     w = _ctx.textwidth(str)
     w *= 1.0 * fs / 10
     w *= _ctx.lineheight() / 1.2
-    if txt == txt.upper(): 
+    if txt == txt.upper():
         w *= 1.5
     _ctx.fontsize(fs)
     return w
@@ -252,7 +252,7 @@ def fit_fontsize(str, width, height):
     # E.g. if a word contains no descenders (Goo vs. goo) there is more room at the bottom to scale.
     def increase(str, width, height, factor):
         while _ctx.textheight(str, width) < height:
-            _ctx.fontsize(_ctx.fontsize()+factor) 
+            _ctx.fontsize(_ctx.fontsize()+factor)
     def decrease(str, width, height, factor):
         while _ctx.textheight(str, width) > height and _ctx.fontsize() > 0:
             _ctx.fontsize(_ctx.fontsize()-factor)
@@ -266,13 +266,13 @@ def fit_fontsize(str, width, height):
     x = _ctx.fontsize()
     _ctx.fontsize(fs)
     return max(x, 0.0001)
-    
+
 def fit_lineheight(str, width, height):
     """ Increases or decrease the line spacing to fit the text vertically in the box.
     """
     def increase(str, width, height, factor):
         while _ctx.textheight(str, width) < height:
-            _ctx.lineheight(_ctx.lineheight()+factor) 
+            _ctx.lineheight(_ctx.lineheight()+factor)
     def decrease(str, width, height, factor):
         while _ctx.textheight(str, width) > height and _ctx.lineheight() > 0.01:
             _ctx.lineheight(_ctx.lineheight()-factor)
@@ -306,7 +306,7 @@ def fit_lineheight(str, width, height):
 #    rect(0, 0, w, h, fill=None, stroke=0, strokewidth=1)
 #text(b, 0, fontsize(), width=w, fill=0)
 #print time()-t
-#text(r, 0, h+fontsize(), w, fill=(1,0,0))    
+#text(r, 0, h+fontsize(), w, fill=(1,0,0))
 
 #fontsize(9)
 #lineheight(1.2)

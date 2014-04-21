@@ -7,7 +7,7 @@ import text
 #### ATTRIBUTES WITH ATTRIBUTES ######################################################################
 
 class attributes_with_attributes(list):
-    # On a styles object, we can set styles.fontsize = 12, 
+    # On a styles object, we can set styles.fontsize = 12,
     # which will set the fontsize in all the style objects it contains.
     # We can't do styles.padding.left = 2 because the styles object has no padding attribute to get.
     # Therefore, we return a list of all the style objects' "padding" attributes
@@ -19,20 +19,20 @@ class attributes_with_attributes(list):
 #### STYLES ##########################################################################################
 
 class styles(dict):
-    
+
     def __init__(self, _ctx, grob):
         self._ctx = _ctx
         self.guide = styleguide(grob)
         self.create("default")
-    
+
     def apply(self):
         self.guide.apply()
-    
+
     def create(self, stylename, **kwargs):
         """ Creates a new style which inherits from the default style,
         or any other style which name is supplied to the optional template parameter.
         """
-        if stylename == "default":    
+        if stylename == "default":
             self[stylename] = style(stylename, self._ctx, **kwargs)
             return self[stylename]
         k = kwargs.get("template", "default")
@@ -41,30 +41,30 @@ class styles(dict):
             if s.__dict__.has_key(attr):
                 s.__dict__[attr] = kwargs[attr]
         return s
-    
+
     def append(self, style):
         self[style.name] = style
-    
+
     def __getattr__(self, a):
         """ Keys in the dictionaries are accessible as attributes.
         """
-        if self.has_key(a): 
+        if self.has_key(a):
             return self[a]
         if a in ("padding", "margin", "background", "strokewidth", "align"):
             return attributes_with_attributes([getattr(style, a) for style in self.values()])
         raise AttributeError, "'styles' object has no attribute '"+a+"'"
-        
+
     def __setattr__(self, a, v):
         """ Setting an attribute is like setting it in all of the contained styles.
         """
         if   a == "_ctx"  : self.__dict__["_ctx"] = v
         elif a == "guide" : self.__dict__["guide"] = v
         elif hasattr(self.values()[0], a):
-            for style in self.values(): 
+            for style in self.values():
                 setattr(style, a, v)
         else:
             raise AttributeError, "'style' object has no attribute '"+a+"'"
-            
+
     def copy(self, grob):
         """ Returns a copy of all styles and a copy of the styleguide.
         """
@@ -80,21 +80,21 @@ class styles(dict):
 # If such a function returns True for a grob, the style is applied to that grob.
 
 class styleguide(dict):
-    
+
     def __init__(self, grob):
         self.grob = grob
         self.order = []
-    
+
     def append(self, stylename, function):
         """ The name of a style and a function that takes a grob.
         It returns True when the style should be applied to the given grob.
         """
         self[stylename] = function
-    
+
     def clear(self):
         self.order = []
         dict.__init__(self)
-    
+
     def apply(self):
         """ Check the rules for each grob and apply the style.
         We expect a grob to have an all() method that yields all grobs to check.
@@ -103,7 +103,7 @@ class styleguide(dict):
         unique = []; [unique.append(x) for x in sorted if x not in unique]
         for node in self.grob.all():
             for s in unique:
-                if self.has_key(s) and self[s](grob): 
+                if self.has_key(s) and self[s](grob):
                     grob.style = s
 
     def copy(self, grob):
@@ -114,11 +114,11 @@ class styleguide(dict):
         dict.__init__(g, [(k, v) for k, v in self.iteritems()])
         return g
 
-#### SPACING #########################################################################################       
+#### SPACING #########################################################################################
 # Left, top, right and bottom spacing in a container.
 
 class spacing(list):
-    
+
     def __init__(self, left=0, top=0, right=0, bottom=0):
         # You can also supply values as one list parameter.
         if isinstance(left, (list, tuple)):
@@ -133,21 +133,21 @@ class spacing(list):
     def _get_t(self): return self[1]
     def _get_r(self): return self[2]
     def _get_b(self): return self[3]
-    
+
     def _set_l(self, v): self[0] = v
     def _set_t(self, v): self[1] = v
     def _set_r(self, v): self[2] = v
     def _set_b(self, v): self[3] = v
-    
+
     left   = l = property(_get_l, _set_l)
     top    = t = property(_get_t, _set_t)
     right  = r = property(_get_r, _set_r)
     bottom = b = property(_get_b, _set_b)
 
-#### BACKGROUND ######################################################################################       
+#### BACKGROUND ######################################################################################
 
 class background():
-    
+
     def __init__(self, clr, horizontal="left", vertical="top", scale=1.0, x=0, y=0):
         """ Background color and image attached according to given alignment and offset.
         """
@@ -158,7 +158,7 @@ class background():
         elif isinstance(clr, tuple):
             self.color    = None
             self.image    = None
-            self.gradient = clr                
+            self.gradient = clr
         else:
             self.color    = clr
             self.image    = None
@@ -191,8 +191,8 @@ class background():
         self.horizontal = h
         self.vertical = v
     align = property(_get_align, _set_align)
-        
-    def gradientfill(self, clr1, clr2, type="radial", 
+
+    def gradientfill(self, clr1, clr2, type="radial",
                      dx=0, dy=0, spread=1.0, angle=0, alpha=1.0):
         self.color = None
         self.image = None
@@ -207,13 +207,13 @@ class background():
 #### STYLE ###########################################################################################
 
 class style(object):
-    
+
     def __init__(self, name, _ctx, **kwargs):
 
         self.name = name
         self._ctx = _ctx
         text._ctx = _ctx # text module needs the drawing context.
-        
+
         # Defaults for colors and typography.
         self.background   = None
         self.fill         = _ctx.color(0)
@@ -233,7 +233,7 @@ class style(object):
         self.clipped      = True
         self.fit          = False
         self.delegate     = True
-        
+
         # Each of the attributes is an optional named parameter in __init__().
         for attr in kwargs:
             if self.__dict__.has_key(attr):
@@ -243,13 +243,13 @@ class style(object):
         """ Copy all attributes, link all monkey patch methods.
         """
         s = style(self.name, self._ctx)
-        for attr in self.__dict__: 
+        for attr in self.__dict__:
             v = self.__dict__[attr]
             if isinstance(v, (background, spacing, self.fill.__class__)): v = v.copy()
             s.__dict__[attr] = v
-        if name != None: 
+        if name != None:
             s.name = name
-        
+
         return s
 
     def _get_background(self): return self._background
@@ -257,31 +257,31 @@ class style(object):
         if not isinstance(v, background):
             b = background(v)
         self._background = b
-    
+
     background = property(_get_background, _set_background)
 
     def _get_strokewidth(self): return self._strokewidth
-    def _set_strokewidth(self, v): 
-        if not isinstance(v, (list, tuple)): 
+    def _set_strokewidth(self, v):
+        if not isinstance(v, (list, tuple)):
             v = (v, v, v, v)
         self._strokewidth = spacing(v)
-    
+
     strokewidth = property(_get_strokewidth, _set_strokewidth)
 
     def _get_margin(self): return self._margin
-    def _set_margin(self, v): 
-        if not isinstance(v, (list, tuple)): 
+    def _set_margin(self, v):
+        if not isinstance(v, (list, tuple)):
             v = (v, v, v, v)
         self._margin = spacing(v)
-    
+
     margin = property(_get_margin, _set_margin)
 
     def _get_padding(self): return self._padding
-    def _set_padding(self, v): 
-        if not isinstance(v, (list, tuple)): 
+    def _set_padding(self, v):
+        if not isinstance(v, (list, tuple)):
             v = (v, v, v, v)
         self._padding = spacing(v)
-    
+
     padding = property(_get_padding, _set_padding)
 
     def _get_align(self): return (self.horizontal, self.vertical)
@@ -290,7 +290,7 @@ class style(object):
             self.horizontal, self.vertical = v
         else:
             self.horizontal, self.vertical = v, "top"
-            
+
     align = property(_get_align, _set_align)
 
 #--- ALIGNMENT HELPER --------------------------------------------------------------------------------
@@ -309,17 +309,17 @@ def alignment(v):
     if v == "justify" : return JUSTIFY
     if v == "top"     : return TOP
     if v == "bottom"  : return BOTTOM
-    return v 
+    return v
 
 #--- RECT WITH IMPROVED ROUNDNESS --------------------------------------------------------------------
 
-from nodebox.graphics import BezierPath
+from plotdevice.grobs import BezierPath
 def rect(_ctx, x, y, width, height, roundness=0.0, draw=True, **kwargs):
     """ Roundness is either a relative float between 0.0 and 1.0,
-    or the absolute radius of the corners. 
+    or the absolute radius of the corners.
     """
-    BezierPath.checkKwargs(kwargs)
-    p = _ctx.BezierPath(**kwargs)
+    # BezierPath.checkKwargs(kwargs)
+    p = BezierPath(**kwargs)
     r = max(0, roundness)
     if r == 0.0:
         p.rect(x, y, width, height)
@@ -335,15 +335,15 @@ def rect(_ctx, x, y, width, height, roundness=0.0, draw=True, **kwargs):
         p._nsBezierPath.appendBezierPathWithArcFromPoint_toPoint_radius_(d, c, r)
         p._nsBezierPath.appendBezierPathWithArcFromPoint_toPoint_radius_(c, a, r)
         p.closepath()
-    p.inheritFromContext(kwargs.keys())
+    # p.inheritFromContext(kwargs.keys())
     if draw:
         p.draw()
-    return p       
+    return p
 
 #--- DRAW GROB ---------------------------------------------------------------------------------------
 
 def begin_grob(style, grob, x, y):
-    
+
     # Cells inherit the parent style.
     # This way you can set a style for a collection of peer cells.
     # An exception to this rule is when style.delegate is False,
@@ -354,7 +354,7 @@ def begin_grob(style, grob, x, y):
     if (style.delegate and len(grob) > 0):
         style._ctx.translate(x, y)
         return (None, 0, 0)
-    
+
     # Margin is the space around each cell.
     l, t, r, b = style.margin
     x += grob.x + l
@@ -362,20 +362,20 @@ def begin_grob(style, grob, x, y):
     w, h = grob.width-r-l, grob.height-b-t
     if w <= 0: return (None, 0, 0)
     if h <= 0: return (None, 0, 0)
-    
+
     # Padding is the space around the cell's content.
     l, t, r, b = style.padding
-    
+
     # The cell path is a rounded rectangle.
     style._ctx.translate(x, y)
     p = rect(style._ctx, 0, 0, w, h, roundness=style.roundness, draw=False)
-    
+
     if style.clipped:
         style._ctx.beginclip(p)
-    
-    draw_background(style, grob, p, 0, 0, w, h)    
+
+    draw_background(style, grob, p, 0, 0, w, h)
     draw_content(style, grob, l, t, w-r-l, h-b-t)
-        
+
     return (p, w, h)
 
 def end_grob(style, grob, path, width, height):
@@ -435,6 +435,7 @@ def draw_background(style, grob, path, x, y, width, height):
 
 #--- DRAW CONTENT ------------------------------------------------------------------------------------
 
+from plotdevice.grobs import CENTER
 def draw_content(style, grob, x, y, width, height):
     # Draw the content in the given color and text properties.
     # Only cells that have no child cells draw content.
@@ -442,11 +443,16 @@ def draw_content(style, grob, x, y, width, height):
     style._ctx.fill(style.fill)
     style._ctx.font(style.font, style.fontsize)
     style._ctx.lineheight(style.lineheight)
-    style._ctx.align(alignment(style.horizontal))
+
+    # hack the local redefs of alignment args back to plotdevice's values
+    from plotdevice.grobs import LEFT, RIGHT, CENTER, JUSTIFY
+    style._ctx.align([LEFT, RIGHT, CENTER, JUSTIFY][style.horizontal])
+    # style._ctx.align(alignment(style.horizontal))
+
     # Content rotation.
     # If the content is rotated 90, -90 or 180 degrees,
     # we translate and rescale to simulate a "flip".
-    style._ctx.transform(0) # corner-mode transformations
+    style._ctx.transform(CENTER) # corner-mode transformations
     style._ctx.translate(x, y)
     style._ctx.rotate(style.rotation)
     if style.rotation % 360 == 90:
@@ -459,7 +465,7 @@ def draw_content(style, grob, x, y, width, height):
         style._ctx.translate(-width, -height)
     # Execute the grid.content.draw() callback.
     if grob.content != None and len(grob) == 0:
-        grob.content.draw(0, 0, width, height, style)    
+        grob.content.draw(0, 0, width, height, style)
     style._ctx.pop()
 
 #--- DRAW STROKE -------------------------------------------------------------------------------------
@@ -486,7 +492,7 @@ def draw_stroke(style, grob, path, width, height):
                 style._ctx.line(0, 0, w, 0)
             if b > 0:
                 style._ctx.strokewidth(b)
-                style._ctx.line(0, h, w, h)     
+                style._ctx.line(0, h, w, h)
 
 #--- DRAW TEXT ---------------------------------------------------------------------------------------
 # Used in content.draw()
@@ -499,10 +505,10 @@ def draw_text(_ctx, txt, x, y, w, h, horizontal=0, fit=False):
         _ctx.fontsize(text.fit_fontsize(txt, w, h))
         _ctx.lineheight(text.fit_lineheight(txt, w, h))
     _ctx.text(
-        txt, 
-        x, 
-        y+_ctx.fontsize(), 
-        w, 
+        txt,
+        x,
+        y+_ctx.fontsize(),
+        w,
         h
     )
 
@@ -527,7 +533,7 @@ def draw_image(_ctx, img, x, y, w, h, horizontal=0, vertical=0, scale=1.0, fit=F
             img_h *= d1
         else:
             img_w *= d2
-            img_h *= d2    
+            img_h *= d2
     if alignment(horizontal) == RIGHT  : x += 1.0 * (w-img_w)
     if alignment(horizontal) == CENTER : x += 0.5 * (w-img_w)
     if alignment(vertical)   == BOTTOM : y += 1.0 * (h-img_h)
