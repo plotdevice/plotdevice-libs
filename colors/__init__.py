@@ -42,14 +42,16 @@ from math import degrees, radians, sin, cos, atan2, sqrt
 from math import floor, ceil
 from copy import deepcopy
 from random import random, choice
-from shutil import copyfile
+# from shutil import copyfile
 
 try:
     # NodeBox / Cocoa specific functionality.
     # Our library can still do a lot of interesting stuff without these!
-    from plotdevice.gfx import Grob, RGB, HSB, CMYK, CORNER, _restore, _save
     from AppKit import NSShadow, NSColor
     from AppKit import CIImage, CIColor, CIFilter, CIVector, NSGraphicsContext
+    from plotdevice.gfx import Grob, RGB, HSB, CMYK, CORNER, _restore, _save
+    from plotdevice.lib import register
+    _ctx = register(__name__)
 except:
     class Grob: pass
 

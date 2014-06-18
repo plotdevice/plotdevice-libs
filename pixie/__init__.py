@@ -9,6 +9,8 @@
 from random import choice
 from plotdevice.gfx import CENTER, CORNER, CMYK
 from plotdevice.util import random, choice
+from plotdevice.lib import register
+_ctx = register(__name__)
 
 SPACING = 1.2
 def spacing(x=1.2):

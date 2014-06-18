@@ -7,6 +7,8 @@
 # http://www.vergenet.net/~conrad/boids/pseudocode.html
 
 from plotdevice.util import random
+from plotdevice.lib import register
+_ctx = register(__name__)
 
 class Boid:
 

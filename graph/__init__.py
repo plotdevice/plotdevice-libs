@@ -16,6 +16,9 @@ __version__   = "1.9.5.6"
 __copyright__ = "Copyright (c) 2008 Tom De Smedt"
 __license__   = "GPL"
 
+from plotdevice.lib import register
+_ctx = register(__name__)
+
 ######################################################################################################
 
 import cluster

@@ -4,9 +4,11 @@
 # See also the SVG DOM specification:
 # http://www.w3.org/TR/SVG/
 
-import xml.dom.minidom as parser
 import re
+import xml.dom.minidom as parser
 from plotdevice.gfx import RGB, MOVETO
+from plotdevice.lib import register
+_ctx = register(__name__)
 
 def parse(svg):
 

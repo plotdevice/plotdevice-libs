@@ -42,6 +42,9 @@ __license__   = "MIT"
 
 ######################################################################################################
 
+from plotdevice.lib import register
+_ctx = register(__name__)
+
 from plotdevice.gfx import MOVETO, LINETO, CURVETO, CLOSE, CENTER, Point, PathElement, BezierPath
 from math import sin, cos, atan, pi, degrees, radians, sqrt, pow
 

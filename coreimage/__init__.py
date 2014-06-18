@@ -8,6 +8,9 @@ __version__   = "1.9.5"
 __copyright__ = "Copyright (c) 2007 Tom De Smedt"
 __license__   = "GPL"
 
+from plotdevice.lib import register
+_ctx = register(__name__)
+
 ### NODEBOX CORE IMAGE ###############################################################################
 
 # The Core Image library for NodeBox adds image manipulation to NodeBox.

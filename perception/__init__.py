@@ -20,6 +20,9 @@ __version__   = "beta+"
 __copyright__ = "Copyright (c) 2008 Tom De Smedt"
 __license__   = "GPL"
 
+from plotdevice.lib import register
+_ctx = register(__name__)
+
 ######################################################################################################
 
 import os
@@ -37,7 +40,7 @@ from graph.cluster import sorted, unique
 # "_range" is the name of a singleton class in the library.
 # "range" is the name of the class instance.
 def range_(start, stop=None, step=1):
-    if stop is None: 
+    if stop is None:
     	stop, start = start, 0
     cur = start
     while cur < stop:
@@ -69,13 +72,13 @@ CACHE = os.path.join(os.path.dirname(__file__), "cache")
 
 def _path(key):
     return os.path.join(CACHE, md5.new(key).hexdigest()+".txt")
-    
+
 def cache(key, value):
     open(_path(key), "w").write(value)
-    
+
 def cached(key):
     return open(_path(key)).read()
-    
+
 def in_cache(key):
     return os.path.exists(_path(key))
 
@@ -96,14 +99,14 @@ def normalize(str):
     Used in Rules.disambiguate() to get the correct cluster root.
     """
     accents = [
-        ("á|ä|â|å|à", "a"), 
-        ("é|ë|ê|è", "e"), 
-        ("í|ï|î|ì", "i"), 
-        ("ó|ö|ô|ø|ò", "o"), 
-        ("ú|ü|û|ù", "u"), 
-        ("ÿ|ý", "y"), 
-        ("š", "s"), 
-        ("ç", "c"), 
+        ("á|ä|â|å|à", "a"),
+        ("é|ë|ê|è", "e"),
+        ("í|ï|î|ì", "i"),
+        ("ó|ö|ô|ø|ò", "o"),
+        ("ú|ü|û|ù", "u"),
+        ("ÿ|ý", "y"),
+        ("š", "s"),
+        ("ç", "c"),
         ("ñ", "n")
     ]
     str = str.lower()
@@ -113,7 +116,7 @@ def normalize(str):
 class InternetError: pass
 
 class Rule:
-    
+
     def __init__(self, concept1, relation, concept2, context=None, weight=1, author=None, date=None):
         """ A rule from the NodeBox Perception database,
         e.g. 'cat' is-a 'predator' in the 'nature' context.
@@ -125,14 +128,14 @@ class Rule:
         self.weight   = weight
         self.author   = author
         self.date     = date
-    
+
     def __repr__(self):
         str = self.concept1 + " " + self.relation + " " +self.concept2
         if self.context != None: str += " (" + self.context + ")"
         return str
 
 class Rules(list):
-	
+
 	def _concepts(self):
 		""" Returns a dictionary of concepts to number of occurences in the ruleset.
 		"""
@@ -143,14 +146,14 @@ class Rules(list):
 			rank[rule.concept1] += 1
 			rank[rule.concept2] += 1
 		return rank
-		
+
 	concepts = property(_concepts)
-	
+
 	def disambiguate(self, root=None):
 		""" Disambiguate case-sensitive concepts (e.g. "god" or "God").
 		Opt for what occurs most in the ruleset, this avoids unconnected graphs.
 		The selected case for the given root concept is returned.
-		""" 
+		"""
 		if root == None: return root
 		self._root = root
 		def _vote(concept, rank):
@@ -173,19 +176,19 @@ class Rules(list):
 		return self._root
 
 def query(concept, relation=None, context=None, author=None, depth=1, max=None, wait=10):
-    
+
     """ Returns search results from the NodeBox Perception database.
     Retrieves a list of rules involving the given concept, relation, context and author.
     If depth is > 1, returns a cluster of rules:
     - concepts connected to the given concept = depth 1
     - concepts connected to the depth 1 set = depth 2, etc.
     """
-    
+
     if concept == None: concept = ""
     if author  == None: author  = AUTHOR
     robots = author==None
     robots = True
-    
+
     api  = "http://nodebox.net/perception/?q="
     #api  = "http://127.0.0.1/~tom/perception/?q="
     api += concept.replace(" ", "_")
@@ -198,7 +201,7 @@ def query(concept, relation=None, context=None, author=None, depth=1, max=None, 
     if max      != None: api += "&max="      + str(max)
     if robots   == True: api += "&robots=1"
 
-    if in_cache(api): 
+    if in_cache(api):
         response = cached(api)
     else:
         try:
@@ -207,9 +210,9 @@ def query(concept, relation=None, context=None, author=None, depth=1, max=None, 
             cache(api, response)
         except Exception, e:
             raise InternetError
-    
+
     rules = Rules()
-    if response == "": 
+    if response == "":
         return rules
     def _parse(str):
         str = str.strip(" '")
@@ -227,7 +230,7 @@ def query(concept, relation=None, context=None, author=None, depth=1, max=None, 
         rules.append(Rule(concept1, relation, concept2, context, weight, author, date))
     return rules
 
-#### CONCEPT CLUSTER ################################################################################# 
+#### CONCEPT CLUSTER #################################################################################
 # Extends the Graph and Node objects for handling a semantic network of rules.
 
 #--- NODE RULE ASSERTION -----------------------------------------------------------------------------
@@ -244,7 +247,7 @@ def has_rule(node1, relation, node2=None, direct=True, reversed=False):
     if node2 == None:
         # Check all connected nodes.
         for node2 in node1.links:
-            if node1.has_rule(relation, node2, direct, reversed): 
+            if node1.has_rule(relation, node2, direct, reversed):
                 return True
         return False
     if isinstance(node2, str):
@@ -260,7 +263,7 @@ def has_rule(node1, relation, node2=None, direct=True, reversed=False):
         or (not node1.links.edge(node2).relation == relation)):
             return False
         # Check nodes connected to nodes with the given relation.
-        return node1.can_reach(node2, 
+        return node1.can_reach(node2,
             traversable=lambda n, e: n == e.node1 and e.relation == relation)
     # Assert that given relation goes from n1 directly to n2.
     if  node1 in node2.links \
@@ -269,7 +272,7 @@ def has_rule(node1, relation, node2=None, direct=True, reversed=False):
         return True
     else:
         return False
-    
+
 graph.node.has_rule = has_rule
 
 def is_a(node1, node2, direct=True)           : return node1.has_rule("is-a",           node2, direct)
@@ -296,7 +299,7 @@ graph.node.is_effect_of   = is_effect_of
 graph.node.has_specific   = has_specific
 graph.node.has_part       = has_part
 graph.node.has_property   = has_property
-graph.node.has_effect     = has_effect 
+graph.node.has_effect     = has_effect
 
 def is_property(node) : return node.has_rule("is-property-of")
 def is_related(node)  : return node.has_rule("is-related-to")
@@ -377,8 +380,8 @@ def style(graph, relation=True):
 
 # Edge weight increases as more users describe the same rule.
 VOTE = 0.05
-      
-def add_rule(graph, concept1, relation, concept2, context="", author="", 
+
+def add_rule(graph, concept1, relation, concept2, context="", author="",
              weight=0.5, length=1.0, label=""):
     """ Creates an edge between node1 and node2 of the given relation type and context.
     Multiple definitions of the same rule (e.g. by different users) increases the edge's weight.
@@ -407,10 +410,10 @@ def add_rule(graph, concept1, relation, concept2, context="", author="",
             e.context  = context
             e.author   = author
     return e
-    
+
 graph.graph.add_rule = add_rule
 
-def cluster(concept, relation=None, context=None, author=None, depth=2, max=None, labeled=False, 
+def cluster(concept, relation=None, context=None, author=None, depth=2, max=None, labeled=False,
             wait=15):
     """ Returns the given Perception query as a graph of connected concept nodes.
     """
@@ -425,8 +428,8 @@ def cluster(concept, relation=None, context=None, author=None, depth=2, max=None
         g.add_node(concept, root=True)
     for rule in rules:
         e = g.add_rule(
-            rule.concept1, 
-            rule.relation, 
+            rule.concept1,
+            rule.relation,
             rule.concept2,
             rule.context,
             rule.author,
@@ -444,7 +447,7 @@ def proper_nouns(graph):
 def proper_leaves(graph):
     proper_nouns = graph.proper_nouns
     return [n for n in graph.leaves if n in proper_nouns]
-    
+
 graph.graph.proper_nouns = proper_nouns
 graph.graph.proper_leaves = proper_leaves
 
@@ -477,7 +480,7 @@ class cost(dict):
             return self[e.relation]
         else:
             return 0
-            
+
 heuristic = cost
 
 def graph_enumerate_rules(graph, relation, distance=2, heuristic=None, reversed=False):
@@ -499,7 +502,7 @@ def graph_enumerate_rules(graph, relation, distance=2, heuristic=None, reversed=
             heuristic.graph = graph
         nodes = graph.root.neighbors(nodes, distance, heuristic)
     return nodes
-    
+
 graph.graph.enumerate_rules = graph_enumerate_rules
 
 # "Describe what the sun is like" -> red, hot, bright, ...
@@ -507,7 +510,7 @@ def graph_properties(graph, distance=2, heuristic=None):
     """ Returns a list of important nodes that are property-of other nodes.
     By default, dislikes is-opposite-of paths.
     A "sun" node might have these direct properties: red, hot, bright, round.
-    The algorithm will also find: slow, healthy, dangerous, blue, mysterious, 
+    The algorithm will also find: slow, healthy, dangerous, blue, mysterious,
     white, exotic, organic, passionate, chaotic, intense, fast, dry.
     """
     if not heuristic:
@@ -528,12 +531,12 @@ def graph_specific(graph, proper=False, fringe=1):
         nodes = filter(lambda n: n.has_rule("is-a", direct=True), nodes)
     if proper:
         nodes = filter(lambda n: n in graph.proper_nouns(), nodes)
-    return nodes  
+    return nodes
 
 # "Illustrate what wild is like" -> landscape, anger, sea, rodeo, ...
 def graph_objects(graph, distance=2, heuristic=None):
     """ Returns a list of tangible concepts.
-    When the root is an object, returns a list of hyponym leaves. 
+    When the root is an object, returns a list of hyponym leaves.
     For example, for a "tree" cluster: beech, birch, crapabble, dogwood, linden, ...
     When the root is a property, returns a list of objects.
     For example, for a "wild" cluster: landscape, forest, anger, sea, rodeo, ...
@@ -551,18 +554,18 @@ graph.graph.perceptonyms = graph.graph.properties = graph_properties
 graph.graph.hyponyms     = graph.graph.specific   = graph_specific
 graph.graph.objects      = graph_objects
 
-#### TAXONOMY ######################################################################################## 
+#### TAXONOMY ########################################################################################
 # Taxonomies are used to find specific/concrete interpretations of a concept.
 
 def taxonomy(concept, context, author=None, depth=4):
     """ Returns a graph containing only is-a edges.
     """
     return cluster(concept, "is-a", context, author, depth, wait=30)
-    
+
 hierarchy = taxonomy
 
 class _range(dict):
-    
+
     def __init__(self):
         """ Creates a taxonomy from a given concept and filters hyponyms from it.
         For example: range.typeface -> Times, Helvetica, Arial, Georgio, Verdana, ...
@@ -586,14 +589,14 @@ class _range(dict):
             "country"  : ("country",  "geography", 1, True),
             "state"    : ("state",    "geography", 1, True),
         }
-    
+
     def append(self, name, concept, context, fringe=2, proper=False):
         self.rules[name] = (concept, context, fringe, proper)
-    
+
     def _hyponyms(self, concept, context=None, fringe=2, proper=False):
         g = taxonomy(concept, context)
         return sorted([n.id for n in g.hyponyms(proper, fringe=fringe)])
-    
+
     def __getattr__(self, a):
         """ Each attribute behaves as a list of hyponym nodes.
         Attributes are expected to be singular nouns.
@@ -611,26 +614,26 @@ class _range(dict):
         else:
             a = a.replace("_", " ")
             return self._hyponyms(a, None, 2, False)
-    
+
     def __call__(self, a):
         return self.__getattr__(a)
 
 range = _range()
 
-#### INDEX ########################################################################################### 
+#### INDEX ###########################################################################################
 # A cached index of shortest paths between concepts.
 # You give it a list of concepts and it looks up all the paths between them,
 # based on the rules in the Perception database.
-# This is essential: we can't create a NodeBox visualization script for each and every concept. 
+# This is essential: we can't create a NodeBox visualization script for each and every concept.
 # We will later need to "solve" how to get from something undefined to something defined.
 
 INDEX = os.path.join(os.path.dirname(__file__), "index")
 
 class _index(dict):
-    
+
     def __init__(self, name="properties"):
         self.name = name
-    
+
     def _get_name(self):
         return self._name
     def _set_name(self, v):
@@ -641,7 +644,7 @@ class _index(dict):
         else:
             dict.__init__(self, {})
     name = property(_get_name, _set_name)
-    
+
     def build(self, name, concepts=[], heuristic=None):
         """ Caches the shortest paths between nodes in the given set.
         Retrieves the entire online Perception database as a graph.
@@ -670,7 +673,7 @@ class _index(dict):
     def shortest_path(self, concept1, concept2):
         """ Returns the shortest path between the given concepts (or None).
         """
-        if concept1 == concept2: 
+        if concept1 == concept2:
         	return [concept2]
         if concept1 in self and \
            concept2 in self[concept1]:
@@ -685,7 +688,7 @@ class _index(dict):
             if path and len(path) < distance:
                 candidate, distance = concept, len(path)
         return candidate
-        
+
     def sort_by_distance(self, root, concepts):
         """ Returns the list of concepts sorted by distance from root.
         """
@@ -696,10 +699,10 @@ class _index(dict):
             if p2 == None: return -1
             return len(p1) - len(p2)
         return sorted(concepts, _cmp)
-        
+
 index = _index()
 
-def _build_properties_index(): 
+def _build_properties_index():
     index.build(
         "properties",
         range.properties,
@@ -708,12 +711,12 @@ def _build_properties_index():
               "is-opposite-of" : 10})
     )
 
-#### SOLVER ########################################################################################## 
+#### SOLVER ##########################################################################################
 # The solver finds the best match between a property and a range of concepts (e.g. creepy <=> flowers).
 # To retrieve the creepiest flower, it analyzes the properties of each specific flower.
 # For each of these properties, we calculate the shortest path to "creepy".
 # Less important properties (further down the list) have less impact on the total score (factor m).
-# XXX - how many paths does the human brain take into account (high m, low m?)	
+# XXX - how many paths does the human brain take into account (high m, low m?)
 def add_method(name, method):
     setattr(graph.graph, name, method)
 graph.add_method = add_method
@@ -742,7 +745,7 @@ class _solver:
         self.method = method
         self.analysis = analysis()
         self.m = 0.5 # score dampener
-        
+
     def _prepare(self):
         if index.name != self.index:
             index.name = self.index
@@ -754,39 +757,39 @@ class _solver:
             raise MethodError, "'"+self.method+\
                 "' is not an existing cluster method the solver can call"
         self.analysis = analysis()
-	
+
     def _retrieve(self, concept, depth=3, cached=True):
-		
+
 		""" Creates a concept cluster graph and returns the results from self.method.
 		For example => cluster("sun").properties()
 		The results are cached for faster retrieval.
 		"""
-		
+
 		if not (cached and concept in _SOLVER_CACHE):
 			g = cluster(concept, depth=depth)
 			_SOLVER_CACHE[concept] = [n.id for n in getattr(g, self.method)()]
 		return _SOLVER_CACHE[concept]
-	
+
     def sort_by_relevance(self, root, concepts, threshold=0, weighted=False):
-        
+
         """ Returns the list of concepts sorted by relevance to the root [property].
-        
+
         1) For each of the concepts, a Perception cluster is created.
         2) The cluster is analyzed for [properties] that best describe the concept (eigenvalue).
-        3) A cached index of distances between all [properties] is used 
+        3) A cached index of distances between all [properties] is used
            to decide which [properties] of which concept are closest to the given query (Dijkstra).
         4) A list of winning concepts is returned (closest first).
-        
+
         For example: painful <-> range.emotion = shame, envy, pride, anger, jealousy, sadness, fear, anxiety, ...
-        
+
         The word [properties] can be replaced with another type of concept,
         as long as it is a graph method the solver can call,
         e.g. graph.properties(), graph.specific(), ...
-        
+
         The threshold defines the minimum amount of [properties] a concept must have.
-        
+
         To get absurd results, the returned list can be reversed.
-        
+
         """
 
         self._prepare()
@@ -794,7 +797,7 @@ class _solver:
         for concept in concepts:
 			# Create a cluster of related concepts.
 			# Find the [properties] that best describe the concept.
-			# Find paths to the root for each [property]. 
+			# Find paths to the root for each [property].
 			# The length of the paths at the start of the list is important.
 			if concept == root:
 				S = [[] for i in range_(100)]
@@ -806,10 +809,10 @@ class _solver:
 				self.analysis[concept] = S # Cache the paths for later analysis.
 				S = [len(path) for path in S]
 				candidates.append((concept, S))
-        
-        if len(candidates) == 0: 
+
+        if len(candidates) == 0:
         	return []
-		
+
 		# Find the concept with the least [properties]:
 		# this is the maximum amount of paths we can compare to find the best candidate.
         n = min([len(paths) for concept, paths in candidates])
@@ -818,38 +821,38 @@ class _solver:
         candidates.sort()
         if not weighted:
 	        candidates = [concept for x, concept in candidates]
-        
+
         # The analysis dictionary contains an overview of the thought process.
         # How each concept travels to the given root.
         for key in self.analysis:
         	self.analysis[key] = self.analysis[key][:n]
-        
+
         return candidates
-    
+
     find = sort_by_relevance
 
 solver = _solver()
 
 #--- ANALOGY -----------------------------------------------------------------------------------------
 # Uses the solver to analyze multiple properties of a given object.
-# This way we can map objects to a different context: 
+# This way we can map objects to a different context:
 # music styles to colors, people to animals, cars to geometric shapes, ...
 # e.g. what kind of animal is George W. Bush?
 
 class _analogy:
-    
+
     def __init__(self):
         self.analysis = analysis()
         self.depth = 20 # how many object properties to analyze?
         self.m = 0.9 # score dampener
-    
+
     def _best_first(self, list, candidates=[]):
     	""" Returns a list copy with items that appear in candidates at the head.
-    	We use this to implement common sense. 
+    	We use this to implement common sense.
     	Example: assume we want a color analogy for "water".
     	- Properties for water: cool, clean, wet, transparent, slow, ..., blue, ...
     	- Color concepts: black, blue, green, red, yellow, ...
-    	- Obviously, "blue" makes an excellent candidate. 
+    	- Obviously, "blue" makes an excellent candidate.
     	- However, the "blue" property is too far down the list to score highly.
     	- Therefore, we sort the water properties to available colors, putting blue at the front.
     	"""
@@ -860,24 +863,24 @@ class _analogy:
     			list.remove(item)
     			list.insert(0, item)
     	return list
-    
+
     def __call__(self, object, concepts, properties=[], threshold=0, weighted=False):
-        
+
         """ For each [property] of the given object, sort concepts by relevance.
         An object is a concept that has properties: sea, Darwin, church, sword, cat, ...
         Returns the list of concepts sorted by the relevance score sum.
-        
+
         For example: sword <=> range.animal = hedgehog, scorpion, bee, cat, cheetah, cougar, ...
-        
+
         """
-        
+
         S = analysis([(concept, {}) for concept in concepts])
         p = properties + solver._retrieve(object)
         p = self._best_first(p, candidates=concepts)
 
         for i, property in enumerate(p[:self.depth]):
-        	
-            # The score for each concept is the sum of the length of the paths 
+
+            # The score for each concept is the sum of the length of the paths
             # from the given property to each of the concept's properties, dampened by order.
             A = solver.find(str(property), concepts, threshold)
             A = solver.analysis
@@ -887,7 +890,7 @@ class _analogy:
 			# Keep track of the scores of all the properties of the given object.
             for concept in A:
                 S[concept][property] = A[concept] * self.m**i
-        
+
             # The solver may not be able to find a path to each concept.
             # We then give it the worst possible score.
             if len(A) > 0:
@@ -895,9 +898,9 @@ class _analogy:
                 for concept in S:
                     if concept not in A:
                         S[concept][property] = m
-        
+
         self.analysis = S
-        
+
         results = [(sum(S[concept].values()), concept) for concept in S]
         results.sort()
         if not weighted:
@@ -908,11 +911,11 @@ class _analogy:
 
 analogy = _analogy()
 
-#### SEARCH-MATCH-PARSE ############################################################################## 
+#### SEARCH-MATCH-PARSE ##############################################################################
 
 def search_match_parse(query, pattern, parse=lambda x: x, service="google", cached=True, n=10,):
 	""" Parses words from search engine queries that match a given syntactic pattern.
-	query   : a Google/Yahoo query. Google queries can include * wildcards. 
+	query   : a Google/Yahoo query. Google queries can include * wildcards.
 	pattern : an en.sentence.find() pattern, e.g. as big as * NN
 	parse   : a function that filters data from a tagged sentence.
 	"""
@@ -922,9 +925,9 @@ def search_match_parse(query, pattern, parse=lambda x: x, service="google", cach
 	if service == "google": n = min(n, 4)
 	if service == "yahoo" : n = min(n, 10)
 	for i in range_(n):
-		if service == "google": 
+		if service == "google":
 			search = web.google.search(query, start=i*4, cached=cached)
-		if service == "yahoo": 
+		if service == "yahoo":
 			search = web.yahoo.search(query, cached=cached, start=i*100, count=100)
 		for result in search:
 			if result.description:
@@ -953,11 +956,11 @@ def clean(word):
 #--- SIMILE ------------------------------------------------------------------------------------------
 
 def suggest_properties(noun, cached=True):
-	""" Learning to Understand Figurative Language: 
+	""" Learning to Understand Figurative Language:
 		From Similes to Metaphors to Irony,
 		Tony Veale, Yanfen Hao
 		http://afflatus.ucd.ie/Papers/LearningFigurative_CogSci07.pdf
-    
+
 	Uses simile to retrieve properties of nouns.
 	For example: troll -> "as ugly as a troll" -> ugly is-property-of troll.
 	Requires the Web and Linguistics libraries.
@@ -969,7 +972,7 @@ def suggest_properties(noun, cached=True):
 		"\"as * as " + noun + "\"",
 		"as * as " + noun,
 		lambda chunk_: clean(chunk_[1][0]), # as A as a house -> A
-		service="google", 
+		service="google",
 		cached=cached
 	)
 	matches = filter(lambda word: word not in ("well", "much"), matches)
@@ -992,7 +995,7 @@ def suggest_objects(adjective, cached=True):
 			"\"as " + adjective + " as " + adverb + " *\"",
 			"as " + adjective + " as * NN",
 			_parse,
-			service="google", 
+			service="google",
 			cached=cached
 		)
 	matches = filter(lambda word: len(word) > 1 and word not in ("****"), matches)
@@ -1001,7 +1004,7 @@ def suggest_objects(adjective, cached=True):
 #--- COMPARATIVE -------------------------------------------------------------------------------------
 
 class compare_concepts(list):
-	
+
 	def __init__(self, relation, cached=True, n=10):
 		""" Comparative search heuristic in the form of: concept1 is-more-important-than concept2.
 		Returns a list of (concept1, concept2)-tuples.
@@ -1013,13 +1016,13 @@ class compare_concepts(list):
 			"\"" + relation.replace("-"," ") + "\"",
 			"NN " + relation.replace("-"," ") + " (a) (an) (JJ) NN",
 			lambda chunk_: (clean(chunk_[0][0]), clean(chunk_[-1][0])), # A is bigger than B --> (A, B)
-			service="yahoo", 
-			cached=cached, 
+			service="yahoo",
+			cached=cached,
 			n=n
 		)
 		self.relation = relation.replace(" ","-")
 		list.__init__(self, matches)
-						
+
 	def graph(self):
 		""" Returns a graph with edges connecting concepts.
 		Different unconnected clusters will be present in the graph.
@@ -1037,7 +1040,7 @@ class compare_concepts(list):
 			if e: e.relation = self.relation.replace(" ", "-")
 		style(g, relation=False)
 		return g
-	
+
 	def rank(self, graph=None):
 		""" Returns a list of (concept1, [concept2, ...])-tuples sorted by weight.
 		The weight is calculated according to nodes' eigenvalue in a graph.
@@ -1072,12 +1075,12 @@ def suggest_comparisons(concept1, concept2, cached=True):
 		"\""+concept1+" is * than "+concept2+"\"",
 		"is (*) * than",
 		lambda chunk_: " ".join(x[0] for x in chunk_[1:-1]), # A is bigger than B --> bigger
-		service="google", 
+		service="google",
 		cached=cached
 	)
 	return count(matches)
 
-###################################################################################################### 
+######################################################################################################
 
 #solver.index = "properties"
 #solver.method = "properties"
@@ -1098,5 +1101,5 @@ def suggest_comparisons(concept1, concept2, cached=True):
 # - search-match-parse, similes and comparatives.
 # - Optimized index builder speed by removing reverse paths.
 # - Rebuilt properties index.
-# - Tested if numerical index paths instead of string index paths 
+# - Tested if numerical index paths instead of string index paths
 #   would shrink file size: no difference (due to pickle format?)

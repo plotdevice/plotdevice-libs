@@ -8,6 +8,9 @@ __version__   = "1.9.4.5"
 __copyright__ = "Copyright (c) 2008 Tom De Smedt"
 __license__   = "GPL"
 
+from plotdevice.lib import register
+_ctx = register(__name__)
+
 ### NODEBOX WEB LIBRARY #############################################################################
 
 # The NodeBox Web library offers a collection of services to retrieve content from the internet.

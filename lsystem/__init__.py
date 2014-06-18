@@ -10,8 +10,10 @@ __license__   = "MIT"
 
 ### L-SYSTEM #########################################################################################
 
-from plotdevice.gfx import CORNER, CENTER
 from sys import maxint
+from plotdevice.gfx import CORNER, CENTER
+from plotdevice.lib import register
+_ctx = register(__name__)
 
 class LSystem(object):
 

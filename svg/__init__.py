@@ -14,6 +14,8 @@ import xml.dom.minidom as parser
 import re
 import md5
 from plotdevice.gfx import RGB, MOVETO
+from plotdevice.lib import register
+_ctx = register(__name__)
 
 #### CACHE ###########################################################################################
 

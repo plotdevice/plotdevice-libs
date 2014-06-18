@@ -5,6 +5,8 @@
 # You can download Raph's curve editor from http://www.levien.com/spiro/.
 
 from math import *
+from plotdevice.lib import register
+_ctx = register(__name__)
 
 ### CORNU ############################################################################################
 
@@ -44,7 +46,7 @@ def boundary_ths(path, ths, closed):
         ths[0] = first_th
         last_th = 2 * atan2(path[-1][1] - path[-2][1], path[-1][0] - path[-2][0]) - ths[-2]
         ths[-1] = last_th
-   
+
 # implementation adapted from cephes
 def polevl(x, coef):
     ans = coef[-1]
@@ -271,10 +273,10 @@ def draw_cornu(path, ths, closed, flat=False):
     #print 'stroke'
 
 def draw_cornu_flat(x0, y0, t0, t1, s0, c0, flip, cs, ss, cmd):
-    
+
     """ Raph Levien's code draws fast LINETO segments.
     """
-    
+
     for j in range(0, 100):
         t = j * .01
         s, c = eval_cornu(t0 + t * (t1 - t0))
@@ -287,7 +289,7 @@ def draw_cornu_flat(x0, y0, t0, t1, s0, c0, flip, cs, ss, cmd):
         print_pt(x0 + x, y0 + y, cmd)
         cmd = 'lineto'
     return cmd
-    
+
 def draw_cornu_bezier(x0, y0, t0, t1, s0, c0, flip, cs, ss, cmd, scale, rot):
 
     """ Mark Meyer's code draws elegant CURVETO segments.
@@ -301,11 +303,11 @@ def draw_cornu_bezier(x0, y0, t0, t1, s0, c0, flip, cs, ss, cmd, scale, rot):
         # becomes the new first point
         t = j * .2
         t2 = t+ .2
-        
+
         curvetime = t0 + t * (t1 - t0)
         curvetime2 = t0 + t2 * (t1 - t0)
         Dt = (curvetime2 - curvetime) * scale
-        
+
         if not s:
             # get first point
             # avoid calling this again: the next time though x,y will equal x3, y3
@@ -315,19 +317,19 @@ def draw_cornu_bezier(x0, y0, t0, t1, s0, c0, flip, cs, ss, cmd, scale, rot):
             c -= c0
             # calculate derivative of fresnel function at point to get tangent slope
             # just take the integrand of the fresnel function
-            dx1 =  cos(pow(curvetime, 2) + (flip * rot))  
+            dx1 =  cos(pow(curvetime, 2) + (flip * rot))
             dy1 =  flip * sin(pow(curvetime, 2) + (flip *rot))
             # x,y = first point on function
             x = ((c * cs - s * ss) +x0)
             y = ((s * cs + c * ss) + y0)
 
         #evaluate the fresnel further along the function to look ahead to the next point
-        s2,c2 = eval_cornu(curvetime2) 
+        s2,c2 = eval_cornu(curvetime2)
         s2 *= flip
         s2 -= s0
         c2 -= c0
 
-        dx2 = cos(pow(curvetime2, 2) + (flip * rot)) 
+        dx2 = cos(pow(curvetime2, 2) + (flip * rot))
         dy2 = flip * sin(pow(curvetime2, 2) + (flip * rot))
         # x3, y3 = second point on function
         x3 = ((c2 * cs - s2 * ss)+x0)
@@ -335,7 +337,7 @@ def draw_cornu_bezier(x0, y0, t0, t1, s0, c0, flip, cs, ss, cmd, scale, rot):
 
         # calculate control points
         x1 = (x + ((Dt/3.0) * dx1))
-        y1 = (y + ((Dt/3.0) * dy1))   
+        y1 = (y + ((Dt/3.0) * dy1))
         x2 = (x3 - ((Dt/3.0) * dx2))
         y2 = (y3 - ((Dt/3.0) * dy2))
 
@@ -343,12 +345,12 @@ def draw_cornu_bezier(x0, y0, t0, t1, s0, c0, flip, cs, ss, cmd, scale, rot):
             print_pt(x, y, cmd)
             cmd = 'curveto'
         print_crv(x1, y1, x2, y2, x3, y3)
-                    
+
         dx1, dy1 = dx2, dy2
         x,y = x3, y3
-        
+
     return cmd
-    
+
 # update thetas based on cornu splines
 def tweak_ths(path, ths, closed):
     dks = []
@@ -430,7 +432,7 @@ def draw_cspline(path, ths):
 def print_pt(x, y, cmd):
     x = 100 * x
     y = 100 * y
-    if (cmd == 'moveto'):        
+    if (cmd == 'moveto'):
         _ctx.moveto(x, y)
     elif (cmd == 'lineto'):
         _ctx.lineto(x, y)
@@ -447,7 +449,7 @@ def print_crv(x1, y1, x2, y2, x3, y3):
     _ctx.curveto(x1, y1, x2, y2, x3, y3)
 
 def dot_pt(x, y):
-    _ctx.oval(x-3,y-3, 6, 6) 
+    _ctx.oval(x-3,y-3, 6, 6)
 
 def relativise(path):
 
@@ -455,26 +457,26 @@ def relativise(path):
         x, y = path[i]
         x *= 0.01 * _ctx.WIDTH
         y *= 0.01 * _ctx.HEIGHT
-        
+
         #Points on the path that have identical coordinates
         #generate a ZeroDivisionError
         for point in path:
             if (x,y) == point:
                 x += 0.0000000001
                 y += 0.0000000001
-        
+
         path[i] = (x,y)
-        
+
     return path
-    
+
 def path(points, close=False, tweaks=20, flat=False, draw=False, helper=False):
 
-    # To make sure we don't change the original, make a copy of the 
+    # To make sure we don't change the original, make a copy of the
     # given points
     points = list(points)
 
     points = relativise(points)
-        
+
     ths = local_ths(points, close)
     for i in range(tweaks):
         boundary_ths(points, ths, close)
@@ -498,11 +500,11 @@ def path(points, close=False, tweaks=20, flat=False, draw=False, helper=False):
         _ctx.endpath()
         for x,y in points:
             dot_pt(x*100,y*100)
-    
+
     return p
-            
+
 def drawpath(p, close=False, tweaks=20, points=False, flat=False):
-    
+
     path(p, close, tweaks, flat, draw=True, helper=points)
 
 ### PSYCO SPECIALIZATION #############################################################################
@@ -510,8 +512,8 @@ def drawpath(p, close=False, tweaks=20, points=False, flat=False):
 try:
     import psyco
     for f in [
-        fit_arc, local_ths, boundary_ths, polevl, fresnel, eval_cornu, 
-        mod_2pi, fit_cornu_half, fit_cornu, draw_tan, draw_cornu, 
+        fit_arc, local_ths, boundary_ths, polevl, fresnel, eval_cornu,
+        mod_2pi, fit_cornu_half, fit_cornu, draw_tan, draw_cornu,
         draw_cornu_flat, draw_cornu_bezier,
         tweak_ths, csinterp, draw_cspline, print_pt, relativise
         ]:

@@ -7,6 +7,9 @@
 
 from os.path import dirname
 from plotdevice.util import random, choice
+from plotdevice.lib import register
+_ctx = register(__name__)
+
 import en
 dictionary = open("%s/vocabulary.txt"%dirname(__file__)).readlines()
 
