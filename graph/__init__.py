@@ -740,7 +740,7 @@ def create(iterations=1000, distance=1.0, layout=LAYOUT_SPRING, depth=True):
 
     global _ctx
     try:
-        from plotdevice.grobs import RGB
+        from plotdevice.gfx import RGB
         _ctx.colormode(RGB)
         g = graph(iterations, distance, layout)
     except:

@@ -6,7 +6,7 @@
 
 import xml.dom.minidom as parser
 import re
-from plotdevice.grobs import RGB, MOVETO
+from plotdevice.gfx import RGB, MOVETO
 
 def parse(svg):
 
@@ -295,7 +295,7 @@ def add_transform_matrix(e, path):
         matrix = matrix.split(",")
         matrix = [float(v) for v in matrix]
 
-        from plotdevice.grobs import Transform
+        from plotdevice.gfx import Transform
         t = Transform()
         t._set_matrix(matrix)
         path = t.transformBezierPath(path)

@@ -7,7 +7,7 @@
 # Remember to install the fonts before running the library.
 
 from random import choice
-from plotdevice.grobs import CENTER, CORNER, CMYK
+from plotdevice.gfx import CENTER, CORNER, CMYK
 from plotdevice.util import random, choice
 
 SPACING = 1.2

@@ -42,10 +42,10 @@ __license__   = "MIT"
 
 ######################################################################################################
 
-from plotdevice.grobs import MOVETO, LINETO, CURVETO, CLOSE, CENTER, Point, PathElement, BezierPath
+from plotdevice.gfx import MOVETO, LINETO, CURVETO, CLOSE, CENTER, Point, PathElement, BezierPath
 from math import sin, cos, atan, pi, degrees, radians, sqrt, pow
 
-from plotdevice.grobs import KEY_BACKSPACE, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN
+from plotdevice.gfx import KEY_BACKSPACE, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN
 KEY_TAB = 48
 KEY_ESC = 53
 

@@ -118,7 +118,7 @@ class KulerTheme(list):
         try: from web import _ctx
         except: pass
 
-        from plotdevice.grobs import RGB
+        from plotdevice.gfx import RGB
         for r,g,b in self:
             _ctx.colormode(RGB)
             _ctx.fill(r,g,b)

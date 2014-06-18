@@ -313,7 +313,7 @@ def alignment(v):
 
 #--- RECT WITH IMPROVED ROUNDNESS --------------------------------------------------------------------
 
-from plotdevice.grobs import BezierPath
+from plotdevice.gfx import BezierPath
 def rect(_ctx, x, y, width, height, roundness=0.0, draw=True, **kwargs):
     """ Roundness is either a relative float between 0.0 and 1.0,
     or the absolute radius of the corners.
@@ -435,7 +435,7 @@ def draw_background(style, grob, path, x, y, width, height):
 
 #--- DRAW CONTENT ------------------------------------------------------------------------------------
 
-from plotdevice.grobs import CENTER
+from plotdevice.gfx import CENTER
 def draw_content(style, grob, x, y, width, height):
     # Draw the content in the given color and text properties.
     # Only cells that have no child cells draw content.
@@ -445,7 +445,7 @@ def draw_content(style, grob, x, y, width, height):
     style._ctx.lineheight(style.lineheight)
 
     # hack the local redefs of alignment args back to plotdevice's values
-    from plotdevice.grobs import LEFT, RIGHT, CENTER, JUSTIFY
+    from plotdevice.gfx import LEFT, RIGHT, CENTER, JUSTIFY
     style._ctx.align([LEFT, RIGHT, CENTER, JUSTIFY][style.horizontal])
     # style._ctx.align(alignment(style.horizontal))
 

@@ -47,7 +47,7 @@ from shutil import copyfile
 try:
     # NodeBox / Cocoa specific functionality.
     # Our library can still do a lot of interesting stuff without these!
-    from plotdevice.grobs import Grob, RGB, HSB, CMYK, CORNER, _restore, _save
+    from plotdevice.gfx import Grob, RGB, HSB, CMYK, CORNER, _restore, _save
     from AppKit import NSShadow, NSColor
     from AppKit import CIImage, CIColor, CIFilter, CIVector, NSGraphicsContext
 except:
@@ -437,7 +437,7 @@ class BaseColor:
 try:
     # The generic BaseColor is pretty nifty but we want to use Color from NodeBox whenever available.
     # It's based on NSColor, allows drawing in NodeBox, has better CMYK conversion, etc.
-    from plotdevice.grobs import Color as BaseColor
+    from plotdevice.gfx import Color as BaseColor
 except:
     pass
 

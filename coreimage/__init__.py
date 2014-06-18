@@ -571,7 +571,7 @@ class Canvas:
         self.renderer.export(self, splitext(name)[0]+".tif", FILE_TIFF, lzw, cmyk)
 
 def canvas(w=None, h=None, renderer=None, quality=None):
-    from plotdevice.grobs.transform import Dimension
+    from plotdevice.gfx.transform import Dimension
     if not w: w = _ctx.WIDTH
     if not h: h = _ctx.HEIGHT
     if not renderer: renderer = CoreImageRenderer(quality)
@@ -1203,7 +1203,7 @@ class Layer(object):
 
 ### RENDERER #########################################################################################
 
-from plotdevice.grobs import Grob
+from plotdevice.gfx import Grob
 class Renderer(Grob):
 
     """ A Canvas renderer interface.
@@ -2568,7 +2568,7 @@ class CoreImageRenderer(Renderer):
         NSGraphicsContext.currentContext().saveGraphicsState()
 
         centered = False
-        from plotdevice.grobs import CENTER
+        from plotdevice.gfx import CENTER
         if _ctx._transformmode == CENTER:
             centered = True
         if centered:
@@ -2869,7 +2869,7 @@ class CoreImageHelper:
         """ Interfaces parameters for the filter to NodeBox sliders.
         """
 
-        from plotdevice.grobs import BOOLEAN, NUMBER
+        from plotdevice.gfx import BOOLEAN, NUMBER
 
         vars = {}
 
@@ -3031,7 +3031,7 @@ class CoreImageHelper:
         layer, w, h, dx0, dy0, dz0, dx1, dy1, dz1, brightness, concentration = args
         l, t, r, b = layer.bounds()
 
-        from plotdevice.grobs import CORNER, CENTER
+        from plotdevice.gfx import CORNER, CENTER
 
         # Draw the helper relative to
         # the layer's position.
@@ -3094,7 +3094,7 @@ class CoreImageHelper:
 
 def test_transformstate():
 
-    from plotdevice.grobs import CORNER, CENTER
+    from plotdevice.gfx import CORNER, CENTER
 
     c = canvas(400, 400)
     c.layer_linear_gradient(color(1.0, 0, 0))

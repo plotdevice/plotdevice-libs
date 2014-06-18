@@ -1,7 +1,7 @@
 # Copyright (c) 2007 Tom De Smedt.
 # See LICENSE.txt for details.
 
-from plotdevice.grobs import BezierPath
+from plotdevice.gfx import BezierPath
 from math import degrees, sqrt, atan2
 from math import radians, sin, cos
 

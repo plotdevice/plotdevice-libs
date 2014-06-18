@@ -1,6 +1,6 @@
 import sys
 sys.path.append('/Users/fdb/Java/jython2.5b0/Lib')
-from plotdevice.grobs import Image
+from plotdevice.gfx import Image
 import flickr
 
 def flickrImage(query):

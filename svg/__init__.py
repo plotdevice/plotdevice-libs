@@ -13,7 +13,7 @@ import arc
 import xml.dom.minidom as parser
 import re
 import md5
-from plotdevice.grobs import RGB, MOVETO
+from plotdevice.gfx import RGB, MOVETO
 
 #### CACHE ###########################################################################################
 
@@ -398,7 +398,7 @@ def parse_transform(e, path):
             v = t.replace(mode, "").lstrip("(").rstrip(")")
             v = v.replace(", ", ",").replace(" ", ",")
             v = [float(x) for x in v.split(",")]
-            from plotdevice.grobs import Transform
+            from plotdevice.gfx import Transform
             t = Transform()
             if mode == "matrix":
                 t._set_matrix(v)

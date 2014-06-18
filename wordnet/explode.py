@@ -2,7 +2,7 @@
 # Manual: http://nodebox.net/code/index.php/Explode
 # Copyright (c) 2007 by Tom De Smedt.
 
-from plotdevice.grobs import CORNER, CENTER
+from plotdevice.gfx import CORNER, CENTER
 
 def node(leaves, x, y, angle, vpad=1.0):
 
