@@ -93,9 +93,7 @@ RENDER_MASK        = "mask"
 PATH_PADDING = 0
 
 # Core Image constants.
-kCIFormatARGB8  = 23
-kCIFormatRGBA16 = 27
-kCIFormatRGBAf  = 34
+from Quartz import kCIFormatARGB8, kCIFormatRGBA16, kCIFormatRGBAf
 QUALITY_LOW     = "low"
 QUALITY_HIGH    = "high"
 
