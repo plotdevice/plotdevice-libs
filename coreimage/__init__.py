@@ -574,7 +574,7 @@ class Canvas:
         self.renderer.export(self, splitext(name)[0]+".tif", FILE_TIFF, lzw, cmyk)
 
 def canvas(w=None, h=None, renderer=None, quality=None):
-    from plotdevice.gfx.transform import Dimension
+    from plotdevice.gfx.geometry import Dimension
     if not w: w = _ctx.WIDTH
     if not h: h = _ctx.HEIGHT
     if not renderer: renderer = CoreImageRenderer(quality)
