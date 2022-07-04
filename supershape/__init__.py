@@ -18,7 +18,7 @@ try:
 
     # Attempt to import the C library
     # for faster performance.
-    from cSuperformula import supercalc
+    from .cSuperformula import supercalc
 
 except:
 
@@ -34,7 +34,7 @@ except:
 
         t2 = sin(m * phi / 4) / b
         t2 = abs(t2)
-        print t2, n3
+        print(t2, n3)
         t2 = pow(t2, n3)
 
         r = pow(t1 + t2, 1 / n1)

@@ -4,7 +4,7 @@ import web
 
 # Get a list of links for a search query.
 links = web.yahoo.search_images("food")
-print links
+print(links)
 
 # Retrieve a random image.
 img = web.url.retrieve(links)
@@ -17,7 +17,7 @@ img = web.url.retrieve(links)
 try:
     data=img.data
 except:
-    print str(img.error)
+    print(str(img.error))
     
 # An easier command is web.download():
 img = web.download(links)

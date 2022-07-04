@@ -6,12 +6,12 @@
 # Copyright (c) 2007 by Tom De Smedt.
 # See LICENSE.txt for details.
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import xml.dom.minidom
 
-from url import URLAccumulator, HTTP403Forbidden
-from html import replace_entities
-from cache import Cache
+from .url import URLAccumulator, HTTP403Forbidden
+from .html import replace_entities
+from .cache import Cache
 
 def clear_cache():
     Cache("yahoo").clear()
@@ -180,11 +180,11 @@ class YahooSearch(YahooResults, URLAccumulator):
         if service == YAHOO_IMAGES   :  url += "ImageSearchService/V1/imageSearch?"
         if service == YAHOO_NEWS     :  url += "NewsSearchService/V1/newsSearch?"
         if service == YAHOO_SPELLING :  url += "WebSearchService/V1/spellingSuggestion?"
-        arg = urllib.urlencode((("appid", YAHOO_ID), 
+        arg = urllib.parse.urlencode((("appid", YAHOO_ID), 
                                 ("query", q),
                                 ("start", start),
                                 ("results", count),
-                                ("context", unicode(context))))
+                                ("context", str(context))))
         
         url += arg
         URLAccumulator.__init__(self, url, wait, asynchronous, cache, ".xml")

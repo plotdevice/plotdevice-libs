@@ -40,9 +40,9 @@ def print_string(s, width=70):
         try:
             i = s[:width].rindex(' ')
         except ValueError:
-            print s
+            print(s)
             return
-        print s[:i]
+        print(s[:i])
         s = s[i:]
 
 class SortedDict(dict):
@@ -175,7 +175,7 @@ class MinimalSet(object):
         return [c for c in self._contexts if len(self._seen[c]) >= minimum]
 
     def display(self, context, target, default=""):
-        if self._displays.has_key((context, target)):
+        if (context, target) in self._displays:
             return self._displays[(context, target)]
         else:
             return default
@@ -207,7 +207,7 @@ def re_show(regexp, string):
     @rtype: C{string}
     @return: A string with braces surrounding the matched substrings.
     """
-    print re.compile(regexp, re.M).sub("{\g<0>}", string.rstrip())
+    print(re.compile(regexp, re.M).sub("{\g<0>}", string.rstrip()))
 
 
 ##########################################################################
@@ -218,10 +218,10 @@ def re_show(regexp, string):
 def filestring(f):
     if hasattr(f, 'read'):
         return f.read()
-    elif isinstance(f, basestring):
+    elif isinstance(f, str):
         return open(f).read()
     else:
-        raise ValueError, "Must be called with a filename or file-like object"
+        raise ValueError("Must be called with a filename or file-like object")
 
 ##########################################################################
 # COUNTER, FOR UNIQUE NAMING

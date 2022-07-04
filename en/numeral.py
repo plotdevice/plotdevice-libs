@@ -156,7 +156,7 @@ def spoken_number(n):
     
     """
 
-    if not isinstance(n, int) and not isinstance(n, long): 
+    if not isinstance(n, int) and not isinstance(n, int): 
         return n
     
     if n < 0:

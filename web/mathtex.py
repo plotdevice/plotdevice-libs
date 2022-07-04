@@ -3,9 +3,9 @@
 # Copyright (c) 2008 by Tom De Smedt, Cedric Foellmi.
 # See LICENSE.txt for details.
 
-from url import URLAccumulator
-from urllib import quote
-from cache import Cache
+from .url import URLAccumulator
+from urllib.parse import quote
+from .cache import Cache
 
 def clear_cache():
     Cache("mathtex").clear()
@@ -21,9 +21,9 @@ class mathTeX(URLAccumulator):
         eq = "\\"+type+" "+eq
         eq = "\dpi{"+str(dpi)+"} " + eq
         if color: 
-            eq = "\usepackage{color} \color{"+color+"} " + eq
+            eq = "\\usepackage{color} \color{"+color+"} " + eq
         
-        print eq
+        print(eq)
         url = "http://www.forkosh.dreamhost.com/mathtex.cgi?"+quote(eq)
         URLAccumulator.__init__(self, url, wait, asynchronous, "mathtex", type="."+type, throttle=1)
 

@@ -1,7 +1,7 @@
-import url
-import soap
+from . import url
+from . import soap
 import re
-from cache import Cache
+from .cache import Cache
 import pickle
 
 def clear_cache():

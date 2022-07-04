@@ -5,7 +5,7 @@ import web
 q = "cloud"
 img = web.morguefile.search(q)[0]
 
-print img
+print(img)
 
 # A morgueFile image in the list has 
 # a number of methods and properties.

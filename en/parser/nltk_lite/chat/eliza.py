@@ -227,20 +227,20 @@ pairs = (
 eliza = Chat(pairs, reflections)
 
 def demo():
-    print "Therapist\n---------"
-    print "Talk to the program by typing in plain English, using normal upper-"
-    print 'and lower-case letters and punctuation.  Enter "quit" when done.'
-    print '='*72
-    print "Hello.  How are you feeling today?"
+    print("Therapist\n---------")
+    print("Talk to the program by typing in plain English, using normal upper-")
+    print('and lower-case letters and punctuation.  Enter "quit" when done.')
+    print('='*72)
+    print("Hello.  How are you feeling today?")
     s = ""
     while s != "quit":
         s = "quit"
-        try: s = raw_input(">")
+        try: s = input(">")
         except EOFError:
-            print s
+            print(s)
         if s:
             while s[-1] in "!.": s = s[:-1]
-            print eliza.respond(s)
+            print(eliza.respond(s))
 
 
 if __name__ == "__main__":

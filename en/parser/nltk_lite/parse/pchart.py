@@ -40,6 +40,7 @@ search strategies.  Currently the following subclasses are defined:
 from en.parser.nltk_lite.parse.chart import *
 from en.parser.nltk_lite.parse.tree import ProbabilisticTree
 from en.parser.nltk_lite.parse.cfg import Nonterminal
+from functools import reduce
 
 # Probabilistic edges
 class ProbabilisticLeafEdge(LeafEdge):
@@ -82,7 +83,7 @@ class FundamentalRule(AbstractChartRule):
     def apply_iter(self, chart, grammar, left_edge, right_edge):
         # Make sure the rule is applicable.
         if not (left_edge.end() == right_edge.start() and
-                left_edge.next() == right_edge.lhs() and
+                next(left_edge) == right_edge.lhs() and
                 left_edge.is_incomplete() and right_edge.is_complete()):
             return
 
@@ -112,7 +113,7 @@ class SingleEdgeFundamentalRule(AbstractChartRule):
         if edge1.is_incomplete():
             # edge1 = left_edge; edge2 = right_edge
             for edge2 in chart.select(start=edge1.end(), is_complete=True,
-                                     lhs=edge1.next()):
+                                     lhs=next(edge1)):
                 for new_edge in fr.apply_iter(chart, grammar, edge1, edge2):
                     yield new_edge
         else:
@@ -204,8 +205,8 @@ class BottomUpChartParse(AbstractParse):
             # Get the best edge.
             edge = queue.pop()
             if self._trace>0:
-                print '  %-50s prob=%s' % (chart.pp_edge(edge,width=2),
-                                           edge.prob())
+                print('  %-50s prob=%s' % (chart.pp_edge(edge,width=2),
+                                           edge.prob()))
             
             # Apply BU & FR to it.
             queue.extend(bu.apply(chart, grammar, edge))
@@ -263,7 +264,7 @@ class BottomUpChartParse(AbstractParse):
         @type chart: C{Chart}
         @rtype: C{None}
         """
-        raise AssertionError, "BottomUpChartParse is an abstract class"
+        raise AssertionError("BottomUpChartParse is an abstract class")
 
 class InsideParse(BottomUpChartParse):
     """
@@ -383,7 +384,7 @@ class BeamParse(BottomUpChartParse):
             split = len(queue)-self._beam_size
             if self._trace > 2:
                 for edge in queue[:split]:
-                    print '  %-50s [DISCARDED]' % chart.pp_edge(edge,2)
+                    print('  %-50s [DISCARDED]' % chart.pp_edge(edge,2))
             queue[:] = queue[split:]
 
 ##//////////////////////////////////////////////////////
@@ -407,17 +408,17 @@ def demo():
               pcfg.toy2)]
 
     # Ask the user which demo they want to use.
-    print
+    print()
     for i in range(len(demos)):
-        print '%3s: %s' % (i+1, demos[i][0])
-        print '     %r' % demos[i][1]
-        print
-    print 'Which demo (%d-%d)? ' % (1, len(demos)),
+        print('%3s: %s' % (i+1, demos[i][0]))
+        print('     %r' % demos[i][1])
+        print()
+    print('Which demo (%d-%d)? ' % (1, len(demos)), end=' ')
     try:
         snum = int(sys.stdin.readline().strip())-1
         sent, grammar = demos[snum]
     except:
-        print 'Bad sentence number'
+        print('Bad sentence number')
         return
 
     # Tokenize the sentence.
@@ -438,7 +439,7 @@ def demo():
     num_parses = []
     all_parses = {}
     for parser in parsers:
-        print '\ns: %s\nparser: %s\ngrammar: %s' % (sent,parser,pcfg)
+        print('\ns: %s\nparser: %s\ngrammar: %s' % (sent,parser,pcfg))
         parser.trace(3)
         t = time.time()
         parses = parser.get_parse_list(tokens)
@@ -450,32 +451,32 @@ def demo():
         for p in parses: all_parses[p.freeze()] = 1
 
     # Print some summary statistics
-    print
-    print '       Parser      | Time (secs)   # Parses   Average P(parse)'
-    print '-------------------+------------------------------------------'
+    print()
+    print('       Parser      | Time (secs)   # Parses   Average P(parse)')
+    print('-------------------+------------------------------------------')
     for i in range(len(parsers)):
-        print '%18s |%11.4f%11d%19.14f' % (parsers[i].__class__.__name__,
-                                         times[i],num_parses[i],average_p[i])
-    parses = all_parses.keys()
+        print('%18s |%11.4f%11d%19.14f' % (parsers[i].__class__.__name__,
+                                         times[i],num_parses[i],average_p[i]))
+    parses = list(all_parses.keys())
     if parses: p = reduce(lambda a,b:a+b.prob(), parses, 0)/len(parses)
     else: p = 0
-    print '-------------------+------------------------------------------'
-    print '%18s |%11s%11d%19.14f' % ('(All Parses)', 'n/a', len(parses), p)
+    print('-------------------+------------------------------------------')
+    print('%18s |%11s%11d%19.14f' % ('(All Parses)', 'n/a', len(parses), p))
 
     # Ask the user if we should draw the parses.
-    print
-    print 'Draw parses (y/n)? ',
+    print()
+    print('Draw parses (y/n)? ', end=' ')
     if sys.stdin.readline().strip().lower().startswith('y'):
         from en.parser.nltk_lite.draw.tree import draw_trees
-        print '  please wait...'
+        print('  please wait...')
         draw_trees(*parses)
 
     # Ask the user if we should print the parses.
-    print
-    print 'Print parses (y/n)? ',
+    print()
+    print('Print parses (y/n)? ', end=' ')
     if sys.stdin.readline().strip().lower().startswith('y'):
         for parse in parses:
-            print parse
+            print(parse)
 
 if __name__ == '__main__':
     demo()

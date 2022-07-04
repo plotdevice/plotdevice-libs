@@ -1,3 +1,4 @@
+import importlib
 # The Twisted World example
 # http://nodebox.net/code/index.php/Twisted_world
 
@@ -12,7 +13,7 @@ except:
     # we may need to try something different when
     # the library is not located in /Application Support
     coreimage = ximport("__init__")
-    reload(coreimage)
+    importlib.reload(coreimage)
 
 # Draw a dark grey background
 background(0.1)

@@ -706,7 +706,7 @@ class HiddenMarkovModelTrainer(object):
             if iteration > 0 and abs(logprob - last_logprob) < epsilon:
                 converged = True
 
-            print 'iteration', iteration, 'logprob', logprob
+            print('iteration', iteration, 'logprob', logprob)
             iteration += 1
             last_logprob = logprob
 
@@ -809,22 +809,22 @@ def demo():
     model = HiddenMarkovModel(symbols=symbols, states=states,
                               transitions=A, outputs=B, priors=pi)
 
-    print 'Testing', model
+    print('Testing', model)
 
     for test in [['up', 'up'], ['up', 'down', 'up'],
                  ['down'] * 5, ['unchanged'] * 5 + ['up']]:
 
         sequence = [(t, None) for t in test]
 
-        print 'Testing with state sequence', test
-        print 'probability =', model.probability(sequence)
-        print 'tagging =    ', model.tag(sequence)
-        print 'p(tagged) =  ', model.probability(sequence)
-        print 'H =          ', model.entropy(sequence)
-        print 'H_exh =      ', model._exhaustive_entropy(sequence)
-        print 'H(point) =   ', model.point_entropy(sequence)
-        print 'H_exh(point)=', model._exhaustive_point_entropy(sequence)
-        print
+        print('Testing with state sequence', test)
+        print('probability =', model.probability(sequence))
+        print('tagging =    ', model.tag(sequence))
+        print('p(tagged) =  ', model.probability(sequence))
+        print('H =          ', model.entropy(sequence))
+        print('H_exh =      ', model._exhaustive_entropy(sequence))
+        print('H(point) =   ', model.point_entropy(sequence))
+        print('H_exh(point)=', model._exhaustive_point_entropy(sequence))
+        print()
 
 
 def load_pos():
@@ -869,31 +869,31 @@ def test_pos(model, sentences, display=False):
         sentence = [(token[0], None) for token in sentence]
         pts = model.best_path(sentence)
         if display:
-            print sentence
-            print 'HMM >>>'
-            print pts
-            print model.entropy(sentences)
-            print '-' * 60
+            print(sentence)
+            print('HMM >>>')
+            print(pts)
+            print(model.entropy(sentences))
+            print('-' * 60)
         else:
-            print '\b.',
+            print('\b.', end=' ')
             stdout.flush()
         for token, tag in zip(sentence, pts):
             count += 1
             if tag == token[TAG]:
                 correct += 1
 
-    print 'accuracy over', count, 'tokens %.1f' % (100.0 * correct / count)
+    print('accuracy over', count, 'tokens %.1f' % (100.0 * correct / count))
 
 def demo_pos():
     # demonstrates POS tagging using supervised training
 
-    print 'Training HMM...'
+    print('Training HMM...')
     labelled_sequences, tag_set, symbols = load_pos()
     trainer = HiddenMarkovModelTrainer(tag_set, symbols)
     hmm = trainer.train_supervised(labelled_sequences[100:],
                     estimator=lambda fd, bins: LidstoneProbDist(fd, 0.1, bins))
 
-    print 'Testing...'
+    print('Testing...')
     test_pos(hmm, labelled_sequences[:100], True)
 
 def _untag(sentences):
@@ -905,7 +905,7 @@ def _untag(sentences):
 def demo_pos_bw():
     # demonstrates the Baum-Welch algorithm in POS tagging
 
-    print 'Training HMM (supervised)...'
+    print('Training HMM (supervised)...')
     sentences, tag_set, symbols = load_pos()
     symbols = set()
     for sentence in sentences:
@@ -915,7 +915,7 @@ def demo_pos_bw():
     trainer = HiddenMarkovModelTrainer(tag_set, list(symbols))
     hmm = trainer.train_supervised(sentences[100:300],
                     estimator=lambda fd, bins: LidstoneProbDist(fd, 0.1, bins))
-    print 'Training (unsupervised)...'
+    print('Training (unsupervised)...')
     # it's rather slow - so only use 10 samples
     unlabelled = _untag(sentences[301:311])
     hmm = trainer.train_unsupervised(unlabelled, model=hmm, max_iterations=5)

@@ -57,11 +57,11 @@ class KMeans(VectorSpace):
 
     def cluster_vectorspace(self, vectors, trace=False):
         if self._means and self._repeats > 1:
-            print 'Warning: means will be discarded for subsequent trials'
+            print('Warning: means will be discarded for subsequent trials')
 
         meanss = []
         for trial in range(self._repeats):
-            if trace: print 'k-means trial', trial
+            if trace: print('k-means trial', trial)
             if not self._means or trial > 1:
                 self._means = self._rng.sample(vectors, self._num_means)
             self._cluster_vectorspace(vectors, trace)
@@ -98,12 +98,12 @@ class KMeans(VectorSpace):
                     index = self.classify_vectorspace(vector)
                     clusters[index].append(vector)
 
-                if trace: print 'iteration'
+                if trace: print('iteration')
                 #for i in range(self._num_means):
                     #print '  mean', i, 'allocated', len(clusters[i]), 'vectors'
 
                 # recalculate cluster means by computing the centroid of each cluster
-                new_means = map(self._centroid, clusters)
+                new_means = list(map(self._centroid, clusters))
 
                 # measure the degree of change from the previous step for convergence
                 difference = self._sum_distances(self._means, new_means)
@@ -172,10 +172,10 @@ def demo():
     clusterer = cluster.KMeans(2, euclidean_distance, initial_means=means)
     clusters = clusterer.cluster(vectors, True, trace=True)
 
-    print 'Clustered:', vectors
-    print 'As:', clusters
-    print 'Means:', clusterer.means()
-    print
+    print('Clustered:', vectors)
+    print('As:', clusters)
+    print('Means:', clusterer.means())
+    print()
 
     vectors = [array(f) for f in [[3, 3], [1, 2], [4, 2], [4, 0], [2, 3], [3, 1]]]
     
@@ -184,16 +184,16 @@ def demo():
 
     clusterer = cluster.KMeans(2, euclidean_distance, repeats=10)
     clusters = clusterer.cluster(vectors, True)
-    print 'Clustered:', vectors
-    print 'As:', clusters
-    print 'Means:', clusterer.means()
-    print
+    print('Clustered:', vectors)
+    print('As:', clusters)
+    print('Means:', clusterer.means())
+    print()
 
     # classify a new vector
     vector = array([3, 3])
-    print 'classify(%s):' % vector,
-    print clusterer.classify(vector)
-    print
+    print('classify(%s):' % vector, end=' ')
+    print(clusterer.classify(vector))
+    print()
 
 if __name__ == '__main__':
     demo()

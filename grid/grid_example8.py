@@ -12,9 +12,10 @@ try:
     grid = ximport("grid")
 except:
     grid = ximport("__init__")
-    reload(grid)
+    importlib.reload(grid)
     
 from random import seed
+import importlib
 seed(txt)
 
 txt = grid.text.placeholder.sentence()

@@ -1,10 +1,11 @@
+import importlib
 # Coffee dynamics.
 
 try: 
     coreimage = ximport("coreimage")
 except:
     coreimage = ximport("__init__")
-    reload(coreimage)
+    importlib.reload(coreimage)
 
 size(500, 500)
 speed(30)

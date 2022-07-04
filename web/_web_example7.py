@@ -1,10 +1,11 @@
+import importlib
 # Color themes from Kuler.
 
 try:
     web = ximport("web")
 except:
     web = ximport("__init__")
-    reload(web)
+    importlib.reload(web)
 
 # Get the current most popular themes.
 themes = web.kuler.search_by_popularity()

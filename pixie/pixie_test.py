@@ -1,3 +1,4 @@
+import importlib
 size(600, 450)
 
 # Import the library
@@ -9,7 +10,7 @@ except:
     # we may need to try something different when
     # the library is not located in /Application Support
     pixie = ximport("__init__")
-    reload(pixie)
+    importlib.reload(pixie)
 
 # Draw a big heading
 pixie.heading("Hello, World", 40, 120, 200, 60)

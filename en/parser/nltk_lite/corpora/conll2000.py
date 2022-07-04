@@ -53,22 +53,22 @@ def demo():
     from en.parser.nltk_lite.corpora import conll2000
     from itertools import islice
 
-    print "CONLL Chunked data\n"
+    print("CONLL Chunked data\n")
     
-    print "Raw text:"
+    print("Raw text:")
     for sent in islice(conll2000.raw(), 0, 5):
-        print sent
-    print
+        print(sent)
+    print()
 
-    print "Tagged text:"
+    print("Tagged text:")
     for sent in islice(conll2000.tagged(), 0, 5):
-        print sent
-    print
+        print(sent)
+    print()
 
-    print "Chunked text:"
+    print("Chunked text:")
     for tree in islice(conll2000.chunked(chunk_types=('NP', 'PP', 'VP')), 0, 5):
-        print tree.pp()
-    print
+        print(tree.pp())
+    print()
 
 
 if __name__ == '__main__':

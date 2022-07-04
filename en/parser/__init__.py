@@ -74,9 +74,9 @@ class PartOfSpeechTagger:
 		ret = []
 		for i in range(len(words)):
 			ret.append("NN") #the default entry
-			if self.lexHash.has_key(words[i]):
+			if words[i] in self.lexHash:
 				ret[i] = self.lexHash[words[i]]
-			elif self.lexHash.has_key(words[i].lower()):
+			elif words[i].lower() in self.lexHash:
 				ret[i] = self.lexHash[words[i].lower()]
 
 		#apply transformational rules
@@ -169,8 +169,8 @@ def sentence_tag(sentence):
 
 ### CHUNKING #########################################################################################
 
-from nltk_lite.parse import chunk as nltk_chunk
-from nltk_lite.parse import tree as nltk_tree
+from .nltk_lite.parse import chunk as nltk_chunk
+from .nltk_lite.parse import tree as nltk_tree
 
 # Simple regular expression rules for chunking.
 chunk_rules = [
@@ -261,7 +261,7 @@ def combinations(items, n):
     """
     if n == 0: yield []
     else:
-        for i in xrange(len(items)):
+        for i in range(len(items)):
             for c in combinations(items, n-1):
                 yield [items[i]] + c
 

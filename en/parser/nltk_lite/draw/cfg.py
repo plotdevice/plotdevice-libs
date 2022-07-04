@@ -53,7 +53,7 @@ Operations:
 
 from en.parser.nltk_lite.draw import *
 from en.parser.nltk_lite.parse.cfg import *
-from Tkinter import *
+from tkinter import *
 from en.parser.nltk_lite.parse.tree import *
 from en.parser.nltk_lite.draw.tree import *
 
@@ -254,13 +254,13 @@ class CFGEditor(object):
             if (prod_tuples[i][0] == prod_tuples[i-1][0]):
                 if () in prod_tuples[i][1]: continue
                 if () in prod_tuples[i-1][1]: continue
-                print prod_tuples[i-1][1]
-                print prod_tuples[i][1]
+                print(prod_tuples[i-1][1])
+                print(prod_tuples[i][1])
                 prod_tuples[i-1][1].extend(prod_tuples[i][1])
                 del prod_tuples[i]
 
         for lhs, rhss in prod_tuples:
-            print lhs, rhss
+            print(lhs, rhss)
             s = '%s ->' % lhs
             for rhs in rhss:
                 for elt in rhs:
@@ -383,7 +383,7 @@ class CFGEditor(object):
         self._clear_tags(linenum)
 
         # Get the line line's text string.
-        line = self._textwidget.get(`linenum`+'.0', `linenum`+'.end')
+        line = self._textwidget.get(repr(linenum)+'.0', repr(linenum)+'.end')
 
         # If it's a valid production, then colorize each token.
         if CFGEditor._PRODUCTION_RE.match(line):
@@ -614,14 +614,14 @@ class CFGDemo(object):
                     isinstance(widget, TreeSegmentWidget) and
                     node.symbol == widget.node().text()):
                     pass # matching nonterminal
-                elif (isinstance(node, (str, unicode)) and
+                elif (isinstance(node, str) and
                       isinstance(widget, TextWidget) and
                       node == widget.text()):
                     pass # matching nonterminal
                 else: break
             else:
                 # Everything matched!
-                print 'MATCH AT', i
+                print('MATCH AT', i)
 
     #//////////////////////////////////////////////////
     # Grammar 
@@ -725,7 +725,7 @@ def demo():
     P -> 'with'
     """)
 
-    def cb(grammar): print grammar
+    def cb(grammar): print(grammar)
     top = Tk()
     editor = CFGEditor(top, grammar, cb)
     Label(top, text='\nTesting CFG Editor\n').pack()

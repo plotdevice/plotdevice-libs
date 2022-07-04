@@ -84,17 +84,17 @@ def demo():
     from en.parser.nltk_lite.corpora import cmudict
     from itertools import islice
 
-    print "raw method:"
+    print("raw method:")
     for entry in islice(cmudict.raw(), 40000, 40025):
-        print entry
-    print
+        print(entry)
+    print()
 
-    print "dictionary method:"
+    print("dictionary method:")
     cmudict = cmudict.dictionary()
-    print 'NATURAL', cmudict['NATURAL']
-    print 'LANGUAGE', cmudict['LANGUAGE']
-    print 'TOOL', cmudict['TOOL']
-    print 'KIT', cmudict['KIT']
+    print('NATURAL', cmudict['NATURAL'])
+    print('LANGUAGE', cmudict['LANGUAGE'])
+    print('TOOL', cmudict['TOOL'])
+    print('KIT', cmudict['KIT'])
 
 if __name__ == '__main__':
     demo()

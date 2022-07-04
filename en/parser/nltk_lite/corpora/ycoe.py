@@ -184,7 +184,7 @@ item_name = {
     'cowulf.o34': 'Wulfstan''s Homilies'
     }
 
-items = item_name.keys()
+items = list(item_name.keys())
 
 """
 Reads files from a given list, and converts them via the conversion_function.
@@ -350,23 +350,23 @@ def demo():
     from itertools import islice
     from pprint import pprint
 
-    print 'Raw Data:'
+    print('Raw Data:')
     pprint(list(ycoe.raw('cocuraC'))[:4])
 
-    print '\nTagged Data:'
+    print('\nTagged Data:')
     pprint(list(ycoe.tagged('cocuraC'))[:4])
 
-    print '\nBracket Parse:'
+    print('\nBracket Parse:')
     pprint(list(ycoe.bracket_parse('cocuraC'))[:4])
 
-    print '\nChunk Parse:'
+    print('\nChunk Parse:')
     pprint(list(ycoe.chunked('cocuraC', chunk_types=('NP', 'PP')))[:4])
 
-    print '\nChunk Parse (partials, cascaded):'
+    print('\nChunk Parse (partials, cascaded):')
     pprint(list(ycoe.chunked('cocuraC', chunk_types=('NP', 'PP'), \
         partial_match=True, collapse_partials=False, cascade=True))[:2])
 
-    print '\nChunk Parse (partials, cascaded, collapsed):'
+    print('\nChunk Parse (partials, cascaded, collapsed):')
     pprint(list(ycoe.chunked('cocuraC', chunk_types=('NP', 'PP'), \
         partial_match=True, collapse_partials=True, cascade=True))[:2])
 

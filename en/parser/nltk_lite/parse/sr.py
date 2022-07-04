@@ -6,7 +6,7 @@
 # URL: <http://nltk.sf.net>
 # For license information, see LICENSE.TXT
 
-from tree import *
+from .tree import *
 from en.parser.nltk_lite import tokenize
 from en.parser.nltk_lite.parse import AbstractParse, cfg
 from types import *
@@ -82,7 +82,7 @@ class ShiftReduce(AbstractParse):
         
         # Trace output.
         if self._trace:
-            print 'Parsing %r' % ' '.join(tokens)
+            print('Parsing %r' % ' '.join(tokens))
             self._trace_stack(stack, remaining_text)
 
         # iterate through the text, pushing the token onto
@@ -217,11 +217,11 @@ class ShiftReduce(AbstractParse):
         str = '  '+marker+' [ '
         for elt in stack:
             if isinstance(elt, Tree):
-                str += `cfg.Nonterminal(elt.node)` + ' '
+                str += repr(cfg.Nonterminal(elt.node)) + ' '
             else:
-                str += `elt` + ' '
+                str += repr(elt) + ' '
         str += '* ' + ' '.join(remaining_text) + ']'
-        print str
+        print(str)
 
     def _trace_shift(self, stack, remaining_text):
         """
@@ -229,7 +229,7 @@ class ShiftReduce(AbstractParse):
         
         @rtype: C{None}
         """
-        if self._trace > 2: print 'Shift %r:' % stack[-1]
+        if self._trace > 2: print('Shift %r:' % stack[-1])
         if self._trace == 2: self._trace_stack(stack, remaining_text, 'S')
         elif self._trace > 0: self._trace_stack(stack, remaining_text)
 
@@ -242,7 +242,7 @@ class ShiftReduce(AbstractParse):
         """
         if self._trace > 2:
             rhs = ' '.join(production.rhs())
-            print 'Reduce %r <- %s' % (production.lhs(), rhs)
+            print('Reduce %r <- %s' % (production.lhs(), rhs))
         if self._trace == 2: self._trace_stack(stack, remaining_text, 'R')
         elif self._trace > 1: self._trace_stack(stack, remaining_text)
 
@@ -263,7 +263,7 @@ class ShiftReduce(AbstractParse):
                 rhs1 = productions[i].rhs()
                 rhs2 = productions[j].rhs()
                 if rhs1[:len(rhs2)] == rhs2:
-                    print 'Warning: %r will never be used' % productions[i]
+                    print('Warning: %r will never be used' % productions[i])
 
 ##//////////////////////////////////////////////////////
 ##  Stepping Shift/Reduce Parser
@@ -463,6 +463,6 @@ def demo():
     parser = ShiftReduce(grammar)
     parser.trace()
     for p in parser.get_parse_list(sent):
-        print p
+        print(p)
 
 if __name__ == '__main__': demo()

@@ -199,5 +199,5 @@ if __name__=='__main__':
         for ant in c:
             from pudb import set_trace; set_trace()
             ant.forage()
-            print ant.x, ant.y
+            print(ant.x, ant.y)
         

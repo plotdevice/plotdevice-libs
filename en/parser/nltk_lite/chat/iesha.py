@@ -124,11 +124,11 @@ from en.parser.nltk_lite.chat import Chat, converse
 iesha = Chat(pairs, reflections)
 
 def demo():
-    print "Iesha the TeenBoT: Simple Replication of ELIZA\n---------"
-    print "Talk to the program by typing in plain English, using normal upper-"
-    print 'and lower-case letters and punctuation.  Enter "quit" when done.'
-    print '='*72
-    print "hi!! i'm iesha! who r u??!"
+    print("Iesha the TeenBoT: Simple Replication of ELIZA\n---------")
+    print("Talk to the program by typing in plain English, using normal upper-")
+    print('and lower-case letters and punctuation.  Enter "quit" when done.')
+    print('='*72)
+    print("hi!! i'm iesha! who r u??!")
 
     converse(iesha)
 

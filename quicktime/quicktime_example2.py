@@ -1,8 +1,9 @@
+import importlib
 try:
     quicktime = ximport("quicktime")
 except:
     quicktime = ximport("__init__")
-    reload(quicktime)
+    importlib.reload(quicktime)
 
 size(575, 595)
 movie = quicktime.movie("twisted_world.mp4")

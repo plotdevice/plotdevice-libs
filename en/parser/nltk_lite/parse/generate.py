@@ -43,5 +43,5 @@ grammar = cfg.parse_grammar("""
 """)
 
 for sent in generate(grammar):
-    print sent
+    print(sent)
     

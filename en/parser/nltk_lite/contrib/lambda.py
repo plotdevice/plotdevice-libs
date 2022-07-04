@@ -126,4 +126,4 @@ def expressions():
     return [N, P, S]
 
 for expr in expressions():
-    print expr, "->", expr.simplify()
+    print(expr, "->", expr.simplify())

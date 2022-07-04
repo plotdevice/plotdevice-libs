@@ -1,3 +1,4 @@
+import importlib
 # SORTING COLOR LISTS
 
 # Import the library
@@ -5,7 +6,7 @@ try:
     colors = ximport("colors")
 except ImportError:
     colors = ximport("__init__")
-    reload(colors)
+    importlib.reload(colors)
 
 # A list of a 100 random colors.
 l = colors.list([color(random(), random(), random()) for i in range(100)])

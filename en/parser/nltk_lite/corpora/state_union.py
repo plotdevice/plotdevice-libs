@@ -101,7 +101,7 @@ def demo():
     for speech in state_union.items:
         year = speech[:4]
         freq = list(state_union.raw(speech)).count('men')
-        print year, freq
+        print(year, freq)
 
 if __name__ == '__main__':
     demo()

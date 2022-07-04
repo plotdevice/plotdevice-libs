@@ -41,5 +41,5 @@ class StemI(object):
         raise NotImplementedError()
 
 
-from regexp import *
-from porter import *
+from .regexp import *
+from .porter import *

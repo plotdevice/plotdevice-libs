@@ -14,8 +14,8 @@ import os
 pywordnet_path = os.path.join(os.path.dirname(__file__), "wordnet2")
 os.environ["WNHOME"] = pywordnet_path
 
-import wordnet as wn
-import wntools
+from . import wordnet as wn
+from . import wntools
 
 import re
 
@@ -295,16 +295,16 @@ def absurd_gloss(q, sense=0, pos=NOUNS, up=3, down=2):
     return gloss(q)
 
 def is_noun(q):
-    return NOUNS.has_key(_normalize(q))
+    return _normalize(q) in NOUNS
     
 def is_verb(q):
-    return VERBS.has_key(_normalize(q))
+    return _normalize(q) in VERBS
     
 def is_adjective(q):
-    return ADJECTIVES.has_key(_normalize(q))
+    return _normalize(q) in ADJECTIVES
     
 def is_adverb(q):
-    return ADVERBS.has_key(_normalize(q))
+    return _normalize(q) in ADVERBS
 
 def all_nouns()      : return NOUNS
 def all_verbs()      : return VERBS

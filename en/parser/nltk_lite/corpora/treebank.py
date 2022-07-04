@@ -139,25 +139,25 @@ def demo():
     from en.parser.nltk_lite.corpora import treebank
     from itertools import islice
 
-    print "Parsed:"
+    print("Parsed:")
     for tree in islice(treebank.parsed(), 3):
-        print tree.pp()
-    print
+        print(tree.pp())
+    print()
 
-    print "Chunked:"
+    print("Chunked:")
     for tree in islice(treebank.chunked(), 3):
-        print tree.pp()
-    print
+        print(tree.pp())
+    print()
 
-    print "Tagged:"
+    print("Tagged:")
     for sent in islice(treebank.tagged(), 3):
-        print sent
-    print
+        print(sent)
+    print()
 
-    print "Raw:"
+    print("Raw:")
     for sent in islice(treebank.raw(), 3):
-        print sent
-    print
+        print(sent)
+    print()
 
 if __name__ == '__main__':
     demo()

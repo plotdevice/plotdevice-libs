@@ -568,7 +568,7 @@ class Parser:
         @returns: a parsed Expression
         """
         self.feed(data)
-        result = self.next()
+        result = next(self)
         return result
 
     def process(self):
@@ -585,7 +585,7 @@ class Parser:
         whether the token will be removed from the buffer; setting it to
         0 gives lookahead capability."""
         if self.buffer == '':
-            raise Error, "end of stream"
+            raise Error("end of stream")
         tok = None
         buffer = self.buffer
         while not tok:
@@ -610,7 +610,7 @@ class Parser:
         TOKENS.extend(Parser.BOOL)
         return token not in TOKENS 
 
-    def next(self):
+    def __next__(self):
         """Parse the next complete expression from the stream and return it."""
         tok = self.token()
         
@@ -634,8 +634,8 @@ class Parser:
             tok = self.token()
 
             if tok != Parser.DOT:
-                raise Error, "parse error, unexpected token: %s" % tok
-            term = self.next()
+                raise Error("parse error, unexpected token: %s" % tok)
+            term = next(self)
             accum = factory(Variable(vars.pop()), term)
             while vars:
                 accum = factory(Variable(vars.pop()), accum)
@@ -643,12 +643,12 @@ class Parser:
 	    
         elif tok == Parser.OPEN:
             # Expression is an application expression: (M N)
-            first = self.next()
-            second = self.next()
+            first = next(self)
+            second = next(self)
             exps = []
             while self.token(0) != Parser.CLOSE:
                 # Support expressions like: (M N P) == ((M N) P)
-                exps.append(self.next())
+                exps.append(next(self))
             tok = self.token() # swallow the close token
             assert tok == Parser.CLOSE
             if isinstance(second, Operator):
@@ -677,7 +677,7 @@ class Parser:
                 # Expression is a simple variable expression: x
                 return VariableExpression(Variable(tok))
             else:
-                raise Error, "parse error, unexpected token: %s" % tok
+                raise Error("parse error, unexpected token: %s" % tok)
     
     # This is intended to be overridden, so that you can derive a Parser class
     # that constructs expressions using your subclasses.  So far we only need
@@ -713,7 +713,7 @@ def expressions():
             ApplicationExpression(XZ, Y))))
     O = LambdaExpression(x, LambdaExpression(y, XY))
     N = ApplicationExpression(LambdaExpression(x, XA), I)
-    T = Parser('\\x y.(x y z)').next()
+    T = next(Parser('\\x y.(x y z)'))
     return [X, XZ, XYZ, I, K, L, S, B, C, O, N, T]
 
 def main():
@@ -722,37 +722,37 @@ def main():
     P = VariableExpression(p)
     Q = VariableExpression(q)
     for l in expressions():
-        print "Expression:", l
-        print "Variables:", l.variables()
-        print "Free:", l.free()
-        print "Subterms:", l.subterms()
-        print "Simplify:",l.simplify()
+        print("Expression:", l)
+        print("Variables:", l.variables())
+        print("Free:", l.free())
+        print("Subterms:", l.subterms())
+        print("Simplify:",l.simplify())
         la = ApplicationExpression(ApplicationExpression(l, P), Q)
         las = la.simplify()
-        print "Apply and simplify: %s -> %s" % (la, las)
-        ll = Parser(str(l)).next()
-        print 'l is:', l
-        print 'll is:', ll
+        print("Apply and simplify: %s -> %s" % (la, las))
+        ll = next(Parser(str(l)))
+        print('l is:', l)
+        print('ll is:', ll)
         assert l.equals(ll)
-        print "Serialize and reparse: %s -> %s" % (l, ll)
-        print
+        print("Serialize and reparse: %s -> %s" % (l, ll))
+        print()
 
 def runtests():
     # Test a beta-reduction which used to be wrong
     l = Parser(r'(\x.\x.(x x) 1)').next().simplify()
-    id = Parser(r'\x.(x x)').next()
+    id = next(Parser(r'\x.(x x)'))
     assert l == id
 
     # Test numerals
-    zero = Parser(r'\f x.x').next()
-    one = Parser(r'\f x.(f x)').next()
-    two = Parser(r'\f x.(f (f x))').next()
-    three = Parser(r'\f x.(f (f (f x)))').next()
-    four = Parser(r'\f x.(f (f (f (f x))))').next()
-    succ = Parser(r'\n f x.(f (n f x))').next()
-    plus = Parser(r'\m n f x.(m f (n f x))').next()
-    mult = Parser(r'\m n f.(m (n f))').next()
-    pred = Parser(r'\n f x.(n \g h.(h (g f)) \u.x \u.u)').next()
+    zero = next(Parser(r'\f x.x'))
+    one = next(Parser(r'\f x.(f x)'))
+    two = next(Parser(r'\f x.(f (f x))'))
+    three = next(Parser(r'\f x.(f (f (f x)))'))
+    four = next(Parser(r'\f x.(f (f (f (f x))))'))
+    succ = next(Parser(r'\n f x.(f (n f x))'))
+    plus = next(Parser(r'\m n f x.(m f (n f x))'))
+    mult = next(Parser(r'\m n f.(m (n f))'))
+    pred = next(Parser(r'\n f x.(n \g h.(h (g f)) \u.x \u.u)'))
     v1 = ApplicationExpression(succ, zero).simplify()
     assert v1 == one
     v2 = ApplicationExpression(succ, v1).simplify()

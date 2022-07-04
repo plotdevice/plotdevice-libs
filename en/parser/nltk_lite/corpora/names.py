@@ -39,12 +39,12 @@ def demo():
     from random import shuffle
     from pprint import pprint
 
-    print "20 female names"
+    print("20 female names")
     female = list(names.raw('female'))
     shuffle(female)
     pprint(female[:20])
 
-    print "20 male names"
+    print("20 male names")
     male = list(names.raw('male'))
     shuffle(male)
     pprint(male[:20])

@@ -80,8 +80,8 @@ from en.parser.nltk_lite.draw import *
 from en.parser.nltk_lite import parse
 from en.parser.nltk_lite.draw.cfg import CFGEditor
 from en.parser.nltk_lite import tokenize
-from Tkinter import *
-import tkFont
+from tkinter import *
+import tkinter.font
         
 class ShiftReduceDemo(object):
     """
@@ -137,16 +137,16 @@ class ShiftReduceDemo(object):
 
     def _init_fonts(self, root):
         # See: <http://www.astro.washington.edu/owen/ROTKFolklore.html>
-        self._sysfont = tkFont.Font(font=Button()["font"])
+        self._sysfont = tkinter.font.Font(font=Button()["font"])
         root.option_add("*Font", self._sysfont)
         
         # TWhat's our font size (default=same as sysfont)
         self._size = IntVar(root)
         self._size.set(self._sysfont.cget('size'))
 
-        self._boldfont = tkFont.Font(family='helvetica', weight='bold',
+        self._boldfont = tkinter.font.Font(family='helvetica', weight='bold',
                                     size=self._size.get())
-        self._font = tkFont.Font(family='helvetica',
+        self._font = tkinter.font.Font(family='helvetica',
                                     size=self._size.get())
 
     def _init_grammar(self, parent):
@@ -551,7 +551,7 @@ class ShiftReduceDemo(object):
                  "Written by Edward Loper")
         TITLE = 'About: Shift-Reduce Parser Demo'
         try:
-            from tkMessageBox import Message
+            from tkinter.messagebox import Message
             Message(message=ABOUT, title=TITLE).show()
         except:
             ShowText(self._top, TITLE, ABOUT)

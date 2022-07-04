@@ -3,7 +3,7 @@
 # Copyright (c) 2007 by Frederik De Bleser.
 # See LICENSE.txt for details.
 
-import osc
+from . import osc
 
 class WiiMote(object):
     

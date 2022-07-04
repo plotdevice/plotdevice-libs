@@ -1,3 +1,4 @@
+import importlib
 # Interactive Cornu editor.
 # Click and drag points on the canvas.
 # Your work will be saved as an SVG-file in this folder.
@@ -6,7 +7,7 @@ try:
     cornu = ximport("cornu")
 except:
     cornu = ximport("__init__")
-    reload(cornu)
+    importlib.reload(cornu)
     
 points = []
 drag = None

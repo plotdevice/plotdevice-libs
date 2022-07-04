@@ -1,5 +1,6 @@
-from urllib import urlopen
+from urllib.request import urlopen
 import re
+import importlib
 
 size(500, 500)
 background(0.2,0.5,0)
@@ -11,7 +12,7 @@ try:
 except:
     # From inside the library folder.
     google = ximport("__init__")
-    reload(google)
+    importlib.reload(google)
 
 # Set the license key
 google.license("<your license key>")

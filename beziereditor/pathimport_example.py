@@ -1,7 +1,8 @@
+import importlib
 size(400, 400)
 
 svg = ximport("svg")
-reload(svg)
+importlib.reload(svg)
 
 paths = svg.parse(open("path.svg").read())
 

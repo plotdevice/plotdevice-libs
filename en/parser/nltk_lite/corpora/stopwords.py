@@ -43,10 +43,10 @@ def demo():
     from itertools import islice
     from pprint import pprint
 
-    print "20 English stopwords"
+    print("20 English stopwords")
     pprint(list(islice(stopwords.raw(), 0, 20)))
 
-    print "20 Danish stopwords"
+    print("20 Danish stopwords")
     pprint(list(islice(stopwords.raw('danish'), 0, 20)))
 
 if __name__ == '__main__':

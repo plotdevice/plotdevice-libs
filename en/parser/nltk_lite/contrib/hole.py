@@ -103,7 +103,7 @@ class HoleSemantics:
         elif usr.node == ':':
             label = usr[0]
             phi = usr[1]
-            assert not self.fragments.has_key(label)
+            assert label not in self.fragments
             self.fragments[label] = phi
 
         # (leq L N) -- a constraint between the label L and node N
@@ -122,7 +122,7 @@ class HoleSemantics:
         subtree that they are part of.
         """
         top_most_labels = self.labels.copy()
-        for f in self.fragments.itervalues():
+        for f in self.fragments.values():
             for arg in f:
                 if self.is_label(arg):
                     top_most_labels.discard(arg)
@@ -133,7 +133,7 @@ class HoleSemantics:
         Return the hole that will be the top of the formula tree.
         """
         top_hole = self.holes.copy()
-        for f in self.fragments.itervalues():
+        for f in self.fragments.values():
             for arg in f:
                 if self.is_hole(arg):
                     top_hole.discard(arg)
@@ -266,7 +266,7 @@ class HoleSemantics:
     def _formula_tree(self, plugging, node):
         if node in plugging:
             return self._formula_tree(plugging, plugging[node])
-        elif self.fragments.has_key(node):
+        elif node in self.fragments:
             frag = self.fragments[node]
             children = [self._formula_tree(plugging, arg) for arg in frag]
             return FOLTree(frag.node, children)
@@ -347,18 +347,18 @@ def main():
     else:
         filename = 'hole.cfg'
 
-    print 'Reading grammar file', filename
+    print('Reading grammar file', filename)
     grammar = GrammarFile.read_file(filename)
     parser = grammar.earley_parser(trace=options.verbosity)
 
     # Prompt the user for a sentence.
-    print 'Sentence: ',
+    print('Sentence: ', end=' ')
     line = sys.stdin.readline()[:-1]
 
     # Parse the sentence.
     tokens = list(tokenize.whitespace(line))
     trees = parser.get_parse_list(tokens)
-    print 'Got %d different parses' % len(trees)
+    print('Got %d different parses' % len(trees))
 
     for tree in trees:
         # Get the semantic feature from the top of the parse tree.
@@ -378,41 +378,41 @@ def main():
 
         # Maybe print the raw semantic representation.
         if options.show_raw:
-            print
-            print 'Raw expression'
-            print usr
+            print()
+            print('Raw expression')
+            print(usr)
 
         # Maybe show the details of the semantic representation.
         if options.show_components:
-            print
-            print 'Holes:       ', hole_sem.holes
-            print 'Labels:      ', hole_sem.labels
-            print 'Constraints: ', hole_sem.constraints
-            print 'Top hole:    ', hole_sem.top_hole
-            print 'Top labels:  ', hole_sem.top_most_labels
-            print 'Fragments:'
-            for (l,f) in hole_sem.fragments.items():
-                print '\t%s: %s' % (l, f)
+            print()
+            print('Holes:       ', hole_sem.holes)
+            print('Labels:      ', hole_sem.labels)
+            print('Constraints: ', hole_sem.constraints)
+            print('Top hole:    ', hole_sem.top_hole)
+            print('Top labels:  ', hole_sem.top_most_labels)
+            print('Fragments:')
+            for (l,f) in list(hole_sem.fragments.items()):
+                print('\t%s: %s' % (l, f))
 
         # Find all the possible ways to plug the formulas together.
         pluggings = hole_sem.pluggings()
 
         # Build FOL formula trees using the pluggings.
-        trees = map(hole_sem.formula_tree, pluggings)
+        trees = list(map(hole_sem.formula_tree, pluggings))
 
         # Print out the formulas in a textual format.
         n = 1
         for tree in trees:
-            print
-            print '%d. %s' % (n, tree)
+            print()
+            print('%d. %s' % (n, tree))
             n += 1
 
         # Maybe draw the formulas as trees.
         if options.draw_trees:
             draw_trees(*trees)
 
-        print
-        print 'Done.'
+        print()
+        print('Done.')
 
 if __name__ == '__main__':
     main()

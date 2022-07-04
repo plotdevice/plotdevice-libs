@@ -6,7 +6,7 @@ try:
     coreimage = ximport("coreimage")
 except:
     coreimage = ximport("__init__")
-    reload(coreimage)
+    importlib.reload(coreimage)
     
 c = coreimage.canvas(WIDTH, HEIGHT)
 
@@ -99,3 +99,4 @@ for i in range(p.w):
                             HEIGHT)
                     path = endpath()                    
 '''
+import importlib

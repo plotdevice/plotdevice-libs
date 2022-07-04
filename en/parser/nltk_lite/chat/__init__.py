@@ -70,7 +70,7 @@ class Chat(object):
 
         words = ""
         for word in string.split(string.lower(str)):
-            if self._reflections.has_key(word):
+            if word in self._reflections:
                 word = self._reflections[word]
             words += ' ' + word
         return words
@@ -114,9 +114,9 @@ def converse(bot, quit="quit"):
     input = ""
     while input != quit:
         input = quit
-        try: input = raw_input(">")
+        try: input = input(">")
         except EOFError:
-            print input
+            print(input)
         if input:
             while input[-1] in "!.": input = input[:-1]
-            print bot.respond(input)
+            print(bot.respond(input))

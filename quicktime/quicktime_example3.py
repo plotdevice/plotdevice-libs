@@ -1,10 +1,11 @@
+import importlib
 # Quicktime + Core Image
 
 try:
     quicktime = ximport("quicktime")
 except:
     quicktime = ximport("__init__")
-    reload(quicktime)
+    importlib.reload(quicktime)
 
 coreimage = ximport("coreimage")
     

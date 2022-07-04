@@ -1,3 +1,4 @@
+import importlib
 # CUSTOM CONTENT
 # Drawing content in a cell from your own command is very easy.
 # You can use it to put multiple variations of artwork in a grid, for example.
@@ -5,7 +6,7 @@ try:
     grid = ximport("grid")
 except:
     grid = ximport("__init__")
-    reload(grid)
+    importlib.reload(grid)
 
 size(500, 500)
 background(0.1, 0, 0.1)

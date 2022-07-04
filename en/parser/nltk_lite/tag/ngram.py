@@ -85,7 +85,7 @@ class Ngram(SequentialBackoff):
         """
 
         if self.size() != 0:
-            raise ValueError, 'Tagger is already trained'
+            raise ValueError('Tagger is already trained')
         token_count = hit_count = 0
         fd = ConditionalFreqDist()
         for sentence in tagged_corpus:
@@ -112,19 +112,19 @@ class Ngram(SequentialBackoff):
             size = len(self._model)
             backoff = 100 - (hit_count * 100.0)/ token_count
             pruning = 100 - (size * 100.0) / len(fd.conditions())
-            print "[Trained %d-gram tagger:" % self._n,
-            print "size=%d, backoff=%.2f%%, pruning=%.2f%%]" % (
-                size, backoff, pruning)
+            print("[Trained %d-gram tagger:" % self._n, end=' ')
+            print("size=%d, backoff=%.2f%%, pruning=%.2f%%]" % (
+                size, backoff, pruning))
 
     def tag_one(self, token, history=None):
         if self.size() == 0:
-            raise ValueError, 'Tagger is not trained'
+            raise ValueError('Tagger is not trained')
         if history:
             self._history.set(history) # NB this may truncate history
         history = tuple(self._history)
         context = (history, token)
 
-        if self._model.has_key(context):
+        if context in self._model:
             return self._model[context]
         if self._backoff:
             return self._backoff.tag_one(token, history)
@@ -167,7 +167,7 @@ class Trigram(Ngram):
 def _demo_tagger(tagger, gold):
     from en.parser.nltk_lite.tag import accuracy
     acc = accuracy(tagger, gold)
-    print 'Accuracy = %4.1f%%' % (100.0 * acc)
+    print('Accuracy = %4.1f%%' % (100.0 * acc))
 
 def demo():
     """
@@ -179,7 +179,7 @@ def demo():
     from en.parser.nltk_lite.corpora import brown
     import sys
 
-    print 'Training taggers.'
+    print('Training taggers.')
 
     # Create a default tagger
     t0 = Default('nn')
@@ -204,21 +204,21 @@ def demo():
     # None, then they will generate an output of None, and so all
     # words will get tagged a None.
 
-    print '='*75
-    print 'Running the taggers on test data...'
-    print '  Default (nn) tagger: ',
+    print('='*75)
+    print('Running the taggers on test data...')
+    print('  Default (nn) tagger: ', end=' ')
     sys.stdout.flush()
     _demo_tagger(t0, brown.tagged('b'))
 
-    print '  Unigram tagger:      ',
+    print('  Unigram tagger:      ', end=' ')
     sys.stdout.flush()
     _demo_tagger(t1, list(brown.tagged('b'))[:1000])
 
-    print '  Bigram tagger:       ',
+    print('  Bigram tagger:       ', end=' ')
     sys.stdout.flush()
     _demo_tagger(t2, list(brown.tagged('b'))[:1000])
 
-    print '  Trigram tagger:      ',
+    print('  Trigram tagger:      ', end=' ')
     sys.stdout.flush()
     _demo_tagger(t3, list(brown.tagged('b'))[:1000])
 

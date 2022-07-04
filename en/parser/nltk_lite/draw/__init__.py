@@ -46,7 +46,7 @@ homepage<http://www.ags.uni-sb.de/~konrad/clig.html>}.
     ScrollWatcherWidget
 @group Tkinter Widgets: CanvasFrame, EntryDialog, ShowText
 """
-from Tkinter import *
+from tkinter import *
 
 ##//////////////////////////////////////////////////////
 ##  CanvasWidget
@@ -185,7 +185,7 @@ class CanvasWidget(object):
         @param attribs: The new canvas widget's attributes.
         """
         if self.__class__ == CanvasWidget:
-            raise TypeError, 'CanvasWidget is an abstract base class'
+            raise TypeError('CanvasWidget is an abstract base class')
         
         if not isinstance(canvas, Canvas):
             raise TypeError('Expected a canvas!')
@@ -210,7 +210,7 @@ class CanvasWidget(object):
         self.__draggable = 0
 
         # Set up attributes.
-        for (attr, value) in attribs.items(): self[attr] = value
+        for (attr, value) in list(attribs.items()): self[attr] = value
 
         # Manage this canvas widget
         self._manage()
@@ -607,12 +607,12 @@ class CanvasWidget(object):
         call it.  If no ancestors have a drag callback, do nothing.
         """
         if self.__draggable:
-            if self.__callbacks.has_key('drag'):
+            if 'drag' in self.__callbacks:
                 cb = self.__callbacks['drag']
                 try:
                     cb(self)
                 except:
-                    print 'Error in drag callback for %r' % self
+                    print('Error in drag callback for %r' % self)
         elif self.__parent is not None:
             self.__parent.__drag()
 
@@ -622,7 +622,7 @@ class CanvasWidget(object):
         otherwise, find the closest ancestor with a click callback, and
         call it.  If no ancestors have a click callback, do nothing.
         """
-        if self.__callbacks.has_key(button):
+        if button in self.__callbacks:
             cb = self.__callbacks[button]
             #try:
             cb(self)
@@ -833,7 +833,7 @@ class SymbolWidget(TextWidget):
         @type symbol: C{string}
         @param symbol: The name of the symbol to display.
         """
-        if not SymbolWidget.SYMBOLS.has_key(symbol):
+        if symbol not in SymbolWidget.SYMBOLS:
             raise ValueError('Unknown symbol: %s' % symbol)
         self._symbol = symbol
         self.set_text(SymbolWidget.SYMBOLS[symbol])
@@ -860,7 +860,7 @@ class SymbolWidget(TextWidget):
         text.tag_config('symbol', font=('symbol', -size))
         for i in range(256):
             if i in (0,10): continue # null and newline
-            for k,v in SymbolWidget.SYMBOLS.items():
+            for k,v in list(SymbolWidget.SYMBOLS.items()):
                 if v == chr(i):
                     text.insert('end', '%-10s\t' % k)
                     break
@@ -1296,7 +1296,7 @@ class SequenceWidget(CanvasWidget):
             x -= x2-x1 + self._space
         
     def __repr__(self):
-        return '[Sequence: ' + `self._children`[1:-1]+']'
+        return '[Sequence: ' + repr(self._children)[1:-1]+']'
 
     # Provide an alias for the child_widgets() member.
     children = CanvasWidget.child_widgets
@@ -1453,7 +1453,7 @@ class StackWidget(CanvasWidget):
             y -= y2-y1 + self._space
 
     def __repr__(self):
-        return '[Stack: ' + `self._children`[1:-1]+']'
+        return '[Stack: ' + repr(self._children)[1:-1]+']'
 
     # Provide an alias for the child_widgets() member.
     children = CanvasWidget.child_widgets
@@ -1716,7 +1716,7 @@ class CanvasFrame(object):
         @rtype: C{None}
         """
         if filename is None:
-            from tkFileDialog import asksaveasfilename
+            from tkinter.filedialog import asksaveasfilename
             ftypes = [('Postscript files', '.ps'),
                       ('All files', '*')]
             filename = asksaveasfilename(filetypes=ftypes,
@@ -2052,7 +2052,7 @@ class ColorizedList(object):
         E.g.:
             >>> textwidget.tag_config('terminal', foreground='black')
         """
-        raise AssertionError, 'Abstract base class'
+        raise AssertionError('Abstract base class')
 
     def _item_repr(self, item):
         """
@@ -2061,7 +2061,7 @@ class ColorizedList(object):
         representations may not span multiple lines.  I.e., the text
         strings returned may not contain newline characters.
         """
-        raise AssertionError, 'Abstract base class'
+        raise AssertionError('Abstract base class')
 
     #////////////////////////////////////////////////////////////
     # Item Access
@@ -2169,7 +2169,7 @@ class ColorizedList(object):
         Deregister a callback function.  If C{func} is none, then
         all callbacks are removed for the given event.
         """
-        if event is None: events = self._callbacks.keys()
+        if event is None: events = list(self._callbacks.keys())
         elif event == 'select': events = ['click1', 'space', 'return']
         elif event == 'move': events = ['up', 'down', 'next', 'prior']
         else: events = [event]
@@ -2225,12 +2225,12 @@ class ColorizedList(object):
         self._textwidget.tag_lower('highlight', 'sel')
 
     def _fire_callback(self, event, itemnum):
-        if not self._callbacks.has_key(event): return
+        if event not in self._callbacks: return
         if 0 <= itemnum < len(self._items):
             item = self._items[itemnum]
         else:
             item = None
-        for cb_func in self._callbacks[event].keys():
+        for cb_func in list(self._callbacks[event].keys()):
             cb_func(item)
 
     def _buttonpress(self, event):
@@ -2384,9 +2384,9 @@ def demo():
 if __name__ == '__main__':
     demo()
 
-from cfg import *
-from chart import *
-from plot import *
-from rdparser import *
-from srparser import *
-from tree import *
+from .cfg import *
+from .chart import *
+from .plot import *
+from .rdparser import *
+from .srparser import *
+from .tree import *

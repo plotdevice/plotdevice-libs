@@ -9,7 +9,7 @@ Created by Christian Swinehart on 2014/04/21.
 Copyright (c) 2014 Samizdat Drafting Co All rights reserved.
 """
 
-from __future__ import with_statement, division
+
 import sys
 import os
 from glob import glob
@@ -23,10 +23,12 @@ def main():
   _mkdir(dist_root)
   libs = [dirname(p) for p in glob('%s/*/__init__.py'%py_root)]
   for lib in libs:
-    print lib
-    os.system('zip -r -q "%s/%s.zip" "%s"'%(dist_root,basename(lib),basename(lib)))
+    print(lib)
+    LIBDIR = basename(lib)
+    ZIP = "%s/%s.zip"%(dist_root, LIBDIR)
+    os.system('ditto -ck --keepParent "%s" "%s"' % (LIBDIR, ZIP))
 
-  print "plotdevice-libs"
+  print("plotdevice-libs")
   os.system('zip -r -q "%s/plotdevice-libs.zip" %s'%(dist_root, ' '.join(basename(l) for l in libs)))
 
 if __name__ == "__main__":

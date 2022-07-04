@@ -90,7 +90,7 @@ def demo():
     for speech in inaugural.items:
         year = speech[:4]
         freq = list(inaugural.raw(speech)).count('men')
-        print year, freq
+        print(year, freq)
 
 if __name__ == '__main__':
     demo()

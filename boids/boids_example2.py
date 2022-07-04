@@ -1,3 +1,4 @@
+import importlib
 # Soaring text.
 
 size(500, 500)
@@ -7,7 +8,7 @@ try:
     boids = ximport("boids")
 except:
     boids = ximport("__init__")
-    reload(boids)
+    importlib.reload(boids)
 
 def setup():     
        

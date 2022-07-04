@@ -152,7 +152,7 @@ class ConfusionMatrix(object):
             raise ValueError('Lists must have the same length.')
             
         # Get a list of all values.
-        values = dict([(val,1) for val in reference+test]).keys()
+        values = list(dict([(val,1) for val in reference+test]).keys())
 
         # Construct a value->index dictionary
         indices = dict([(val,i) for (i,val) in enumerate(values)])
@@ -177,12 +177,13 @@ class ConfusionMatrix(object):
         #: The number of correct (on-diagonal) values in the matrix.
         self._correct = sum([confusion[i][i] for i in range(len(values))])
 
-    def __getitem__(self, (li,lj)):
+    def __getitem__(self, xxx_todo_changeme):
         """
         @return: The number of times that value C{li} was expected and
         value C{lj} was given.
         @rtype: C{int}
         """
+        (li,lj) = xxx_todo_changeme
         i = self._indices[li]
         j = self._indices[lj]
         return self._confusion[i][j]
@@ -205,18 +206,18 @@ class ConfusionMatrix(object):
         if values_in_chart:
             values = self._values
         else:
-            values = range(len(self._values))
+            values = list(range(len(self._values)))
 
         # Construct a format string for row values
         valuelen = max([len(str(val)) for val in values])
-        value_format = '%' + `valuelen` + 's |'
+        value_format = '%' + repr(valuelen) + 's |'
         # Construct a format string for matrix entries
         if show_percents:
             entrylen = 6
             entry_format = '%5.1f%%'
         else:
-            entrylen = len(`self._max_conf`)
-            entry_format = '%' + `entrylen` + 'd'
+            entrylen = len(repr(self._max_conf))
+            entry_format = '%' + repr(entrylen) + 'd'
 
         # Write the column values.
         value_strings = [str(val) for val in values]
@@ -259,31 +260,31 @@ class ConfusionMatrix(object):
     def key(self):
         values = self._values
         str = 'Value key:\n'
-        indexlen = len(`len(values)-1`)
-        key_format = '  %'+`indexlen`+'d: %s\n'
+        indexlen = len(repr(len(values)-1))
+        key_format = '  %'+repr(indexlen)+'d: %s\n'
         for i in range(len(values)):
             str += key_format % (i, values[i])
 
         return str
 
 def demo():
-    print '-'*75
+    print('-'*75)
     reference = 'DET NN VB DET JJ NN NN IN DET NN'.split()
     test    = 'DET VB VB DET NN NN NN IN DET NN'.split()
-    print 'Reference =', reference
-    print 'Test    =', test
-    print 'Confusion matrix:'
-    print ConfusionMatrix(reference, test)
-    print 'Accuracy:', accuracy(reference, test)
+    print('Reference =', reference)
+    print('Test    =', test)
+    print('Confusion matrix:')
+    print(ConfusionMatrix(reference, test))
+    print('Accuracy:', accuracy(reference, test))
 
-    print '-'*75
+    print('-'*75)
     reference_set = sets.Set(reference)
     test_set = sets.Set(test)
-    print 'Reference =', reference_set
-    print 'Test =   ', test_set
-    print 'Precision:', precision(reference_set, test_set)
-    print '   Recall:', recall(reference_set, test_set)
-    print 'F-Measure:', f_measure(reference_set, test_set)
-    print '-'*75
+    print('Reference =', reference_set)
+    print('Test =   ', test_set)
+    print('Precision:', precision(reference_set, test_set))
+    print('   Recall:', recall(reference_set, test_set))
+    print('F-Measure:', f_measure(reference_set, test_set))
+    print('-'*75)
 if __name__ == '__main__':
     demo()

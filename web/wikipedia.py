@@ -10,12 +10,12 @@
 
 import re
 from xml.dom import minidom
-from urllib import quote
+from urllib.parse import quote
 
-from url import URLAccumulator
-from html import replace_entities, strip_tags
-from cache import Cache
-import mimetex
+from .url import URLAccumulator
+from .html import replace_entities, strip_tags
+from .cache import Cache
+from . import mimetex
 
 def clear_cache():
     Cache("wikipedia").clear()
@@ -28,285 +28,285 @@ class WikipediaPageMissing(Exception):
 ### WIKIPEDIA LANGUAGES ##############################################################################
 
 languages = {
-    "aa"           : u"Afar",
-    "ab"           : u"Abkhaz",
-    "af"           : u"Afrikaans",
-    "ak"           : u"Akan",
-    "als"          : u"Alemannic",
-    "am"           : u"Amharic",
-    "an"           : u"Aragonese",
-    "ang"          : u"Old English",
-    "ar"           : u"Arabic",
-    "arc"          : u"Aramaic",
-    "as"           : u"Assamese",
-    "ast"          : u"Asturian",
-    "av"           : u"Avar",
-    "ay"           : u"Aymara",
-    "az"           : u"Azerbaijani",
-    "ba"           : u"Bashkir",
-    "bar"          : u"Bavarian",
-    "bat-smg"      : u"Samogitian",
-    "be"           : u"Belarusian",
-    "bg"           : u"Bulgarian",
-    "bh"           : u"Bihara",
-    "bi"           : u"Bislama",
-    "bm"           : u"Bambara",
-    "bn"           : u"Bengali",
-    "bo"           : u"Tibetan",
-    "bpy"          : u"Bishnupriya Manipuri",
-    "br"           : u"Breton",
-    "bs"           : u"Bosnian",
-    "bug"          : u"Buginese",
-    "bxr"          : u"Buryat (Russia)",
-    "ca"           : u"Catalan",
-    "cbk-zam"      : u"Zamboanga Chavacano",
-    "cdo"          : u"Min Dong",
-    "ce"           : u"Chechen",
-    "ceb"          : u"Cebuano",
-    "ch"           : u"Chamorro",
-    "cho"          : u"Choctaw",
-    "chr"          : u"Cherokee",
-    "chy"          : u"Cheyenne",
-    "co"           : u"Corsican",
-    "cr"           : u"Cree",
-    "crh"          : u"Crimean Tatar",
-    "crh-latn"     : u"Crimean Tatar (Latin)",
-    "crh-cyrl"     : u"Crimean Tatar (Cyrillic)",
-    "cs"           : u"Czech",
-    "csb"          : u"Cassubian",
-    "cu"           : u"Old Church Slavonic (ancient language)",
-    "cv"           : u"Chuvash",
-    "cy"           : u"Welsh",
-    "da"           : u"Danish",
-    "de"           : u"German",
-    "diq"          : u"Zazaki",
-    "dk"           : u"Danish",
-    "dv"           : u"Dhivehi",
-    "dz"           : u"Bhutani",
-    "ee"           : u"Ewe",
-    "el"           : u"Greek",
-    "eml"          : u"Emilian-Romagnol/Sammarinese",
-    "en"           : u"English",
-    "eo"           : u"Esperanto",
-    "es"           : u"Spanish",
-    "et"           : u"Estonian",
-    "eu"           : u"Basque",
-    "fa"           : u"Persian",
-    "ff"           : u"Fulah",
-    "fi"           : u"Finnish",
-    "fiu-vro"      : u"Voro",
-    "fj"           : u"Fijian",
-    "fo"           : u"Faroese",
-    "fr"           : u"French",
-    "frp"          : u"Franco-Provencal/Arpitan",
-    "fur"          : u"Friulian",
-    "fy"           : u"Frisian",
-    "ga"           : u"Irish",
-    "gd"           : u"Scots Gaelic",
-    "gl"           : u"Gallegan",
-    "glk"          : u"Gilaki",
-    "gn"           : u"Guarani",
-    "got"          : u"Gothic",
-    "gsw"          : u"Alemannic",
-    "gu"           : u"Gujarati",
-    "gv"           : u"Manx",
-    "ha"           : u"Hausa",
-    "haw"          : u"Hawaiian",
-    "he"           : u"Hebrew",
-    "hi"           : u"Hindi",
-    "hil"          : u"Hiligaynon",
-    "ho"           : u"Hiri Motu",
-    "hr"           : u"Croatian",
-    "hsb"          : u"Upper Sorbian",
-    "ht"           : u"Haitian",
-    "hu"           : u"Hungarian",
-    "hy"           : u"Armenian",
-    "hz"           : u"Herero",
-    "ia"           : u"Interlingua (IALA)",
-    "id"           : u"Indonesian",
-    "ie"           : u"Interlingue (Occidental)",
-    "ig"           : u"Igbo",
-    "ii"           : u"Sichuan Yi",
-    "ik"           : u"Inupiak",
-    "ilo"          : u"Ilokano",
-    "io"           : u"Ido",
-    "is"           : u"Icelandic",
-    "it"           : u"Italian",
-    "iu"           : u"Inuktitut",
-    "ja"           : u"Japanese",
-    "jbo"          : u"Lojban",
-    "jv"           : u"Javanese",
-    "ka"           : u"Georgian",
-    "kaa"          : u"Karakalpak",
-    "kab"          : u"Kabyle",
-    "kg"           : u"KiKongo",
-    "ki"           : u"Kikuyu",
-    "kj"           : u"Kuanyama",
-    "kk"           : u"Kazakh",
-    "kk-cn"        : u"Kazakh Arabic",
-    "kk-kz"        : u"Kazakh Cyrillic",
-    "kk-tr"        : u"Kazakh Latin",
-    "kl"           : u"Greenlandic",
-    "km"           : u"Cambodian",
-    "kn"           : u"Kannada",
-    "ko"           : u"Korean",
-    "kr"           : u"Kanuri",
-    "ks"           : u"Kashmiri",
-    "ksh"          : u"Ripuarian",
-    "ku"           : u"Kurdish",
-    "kv"           : u"Komi",
-    "kw"           : u"Cornish",
-    "ky"           : u"Kirghiz",
-    "la"           : u"Latin",
-    "lad"          : u"Ladino",
-    "lbe"          : u"Lak",
-    "lb"           : u"Luxemburguish",
-    "lg"           : u"Ganda",
-    "li"           : u"Limburgian",
-    "lij"          : u"Ligurian",
-    "lld"          : u"Ladin",
-    "lmo"          : u"Lombard",
-    "ln"           : u"Lingala",
-    "lo"           : u"Laotian",
-    "lt"           : u"Lithuanian",
-    "lv"           : u"Latvian",
-    "lzz"          : u"Laz",
-    "map-bms"      : u"Banyumasan",
-    "mg"           : u"Malagasy",
-    "mh"           : u"Marshallese",
-    "mi"           : u"Maori",
-    "minnan"       : u"Min-nan",
-    "mk"           : u"Macedonian",
-    "ml"           : u"Malayalam",
-    "mn"           : u"Mongoloian",
-    "mo"           : u"Moldovan",
-    "mr"           : u"Marathi",
-    "ms"           : u"Malay",
-    "mt"           : u"Maltese",
-    "mus"          : u"Creek",
-    "my"           : u"Burmese",
-    "mzn"          : u"Mazandarin",
-    "na"           : u"Nauruan",
-    "nah"          : u"Nahuatl",
-    "nan"          : u"Min-nan",
-    "nap"          : u"Neapolitan",
-    "nb"           : u"Norwegian (Bokmal)",
-    "nds"          : u"Low German",
-    "nds-nl"       : u"Dutch Low Saxon",
-    "ne"           : u"Nepali",
-    "new"          : u"Newar/Nepal Bhasa",
-    "ng"           : u"Ndonga",
-    "nl"           : u"Dutch",
-    "nn"           : u"Norwegian (Nynorsk)",
-    "no"           : u"Norwegian",
-    "non"          : u"Old Norse",
-    "nov"          : u"Novial",
-    "nrm"          : u"Norman",
-    "nv"           : u"Navajo",
-    "ny"           : u"Chichewa",
-    "oc"           : u"Occitan",
-    "om"           : u"Oromo",
-    "or"           : u"Oriya",
-    "os"           : u"Ossetic",
-    "pa"           : u"Punjabi",
-    "pag"          : u"Pangasinan",
-    "pam"          : u"Pampanga",
-    "pap"          : u"Papiamentu",
-    "pdc"          : u"Pennsylvania German",
-    "pih"          : u"Norfuk/Pitcairn/Norfolk",
-    "pi"           : u"Pali",
-    "pl"           : u"Polish",
-    "pms"          : u"Piedmontese",
-    "ps"           : u"Pashto",
-    "pt"           : u"Portuguese",
-    "pt-br"        : u"Brazilian Portuguese",
-    "qu"           : u"Quechua",
-    "rm"           : u"Raeto-Romance",
-    "rmy"          : u"Vlax Romany",
-    "rn"           : u"Kirundi",
-    "ro"           : u"Romanian",
-    "roa-rup"      : u"Aromanian",
-    "roa-tara"     : u"Tarantino",
-    "ru"           : u"Russian",
-    "ru-sib"       : u"Siberian/North Russian",
-    "rw"           : u"Kinyarwanda",
-    "sa"           : u"Sanskrit",
-    "sc"           : u"Sardinian",
-    "scn"          : u"Sicilian",
-    "sco"          : u"Scots",
-    "sd"           : u"Sindhi",
-    "se"           : u"Northern Sami",
-    "sg"           : u"Sango",
-    "sh"           : u"Serbocroatian",
-    "si"           : u"Sinhalese",
-    "simple"       : u"Simple English",
-    "sk"           : u"Slovak",
-    "sl"           : u"Slovenian",
-    "sm"           : u"Samoan",
-    "sn"           : u"Shona",
-    "so"           : u"Somali",
-    "sq"           : u"Albanian",
-    "sr"           : u"Serbian",
-    "sr-ec"        : u"Serbian cyrillic ekavian",
-    "sr-jc"        : u"Serbian cyrillic iyekvian",
-    "sr-el"        : u"Serbian latin ekavian",
-    "sr-jl"        : u"Serbian latin iyekavian",
-    "ss"           : u"Swati",
-    "st"           : u"Southern Sotho",
-    "su"           : u"Sundanese",
-    "sv"           : u"Swedish",
-    "sw"           : u"Swahili",
-    "ta"           : u"Tamil",
-    "te"           : u"Telugu",
-    "tet"          : u"Tetun",
-    "tg"           : u"Tajik",
-    "th"           : u"Thai",
-    "ti"           : u"Tigrinya",
-    "tk"           : u"Turkmen",
-    "tl"           : u"Tagalog (Filipino)",
-    "tlh"          : u"Klingon",
-    "tn"           : u"Setswana",
-    "to"           : u"Tonga (Tonga Islands)",
-    "tokipona"     : u"Toki Pona",
-    "tp"           : u"Toki Pona",
-    "tpi"          : u"Tok Pisin",
-    "tr"           : u"Turkish",
-    "ts"           : u"Tsonga",
-    "tt"           : u"Tatar",
-    "tum"          : u"Tumbuka",
-    "tw"           : u"Twi",
-    "ty"           : u"Tahitian",
-    "tyv"          : u"Tyvan",
-    "udm"          : u"Udmurt",
-    "ug"           : u"Uyghur",
-    "uk"           : u"Ukrainian",
-    "ur"           : u"Urdu",
-    "uz"           : u"Uzbek",
-    "ve"           : u"Venda",
-    "vec"          : u"Venetian",
-    "vi"           : u"Vietnamese",
-    "vls"          : u"West Flemish",
-    "vo"           : u"Volapuk",
-    "wa"           : u"Walloon",
-    "war"          : u"Waray-Waray",
-    "wo"           : u"Wolof",
-    "wuu"          : u"Wu",
-    "xal"          : u"Kalmyk",
-    "xh"           : u"Xhosan",
-    "yi"           : u"Yiddish",
-    "yo"           : u"Yoruba",
-    "za"           : u"Zhuang",
-    "zea"          : u"Zealandic",
-    "zh"           : u"Chinese", # correct?
-    "zh-cfr"       : u"Min-nan",
-    "zh-classical" : u"Classical Chinese/Literary Chinese",
-    "zh-cn"        : u"Simplified",
-    "zh-hk"        : u"Traditional (Hong Kong)",
-    "zh-min-nan"   : u"Min-nan",
-    "zh-sg"        : u"Simplified (Singapore)",
-    "zh-tw"        : u"Traditional",
-    "zh-yue"       : u"Cantonese",
-    "zu"           : u"Zulu",
+    "aa"           : "Afar",
+    "ab"           : "Abkhaz",
+    "af"           : "Afrikaans",
+    "ak"           : "Akan",
+    "als"          : "Alemannic",
+    "am"           : "Amharic",
+    "an"           : "Aragonese",
+    "ang"          : "Old English",
+    "ar"           : "Arabic",
+    "arc"          : "Aramaic",
+    "as"           : "Assamese",
+    "ast"          : "Asturian",
+    "av"           : "Avar",
+    "ay"           : "Aymara",
+    "az"           : "Azerbaijani",
+    "ba"           : "Bashkir",
+    "bar"          : "Bavarian",
+    "bat-smg"      : "Samogitian",
+    "be"           : "Belarusian",
+    "bg"           : "Bulgarian",
+    "bh"           : "Bihara",
+    "bi"           : "Bislama",
+    "bm"           : "Bambara",
+    "bn"           : "Bengali",
+    "bo"           : "Tibetan",
+    "bpy"          : "Bishnupriya Manipuri",
+    "br"           : "Breton",
+    "bs"           : "Bosnian",
+    "bug"          : "Buginese",
+    "bxr"          : "Buryat (Russia)",
+    "ca"           : "Catalan",
+    "cbk-zam"      : "Zamboanga Chavacano",
+    "cdo"          : "Min Dong",
+    "ce"           : "Chechen",
+    "ceb"          : "Cebuano",
+    "ch"           : "Chamorro",
+    "cho"          : "Choctaw",
+    "chr"          : "Cherokee",
+    "chy"          : "Cheyenne",
+    "co"           : "Corsican",
+    "cr"           : "Cree",
+    "crh"          : "Crimean Tatar",
+    "crh-latn"     : "Crimean Tatar (Latin)",
+    "crh-cyrl"     : "Crimean Tatar (Cyrillic)",
+    "cs"           : "Czech",
+    "csb"          : "Cassubian",
+    "cu"           : "Old Church Slavonic (ancient language)",
+    "cv"           : "Chuvash",
+    "cy"           : "Welsh",
+    "da"           : "Danish",
+    "de"           : "German",
+    "diq"          : "Zazaki",
+    "dk"           : "Danish",
+    "dv"           : "Dhivehi",
+    "dz"           : "Bhutani",
+    "ee"           : "Ewe",
+    "el"           : "Greek",
+    "eml"          : "Emilian-Romagnol/Sammarinese",
+    "en"           : "English",
+    "eo"           : "Esperanto",
+    "es"           : "Spanish",
+    "et"           : "Estonian",
+    "eu"           : "Basque",
+    "fa"           : "Persian",
+    "ff"           : "Fulah",
+    "fi"           : "Finnish",
+    "fiu-vro"      : "Voro",
+    "fj"           : "Fijian",
+    "fo"           : "Faroese",
+    "fr"           : "French",
+    "frp"          : "Franco-Provencal/Arpitan",
+    "fur"          : "Friulian",
+    "fy"           : "Frisian",
+    "ga"           : "Irish",
+    "gd"           : "Scots Gaelic",
+    "gl"           : "Gallegan",
+    "glk"          : "Gilaki",
+    "gn"           : "Guarani",
+    "got"          : "Gothic",
+    "gsw"          : "Alemannic",
+    "gu"           : "Gujarati",
+    "gv"           : "Manx",
+    "ha"           : "Hausa",
+    "haw"          : "Hawaiian",
+    "he"           : "Hebrew",
+    "hi"           : "Hindi",
+    "hil"          : "Hiligaynon",
+    "ho"           : "Hiri Motu",
+    "hr"           : "Croatian",
+    "hsb"          : "Upper Sorbian",
+    "ht"           : "Haitian",
+    "hu"           : "Hungarian",
+    "hy"           : "Armenian",
+    "hz"           : "Herero",
+    "ia"           : "Interlingua (IALA)",
+    "id"           : "Indonesian",
+    "ie"           : "Interlingue (Occidental)",
+    "ig"           : "Igbo",
+    "ii"           : "Sichuan Yi",
+    "ik"           : "Inupiak",
+    "ilo"          : "Ilokano",
+    "io"           : "Ido",
+    "is"           : "Icelandic",
+    "it"           : "Italian",
+    "iu"           : "Inuktitut",
+    "ja"           : "Japanese",
+    "jbo"          : "Lojban",
+    "jv"           : "Javanese",
+    "ka"           : "Georgian",
+    "kaa"          : "Karakalpak",
+    "kab"          : "Kabyle",
+    "kg"           : "KiKongo",
+    "ki"           : "Kikuyu",
+    "kj"           : "Kuanyama",
+    "kk"           : "Kazakh",
+    "kk-cn"        : "Kazakh Arabic",
+    "kk-kz"        : "Kazakh Cyrillic",
+    "kk-tr"        : "Kazakh Latin",
+    "kl"           : "Greenlandic",
+    "km"           : "Cambodian",
+    "kn"           : "Kannada",
+    "ko"           : "Korean",
+    "kr"           : "Kanuri",
+    "ks"           : "Kashmiri",
+    "ksh"          : "Ripuarian",
+    "ku"           : "Kurdish",
+    "kv"           : "Komi",
+    "kw"           : "Cornish",
+    "ky"           : "Kirghiz",
+    "la"           : "Latin",
+    "lad"          : "Ladino",
+    "lbe"          : "Lak",
+    "lb"           : "Luxemburguish",
+    "lg"           : "Ganda",
+    "li"           : "Limburgian",
+    "lij"          : "Ligurian",
+    "lld"          : "Ladin",
+    "lmo"          : "Lombard",
+    "ln"           : "Lingala",
+    "lo"           : "Laotian",
+    "lt"           : "Lithuanian",
+    "lv"           : "Latvian",
+    "lzz"          : "Laz",
+    "map-bms"      : "Banyumasan",
+    "mg"           : "Malagasy",
+    "mh"           : "Marshallese",
+    "mi"           : "Maori",
+    "minnan"       : "Min-nan",
+    "mk"           : "Macedonian",
+    "ml"           : "Malayalam",
+    "mn"           : "Mongoloian",
+    "mo"           : "Moldovan",
+    "mr"           : "Marathi",
+    "ms"           : "Malay",
+    "mt"           : "Maltese",
+    "mus"          : "Creek",
+    "my"           : "Burmese",
+    "mzn"          : "Mazandarin",
+    "na"           : "Nauruan",
+    "nah"          : "Nahuatl",
+    "nan"          : "Min-nan",
+    "nap"          : "Neapolitan",
+    "nb"           : "Norwegian (Bokmal)",
+    "nds"          : "Low German",
+    "nds-nl"       : "Dutch Low Saxon",
+    "ne"           : "Nepali",
+    "new"          : "Newar/Nepal Bhasa",
+    "ng"           : "Ndonga",
+    "nl"           : "Dutch",
+    "nn"           : "Norwegian (Nynorsk)",
+    "no"           : "Norwegian",
+    "non"          : "Old Norse",
+    "nov"          : "Novial",
+    "nrm"          : "Norman",
+    "nv"           : "Navajo",
+    "ny"           : "Chichewa",
+    "oc"           : "Occitan",
+    "om"           : "Oromo",
+    "or"           : "Oriya",
+    "os"           : "Ossetic",
+    "pa"           : "Punjabi",
+    "pag"          : "Pangasinan",
+    "pam"          : "Pampanga",
+    "pap"          : "Papiamentu",
+    "pdc"          : "Pennsylvania German",
+    "pih"          : "Norfuk/Pitcairn/Norfolk",
+    "pi"           : "Pali",
+    "pl"           : "Polish",
+    "pms"          : "Piedmontese",
+    "ps"           : "Pashto",
+    "pt"           : "Portuguese",
+    "pt-br"        : "Brazilian Portuguese",
+    "qu"           : "Quechua",
+    "rm"           : "Raeto-Romance",
+    "rmy"          : "Vlax Romany",
+    "rn"           : "Kirundi",
+    "ro"           : "Romanian",
+    "roa-rup"      : "Aromanian",
+    "roa-tara"     : "Tarantino",
+    "ru"           : "Russian",
+    "ru-sib"       : "Siberian/North Russian",
+    "rw"           : "Kinyarwanda",
+    "sa"           : "Sanskrit",
+    "sc"           : "Sardinian",
+    "scn"          : "Sicilian",
+    "sco"          : "Scots",
+    "sd"           : "Sindhi",
+    "se"           : "Northern Sami",
+    "sg"           : "Sango",
+    "sh"           : "Serbocroatian",
+    "si"           : "Sinhalese",
+    "simple"       : "Simple English",
+    "sk"           : "Slovak",
+    "sl"           : "Slovenian",
+    "sm"           : "Samoan",
+    "sn"           : "Shona",
+    "so"           : "Somali",
+    "sq"           : "Albanian",
+    "sr"           : "Serbian",
+    "sr-ec"        : "Serbian cyrillic ekavian",
+    "sr-jc"        : "Serbian cyrillic iyekvian",
+    "sr-el"        : "Serbian latin ekavian",
+    "sr-jl"        : "Serbian latin iyekavian",
+    "ss"           : "Swati",
+    "st"           : "Southern Sotho",
+    "su"           : "Sundanese",
+    "sv"           : "Swedish",
+    "sw"           : "Swahili",
+    "ta"           : "Tamil",
+    "te"           : "Telugu",
+    "tet"          : "Tetun",
+    "tg"           : "Tajik",
+    "th"           : "Thai",
+    "ti"           : "Tigrinya",
+    "tk"           : "Turkmen",
+    "tl"           : "Tagalog (Filipino)",
+    "tlh"          : "Klingon",
+    "tn"           : "Setswana",
+    "to"           : "Tonga (Tonga Islands)",
+    "tokipona"     : "Toki Pona",
+    "tp"           : "Toki Pona",
+    "tpi"          : "Tok Pisin",
+    "tr"           : "Turkish",
+    "ts"           : "Tsonga",
+    "tt"           : "Tatar",
+    "tum"          : "Tumbuka",
+    "tw"           : "Twi",
+    "ty"           : "Tahitian",
+    "tyv"          : "Tyvan",
+    "udm"          : "Udmurt",
+    "ug"           : "Uyghur",
+    "uk"           : "Ukrainian",
+    "ur"           : "Urdu",
+    "uz"           : "Uzbek",
+    "ve"           : "Venda",
+    "vec"          : "Venetian",
+    "vi"           : "Vietnamese",
+    "vls"          : "West Flemish",
+    "vo"           : "Volapuk",
+    "wa"           : "Walloon",
+    "war"          : "Waray-Waray",
+    "wo"           : "Wolof",
+    "wuu"          : "Wu",
+    "xal"          : "Kalmyk",
+    "xh"           : "Xhosan",
+    "yi"           : "Yiddish",
+    "yo"           : "Yoruba",
+    "za"           : "Zhuang",
+    "zea"          : "Zealandic",
+    "zh"           : "Chinese", # correct?
+    "zh-cfr"       : "Min-nan",
+    "zh-classical" : "Classical Chinese/Literary Chinese",
+    "zh-cn"        : "Simplified",
+    "zh-hk"        : "Traditional (Hong Kong)",
+    "zh-min-nan"   : "Min-nan",
+    "zh-sg"        : "Simplified (Singapore)",
+    "zh-tw"        : "Traditional",
+    "zh-yue"       : "Cantonese",
+    "zu"           : "Zulu",
 }
 
 ### WIKIPEDIALINK ####################################################################################
@@ -314,7 +314,7 @@ languages = {
 
 class WikipediaLink:
     
-    def __init__(self, page, anchor=u"", display=u""):
+    def __init__(self, page, anchor="", display=""):
         
         self.page = page
         self.anchor = anchor
@@ -330,7 +330,7 @@ class WikipediaLink:
 
 class WikipediaParagraph(list):
     
-    def __init__(self, title=u"", main=[], related=[], tables=[]):
+    def __init__(self, title="", main=[], related=[], tables=[]):
         
         self.title = title
         self.main = main
@@ -353,7 +353,7 @@ class WikipediaParagraph(list):
     
 class WikipediaImage:
     
-    def __init__(self, path, description=u"", links=[], properties=[]):
+    def __init__(self, path, description="", links=[], properties=[]):
         
         self.path = path
         self.description = description
@@ -370,20 +370,20 @@ class WikipediaImage:
 
 class WikipediaReference:
     
-    def __init__(self, title=u"", url=u""):
+    def __init__(self, title="", url=""):
         
         self.title = title
         self.url = url
-        self.author    = u""
-        self.first     = u""
-        self.last      = u""
-        self.journal   = u""
-        self.publisher = u""
-        self.date      = u""
-        self.year      = u""
-        self.id        = u""
+        self.author    = ""
+        self.first     = ""
+        self.last      = ""
+        self.journal   = ""
+        self.publisher = ""
+        self.date      = ""
+        self.year      = ""
+        self.id        = ""
         
-        self.note      = u""
+        self.note      = ""
         
     def __str__(self):
         
@@ -403,24 +403,24 @@ class WikipediaReference:
 
 class WikipediaTable(list):
     
-    def __init__(self, title=u"", properties=u"", paragraph=None):
+    def __init__(self, title="", properties="", paragraph=None):
         
-        self.title = u""
+        self.title = ""
         self.properties = properties
         self.paragraph = None
       
 class WikipediaTableRow(list):
     
-    def __init__(self, heading=False, properties=u""):
+    def __init__(self, heading=False, properties=""):
         
         self.properties = properties
 
-class WikipediaTableCell(unicode):
+class WikipediaTableCell(str):
     
     def __init__(self, data):
         
-        unicode.__init__(self, data)
-        self.properties = u""
+        str.__init__(self, data)
+        self.properties = ""
 
 ### WIKIPEDIAPAGE ####################################################################################
 
@@ -478,11 +478,11 @@ class WikipediaPage:
 
     def __unicode__(self):
         
-        str = u""
+        str = ""
         for paragraph in self.paragraphs:
             str += paragraph.title+"\n\n"
             for textblock in paragraph:
-                str += unicode(textblock)+"\n\n"
+                str += str(textblock)+"\n\n"
         
         return str
         
@@ -730,14 +730,14 @@ class WikipediaPage:
             p = self.parse_balanced_image(p)
             img = p.split("|")
             path = img[0].replace("[[Image:", "").strip()
-            description = u""
+            description = ""
             links = {}
             properties = []
             if len(img) > 1:
                 img = "|".join(img[1:])
                 links = self.parse_links(img)
                 properties = self.plain(img).split("|")
-                description = u""
+                description = ""
                 # Best guess: an image description is normally
                 # longer than six characters, properties like
                 # "thumb" and "right" are less than six characters.
@@ -907,7 +907,7 @@ class WikipediaPage:
         """
 
         if paragraph.depth > 0:
-            n = range(len(paragraphs))
+            n = list(range(len(paragraphs)))
             n.reverse()
             for i in n:
                 if paragraphs[i].depth == paragraph.depth-1:
@@ -1067,7 +1067,7 @@ class WikipediaPage:
                 properties = cell[:i].strip()
             else:
                 data = self.plain(cell)
-                properties = u""
+                properties = ""
             cell = WikipediaTableCell(data)
             cell.properties = properties
             row.append(cell)
@@ -1195,7 +1195,7 @@ class WikipediaPage:
         for citation in m:
             c = citation.replace("\n", "")
             r = WikipediaReference()
-            for key in r.__dict__.keys():
+            for key in list(r.__dict__.keys()):
                 value = re.search("\| {0,1}"+key+"(.*?)[\|}]", c)
                 if value:
                     value = value.group(1)
@@ -1259,7 +1259,7 @@ class WikipediaPage:
         for category in m:
             category = category.split("|")
             page = category[0].strip()
-            display = u""
+            display = ""
             if len(category) > 1: 
                 display = category[1].strip()
             #if not categories.has_key(page):
@@ -1437,7 +1437,7 @@ def draw_list(markup, x, y, w, padding=5, callback=None):
         
         if chunk.lstrip().startswith("*"):
             indent = chunk.find("*")*padding*2
-            bullet = u"•"
+            bullet = "•"
             dx = textwidth("*")
             chunk = chunk.lstrip("* \t")
         
@@ -1614,19 +1614,19 @@ def redirect(page):
 def superscript(number):
     
     digits = [
-        u"\u2070",
-        u"\u2071",
-        u"\u2072",
-        u"\u2073",
-        u"\u2074",
-        u"\u2075",
-        u"\u2076",
-        u"\u2077",
-        u"\u2078",
-        u"\u2079",  
+        "\u2070",
+        "\u2071",
+        "\u2072",
+        "\u2073",
+        "\u2074",
+        "\u2075",
+        "\u2076",
+        "\u2077",
+        "\u2078",
+        "\u2079",  
     ]
     
-    s = u""
+    s = ""
     for digit in str(number):
         s += digits[int(digit)]
         

@@ -1,3 +1,4 @@
+import importlib
 # Interactive eraser.
 
 size(500, 400)
@@ -6,7 +7,7 @@ try:
     coreimage = ximport("coreimage")
 except:
     coreimage = ximport("__init__")
-    reload(coreimage)
+    importlib.reload(coreimage)
 
 img = "images/France_414.jpg"
 

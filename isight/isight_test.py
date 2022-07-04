@@ -1,3 +1,4 @@
+import importlib
 size(600, 450)
 background(0)
 
@@ -10,7 +11,7 @@ except:
     # we may need to try something different when
     # the library is not located in /Application Support
     isight = ximport("__init__")
-    reload(isight)
+    importlib.reload(isight)
 
 # Create a grid of 3 x 3 with each image grabbed from the iSight.
 # This will take some time.

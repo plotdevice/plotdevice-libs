@@ -80,7 +80,7 @@ class EM(VectorSpace):
         converged = False
 
         while not converged:
-            if trace: print 'iteration; loglikelihood', lastl
+            if trace: print('iteration; loglikelihood', lastl)
             # E-step, calculate hidden variables, h[i,j]
             h = numpy.zeros((len(vectors), self._num_clusters),
                 numpy.float64)
@@ -193,29 +193,29 @@ def demo():
     clusterer = cluster.EM(means, bias=0.1)
     clusters = clusterer.cluster(vectors, True, trace=True)
 
-    print 'Clustered:', vectors
-    print 'As:       ', clusters
-    print
+    print('Clustered:', vectors)
+    print('As:       ', clusters)
+    print()
     
     for c in range(2):
-        print 'Cluster:', c
-        print 'Prior:  ', clusterer._priors[c]
-        print 'Mean:   ', clusterer._means[c]
-        print 'Covar:  ', clusterer._covariance_matrices[c]
-        print
+        print('Cluster:', c)
+        print('Prior:  ', clusterer._priors[c])
+        print('Mean:   ', clusterer._means[c])
+        print('Covar:  ', clusterer._covariance_matrices[c])
+        print()
 
     # classify a new vector
     vector = array([2, 2])
-    print 'classify(%s):' % vector,
-    print clusterer.classify(vector)
+    print('classify(%s):' % vector, end=' ')
+    print(clusterer.classify(vector))
 
     # show the classification probabilities
     vector = array([2, 2])
-    print 'classification_probdist(%s):' % vector
+    print('classification_probdist(%s):' % vector)
     pdist = clusterer.classification_probdist(vector)
     for sample in pdist.samples():
-        print '%s => %.0f%%' % (sample,
-                    pdist.prob(sample) *100)
+        print('%s => %.0f%%' % (sample,
+                    pdist.prob(sample) *100))
 
 #
 #     The following demo code is broken.

@@ -2,10 +2,10 @@
 # Author: Tom De Smedt <tomdesmedt@organisms.be>
 # See LICENSE.txt for details.
 
-import numeral
-import tags
-import wordnet
-import singular
+from . import numeral
+from . import tags
+from . import wordnet
+from . import singular
 
 # Connectives from a file somewhere in Darwin:
 commonsense_connectives = [
@@ -123,13 +123,13 @@ def sentence_keywords(str, top=10, nouns=True, singularize=True, filters=[]):
         and not numeral.is_number(word) \
         and not tags.is_tag(word) \
         and (not nouns or noun):
-            if word in count.keys():
+            if word in list(count.keys()):
                 count[word] += 1
             else:
                 count[word] = 1
     
     sorted = []
-    for word in count.keys():
+    for word in list(count.keys()):
         sorted.append((count[word], word))
     sorted.sort()
     sorted.reverse()
@@ -211,7 +211,7 @@ def is_emotion(word, shallow=False, pos=None, boolean=True):
     # if we shuffle the list we have an equal speed
     # for each Ekman emotion to scan.
     from random import shuffle
-    indices = range(len(ekman))
+    indices = list(range(len(ekman)))
     shuffle(indices)
     
     # For each Ekman emotion,

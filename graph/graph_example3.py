@@ -1,8 +1,9 @@
+import importlib
 try:
     graph = ximport("graph")
 except ImportError:
     graph = ximport("__init__")
-    reload(graph)
+    importlib.reload(graph)
 
 size(500, 500)
 
@@ -27,8 +28,8 @@ def draw():
     # show the shortest path between random nodes.
     path = []
     if g.done:
-        id1 = choice(g.keys())
-        id2 = choice(g.keys())
+        id1 = choice(list(g.keys()))
+        id2 = choice(list(g.keys()))
         path = g.shortest_path(id1, id2)    
         
     # Draw the graph and display the shortest path.

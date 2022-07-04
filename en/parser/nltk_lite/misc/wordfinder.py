@@ -114,15 +114,15 @@ def demo():
     wordlist = [w for w in wordlist if 3 <= len(w) <= 12]
     grid, used = wordfinder(wordlist)
 
-    print "Word Finder\n"
+    print("Word Finder\n")
     for i in range(len(grid)):
         for j in range(len(grid[i])):
-            print grid[i][j],
-        print
-    print
+            print(grid[i][j], end=' ')
+        print()
+    print()
     
     for i in range(len(used)):
-        print "%d:" % (i+1), used[i]
+        print("%d:" % (i+1), used[i])
 
 if __name__ == '__main__':
     demo()

@@ -50,7 +50,7 @@ def _remove_group_identifiers(parsed_re):
             to_process[1] = tuple(sub_item)
 
         # Process each item, in the case of nested SUBPATTERNS
-        processed = map(_remove_group_identifiers, to_process)
+        processed = list(map(_remove_group_identifiers, to_process))
 
         # Coerce back into the original type
         if isinstance(parsed_re, list):
@@ -99,7 +99,7 @@ def token_split(text, pattern, advanced=False):
 
         # If it's a single string, then convert it to a tuple
         # (which we can iterate over, just like an iterator.)
-        if isinstance(text, (str, unicode)):
+        if isinstance(text, str):
             text = (text,)
 
         # Process each substring returned by the iterator, in turn.
@@ -227,13 +227,13 @@ def _display(tokens):
     A helper function for L{demo} that displays a list of tokens.
     """
 
-    str = '    '+`list(tokens)`+' '   # an indented string representation
+    str = '    '+repr(list(tokens))+' '   # an indented string representation
     str = re.sub(r"(.{,70})\s", r'\1\n     ', str).rstrip()   # wrap at 70 characters
 
     # Truncate after three lines:
     str = re.sub(r'(.+\n.+\n.+)\s\S+\n[\s\S]+(?!$)', r'\1 ...]', str)
 
-    print str
+    print(str)
 
 def demo():
     """
@@ -245,27 +245,27 @@ def demo():
 
     # Define the test string.
     s = "Good muffins cost $3.88\nin New York.  Please buy me\ntwo of them.\n\nThanks."
-    print 'Input text:'
-    print `s`
-    print
-    print 'Tokenize using whitespace:'
+    print('Input text:')
+    print(repr(s))
+    print()
+    print('Tokenize using whitespace:')
     _display(tokenize.whitespace(s))
-    print
-    print 'Tokenize sequences of alphanumeric characters:'
+    print()
+    print('Tokenize sequences of alphanumeric characters:')
     _display(tokenize.regexp(s, pattern=r'\w+', gaps=False))
-    print
-    print 'Tokenize sequences of letters and sequences of nonletters:'
+    print()
+    print('Tokenize sequences of letters and sequences of nonletters:')
     _display(tokenize.wordpunct(s))
-    print
-    print 'Tokenize by lines:'
+    print()
+    print('Tokenize by lines:')
     _display(tokenize.line(s))
-    print
-    print 'Tokenize by blank lines:'
+    print()
+    print('Tokenize by blank lines:')
     _display(tokenize.blankline(s))
-    print
-    print 'A simple sentence tokenizer:'
+    print()
+    print('A simple sentence tokenizer:')
     _display(tokenize.regexp(s, pattern=r'\.(\s+|$)', gaps=True))
-    print
+    print()
     
 if __name__ == '__main__':
     demo()

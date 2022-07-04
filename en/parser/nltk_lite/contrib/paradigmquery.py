@@ -48,7 +48,7 @@ class ParadigmQuery(object):
         self.xml = None
 
         # If p_string was given, parse it
-        if p_string <> None:
+        if p_string != None:
             self.parse(p_string)
 
     def parse(self, p_string):
@@ -139,7 +139,7 @@ class ParadigmQuery(object):
         try:
             self.parseList = rd_parser.get_parse_list(toklist)[0]
         except IndexError: 
-            print "Could not parse query."
+            print("Could not parse query.")
             return
 
 
@@ -162,7 +162,7 @@ class ParadigmQuery(object):
         Returns the results from the CFG parsing
         """
         if self.string == None:
-            print "No string has been parsed. Please use parse(string)."
+            print("No string has been parsed. Please use parse(string).")
             return None
         return self.nltktree
 
@@ -173,7 +173,7 @@ class ParadigmQuery(object):
         the document is very simple. If I have time, this may be reimplemented.
         """
         if self.string == None:
-            print "No string has been parsed. Please use parse(string)."
+            print("No string has been parsed. Please use parse(string).")
             return None
         return '<?xml version="1.0"?>\n<document><parse-tree>' + self.xml \
                   + "</parse-tree></document>"
@@ -304,16 +304,16 @@ def demo():
     query = r'table(one/two/three, four, five)'
 
     # Print the query
-    print """
+    print("""
 ================================================================================
 Query: ParadigmQuery(query)
 ================================================================================
-"""
+""")
     a = ParadigmQuery(query)
-    print query
+    print(query)
 
     # Print the Tree representation
-    print """
+    print("""
 ================================================================================
 Tree: getTree()
   O is an operator
@@ -321,19 +321,19 @@ Tree: getTree()
   H is a hierarchy
   D is a domain
 ================================================================================
-"""
-    print a.getTree()
+""")
+    print(a.getTree())
 
     # Print the XML representation
-    print """
+    print("""
 ================================================================================
 XML: getXML()
 ================================================================================
-"""
-    print a.getXML()
+""")
+    print(a.getXML())
 
     # Some space
-    print 
+    print() 
 
 
 if __name__ == '__main__':

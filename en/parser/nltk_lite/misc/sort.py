@@ -139,7 +139,7 @@ def demo():
     from random import shuffle
 
     for size in (10, 20, 50, 100, 200, 500, 1000):
-        a = range(size)
+        a = list(range(size))
 
         # various sort methods
         shuffle(a); count_selection = selection(a)
@@ -147,8 +147,8 @@ def demo():
         shuffle(a); count_merge     = merge(a)
         shuffle(a); count_quick     = quick(a)
 
-        print "size=%5d:  selection=%8d,  bubble=%8d,  merge=%6d,  quick=%6d" %\
-              (size, count_selection, count_bubble, count_merge, count_quick)
+        print("size=%5d:  selection=%8d,  bubble=%8d,  merge=%6d,  quick=%6d" %\
+              (size, count_selection, count_bubble, count_merge, count_quick))
 
 if __name__ == '__main__':
     demo()

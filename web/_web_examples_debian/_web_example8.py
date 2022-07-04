@@ -4,4 +4,4 @@ import web
 
 definitions = web.urbandictionary.search("human")
 for i, d in enumerate(definitions):
-    print "%d: %s" % (i, d)
+    print("%d: %s" % (i, d))

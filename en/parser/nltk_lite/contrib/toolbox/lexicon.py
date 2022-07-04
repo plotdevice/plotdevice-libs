@@ -13,7 +13,7 @@ contents of a Shoebox lexicon without reference to its metadata.
 import os, re, sys
 from en.parser.nltk_lite.corpora import get_basedir
 from en.parser.nltk_lite.corpora.shoebox import ShoeboxFile
-from utilities import Field, SequentialDictionary
+from .utilities import Field, SequentialDictionary
 
 
 class Lexicon(ShoeboxFile):
@@ -67,7 +67,7 @@ class Lexicon(ShoeboxFile):
     @return: all of the entries in the Lexicon
     @rtype: list of Entry objects
     """
-    keys = self._entries.keys()
+    keys = list(self._entries.keys())
     keys.sort()
     for k in keys :
       v = self._entries[k]
@@ -95,10 +95,10 @@ class Lexicon(ShoeboxFile):
               # Should this throw an error if a field with no values
               # is used in the list of key fields?
               pass
-      if self._entries.has_key(key) :
+      if key in self._entries :
           if unique :
               msg = "Non-unique entry! \nEntry: \n%s\nKey Fields: %s\nKey: '%s'\n" % (entry, self._key_fields, key)    
-              raise ValueError, msg
+              raise ValueError(msg)
       else :
           self._entries[key] = []
       # Now append entry to list of entries for key
@@ -195,7 +195,7 @@ class Entry:
     """
     s = ""
     fields = self.get_fields()
-    for fm, fvs in self._fields.items():
+    for fm, fvs in list(self._fields.items()):
       for fv in fvs:
         s = s + "\n\\%s %s" % (fm, fv)          
     return s
@@ -264,7 +264,7 @@ class Entry:
     
     @rtype: list of Field objects
     """
-    return self._fields.values()
+    return list(self._fields.values())
 
   def get_field_markers(self):
     """
@@ -273,7 +273,7 @@ class Entry:
     @return: the field markers of an entry
     @rtype: list
     """
-    return self._fields.keys()
+    return list(self._fields.keys())
 
   def get_values_by_marker(self, field_marker, sep=None) :
     return self.get_field_values_by_field_marker(field_marker, sep)
@@ -364,7 +364,7 @@ class Entry:
     @param value : field value
     @type  value : string    
     """
-    if self._fields.has_key(marker):
+    if marker in self._fields:
       fvs = self._fields[marker]
       fvs.append(value)
     else:
@@ -381,7 +381,7 @@ class Entry:
     @param fieldMarker: field marker to be deleted
     @type  fieldMarker: string
     """
-    if self._fields.has_key(fieldMarker):
+    if fieldMarker in self._fields:
       del self._fields[fieldMarker]
 
 def demo() :
@@ -390,9 +390,9 @@ def demo() :
     l.parse(key_fields=['lx','ps','sn'], unique_entry=False)
     h = l.get_header()
     for e in l.get_entries() :
-        print "<%s><%s><%s>" % (e.get_field_as_string("lx", ""),
+        print("<%s><%s><%s>" % (e.get_field_as_string("lx", ""),
                                 e.get_field_as_string("ps", ""),
-                                e.get_field_as_string("sn", ""))
+                                e.get_field_as_string("sn", "")))
   
 if __name__ == '__main__':
     demo()

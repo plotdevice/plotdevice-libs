@@ -55,7 +55,7 @@ Erik Max Francis, for the command line interface
 Michael Twomey, for HTTP proxy support"""
 
 import os, sys, getopt
-import GoogleSOAPFacade
+from . import GoogleSOAPFacade
 
 LICENSE_KEY = None
 HTTP_PROXY  = None
@@ -110,12 +110,12 @@ def _version():
     """
     Display a formatted version string for the module
     """
-    print """PyGoogle %(__version__)s
+    print("""PyGoogle %(__version__)s
 %(__copyright__)s
 released %(__date__)s
 
 Thanks to:
-%(__credits__)s""" % globals()
+%(__credits__)s""" % globals())
 
     
 def _usage():
@@ -123,7 +123,7 @@ def _usage():
     Display usage information for the command-line interface
     """
     program = os.path.basename(sys.argv[0])
-    print """Usage: %(program)s [options] [querytype] query
+    print("""Usage: %(program)s [options] [querytype] query
 
 options:
   -k, --key= <license key> Google license key (see important note below)
@@ -143,9 +143,9 @@ querytype:
 IMPORTANT NOTE: all Google functions require a valid license key;
 visit http://www.google.com/apis/ to get one.  %(program)s will look in
 these places (in order) and use the first license key it finds:
-  * the key specified on the command line""" % vars()
+  * the key specified on the command line""" % vars())
     for get, location in _licenseLocations[2:]:
-        print "  *", location
+        print("  *", location)
 
 ## ----------------------------------------------------------------------
 ## utility functions (API)
@@ -178,7 +178,7 @@ def getLicense(license_key = None):
         rc = get(license_key)
         if rc: return rc
     _usage()
-    raise NoLicenseKey, 'get a license key at http://www.google.com/apis/'
+    raise NoLicenseKey('get a license key at http://www.google.com/apis/')
 
 
 def setProxy(http_proxy):
@@ -236,7 +236,7 @@ def _getRemoteServer( http_proxy ):
 
 class _SearchBase:
     def __init__(self, params):
-        for k, v in params.items():
+        for k, v in list(params.items()):
             if isinstance(v, GoogleSOAPFacade.structType):
                 v = GoogleSOAPFacade.toDict( v )
                 
@@ -500,12 +500,12 @@ def _test():
     except NoLicenseKey:
         return
         
-    print "Searching for Python at google.com..."
+    print("Searching for Python at google.com...")
     data = doGoogleSearch( "Python" )
     _output( data, { "func": "doGoogleSearch"} )
 
-    print "\nSearching for 5 _French_ pages about Python, "
-    print "encoded in ISO-8859-1..."
+    print("\nSearching for 5 _French_ pages about Python, ")
+    print("encoded in ISO-8859-1...")
 
     data = doGoogleSearch( "Python", language = 'lang_fr',                 
                                      outputencoding = 'ISO-8859-1',
@@ -514,7 +514,7 @@ def _test():
     _output( data, { "func": "doGoogleSearch" } )
 
     phrase = "Pyhton programming languager"
-    print "\nTesting spelling suggestions for '%s'..." % phrase
+    print("\nTesting spelling suggestions for '%s'..." % phrase)
     
     data = doSpellingSuggestion( phrase )
     
@@ -526,7 +526,7 @@ def _test():
 
 class _OutputFormatter:
     def boil(self, data):
-        if type(data) == type(u""):
+        if type(data) == type(""):
             return data.encode("ISO-8859-1", "replace")
         else:
             return data
@@ -536,11 +536,11 @@ class _TextOutputFormatter(_OutputFormatter):
         if params.get("showMeta", 0):
             meta = data.meta
             for category in meta.directoryCategories:
-                print "directoryCategory: %s" % \
-                  self.boil(category["fullViewableName"])
+                print("directoryCategory: %s" % \
+                  self.boil(category["fullViewableName"]))
             for attr in [node for node in dir(meta) if \
-              node <> "directoryCategories" and node[:2] <> '__']:
-                print "%s:" % attr, self.boil(getattr(meta, attr))
+              node != "directoryCategories" and node[:2] != '__']:
+                print("%s:" % attr, self.boil(getattr(meta, attr)))
         
     def doGoogleSearch(self, data, params):
         results = data.results
@@ -551,15 +551,15 @@ class _TextOutputFormatter(_OutputFormatter):
         for result in results:
             for attr in dir(result):
                 if attr == "directoryCategory":
-                    print "directoryCategory:", \
-                      self.boil(result.directoryCategory["fullViewableName"])
-                elif attr[:2] <> '__':
-                    print "%s:" % attr, self.boil(getattr(result, attr))
-            print
+                    print("directoryCategory:", \
+                      self.boil(result.directoryCategory["fullViewableName"]))
+                elif attr[:2] != '__':
+                    print("%s:" % attr, self.boil(getattr(result, attr)))
+            print()
         self.common(data, params)
     
     def doGetCachedPage(self, data, params):
-        print data
+        print(data)
         self.common(data, params)
 
     doSpellingSuggestion = doGetCachedPage

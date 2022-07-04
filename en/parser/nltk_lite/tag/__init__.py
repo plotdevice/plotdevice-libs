@@ -130,6 +130,6 @@ def accuracy(tagger, gold):
 
 #############################################################
 
-from unigram import *
-from ngram import *
-from brill import *
+from .unigram import *
+from .ngram import *
+from .brill import *

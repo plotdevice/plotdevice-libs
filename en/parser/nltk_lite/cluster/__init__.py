@@ -137,7 +137,7 @@ class ClusterI:
         """
         Returns the names of the clusters.
         """
-        return range(self.num_clusters())
+        return list(range(self.num_clusters()))
 
     def cluster_name(self, index):
         """
@@ -168,7 +168,7 @@ class VectorSpace(ClusterI):
 
         # normalise the vectors
         if self._should_normalise:
-            vectors = map(self._normalise, vectors)
+            vectors = list(map(self._normalise, vectors))
 
         # use SVD to reduce the dimensionality
         if self._svd_dimensions and self._svd_dimensions < len(vectors[0]):
@@ -185,7 +185,7 @@ class VectorSpace(ClusterI):
 
         # assign the vectors to clusters
         if assign_clusters:
-            print self._Tt, vectors
+            print(self._Tt, vectors)
             return [self.classify(vector) for vector in vectors]
 
     def cluster_vectorspace(self, vectors, trace):
@@ -340,7 +340,7 @@ class Dendogram:
         
         # find the bottom row and the best cell width
         last_row = [str(leaf._value) for leaf in leaves]
-        width = max(map(len, last_row)) + 1
+        width = max(list(map(len, last_row))) + 1
         lhalf = width / 2
         rhalf = width - lhalf - 1
 
@@ -355,8 +355,8 @@ class Dendogram:
         verticals = [ format(' ') for leaf in leaves ]
         while queue:
             priority, node = queue.pop()
-            child_left_leaf = map(lambda c: c.leaves(False)[0], node._children)
-            indices = map(leaves.index, child_left_leaf)
+            child_left_leaf = [c.leaves(False)[0] for c in node._children]
+            indices = list(map(leaves.index, child_left_leaf))
             if child_left_leaf:
                 min_idx = min(indices)
                 max_idx = max(indices)
@@ -394,6 +394,6 @@ class Dendogram:
 
 ########################################################################
 
-from kmeans import *
-from gaac import *
-from em import *
+from .kmeans import *
+from .gaac import *
+from .em import *

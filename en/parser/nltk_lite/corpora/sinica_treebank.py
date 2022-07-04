@@ -82,10 +82,10 @@ def demo():
 #        print tree.pp()
 #    print
 
-    print "Raw:"
+    print("Raw:")
     for sent in islice(sinica_treebank.raw(), 3):
-        print sent
-    print
+        print(sent)
+    print()
 
 if __name__ == '__main__':
     demo()

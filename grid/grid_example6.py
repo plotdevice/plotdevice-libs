@@ -1,3 +1,4 @@
+import importlib
 # SPREADSHEET
 # When working with tables and schedules,
 # do we go for automation and formulas (e.g. Excel)
@@ -8,7 +9,7 @@ try:
     grid = ximport("grid")
 except:
     grid = ximport("__init__")
-    reload(grid)
+    importlib.reload(grid)
 
 # --- DATA --------------------------------------------------------------
 
@@ -26,7 +27,7 @@ schedule = {
 # The number of tasks and the number of months (or weeks, years etc.)
 # The number of months equals the highest number in the timing lists.
 tasks  = len(schedule)
-units = max([max(timing) for task, timing in schedule.iteritems()])
+units = max([max(timing) for task, timing in schedule.items()])
 
 # --- STRUCTURE ---------------------------------------------------------
 
@@ -107,7 +108,7 @@ for cell in g.top[1:-1]:
 # The leftmost field in each row displays the task description.
 # Each month in which a task is worked on gets marked by an "x".
 i = 1
-for task, timing in schedule.iteritems():
+for task, timing in schedule.items():
     g.row(i).left.content = task
     for t in timing:
         g.row(i)[t].content = "x"

@@ -3,7 +3,7 @@
 # Based on the MorgueFile API:
 # http://box115.morguefile.com/wiki/index.php/Morguefile_api
 
-from urllib import urlopen
+from urllib.request import urlopen
 from xml.dom.minidom import parseString
 import os
 

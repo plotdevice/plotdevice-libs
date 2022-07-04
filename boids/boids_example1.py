@@ -1,3 +1,4 @@
+import importlib
 size(500, 500)
 speed(20)
 
@@ -5,7 +6,7 @@ try:
     boids = ximport("boids")
 except:
     boids = ximport("__init__")
-    reload(boids)
+    importlib.reload(boids)
 
 def setup():     
     

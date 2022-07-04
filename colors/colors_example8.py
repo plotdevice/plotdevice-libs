@@ -12,11 +12,11 @@ en = ximport("en")
 # into which it classifies all words.
 # Examples: verb.weather, noun.artifactm nou.animal, ...
 lexname_scores = {}
-for lexname in en.wordnet.wn.Lexname.dict.keys():
+for lexname in list(en.wordnet.wn.Lexname.dict.keys()):
     lexname_scores[lexname] = []
 
 # Traverse all colors in the context (blue, green, ...)
-for clr in colors.context.keys():
+for clr in list(colors.context.keys()):
     
     # Each color has associated tags: blue -> air, cold, calm, ...
     # Calculate the weight of each tag,
@@ -34,7 +34,7 @@ for clr in colors.context.keys():
                          ("adj",  en.wordnet.ADJECTIVES)]:
             try:
                 lexname = pos+"." + en.wordnet.lexname(tag, pos=ref)
-                if not count.has_key(lexname):
+                if lexname not in count:
                     count[lexname] = 0
                 count[lexname] += weight
             except:
@@ -44,8 +44,8 @@ for clr in colors.context.keys():
     # that have tags categorized under this lexname,
     # together with the tag score from the count dict.
     # noun.feeling -> (blue, 0.09)
-    for lexname in count.keys():
-        if not lexname_scores.has_key(lexname):
+    for lexname in list(count.keys()):
+        if lexname not in lexname_scores:
             lexname_scores[lexname] = []
         lexname_scores[lexname].append((clr, count[lexname]))
 
@@ -53,7 +53,7 @@ for clr in colors.context.keys():
 # We normalize the weight so their total weight is 1.0.
 # So now we have a percentage of each color's importance for the lexname.
 # verb.weather -> grey 24%, orange 19%, white 57%
-for lexname in lexname_scores.keys():
+for lexname in list(lexname_scores.keys()):
     s = sum([weight for clr, weight in lexname_scores[lexname]])
     normalized = [(clr, weight/s) for clr, weight in lexname_scores[lexname]]
     lexname_scores[lexname] = normalized
@@ -75,7 +75,7 @@ elif en.is_verb(q):
 elif en.is_adjective(q): 
     l = "adj."+en.adjective.lexname(q)
     
-print q, "is-a", l
+print(q, "is-a", l)
 
 clrs = colors.list()
 for clr, weight in lexname_scores[l]:

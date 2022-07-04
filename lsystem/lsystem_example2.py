@@ -1,10 +1,11 @@
+import importlib
 size(500, 250)
 
 try: 
     lsystem = ximport("lsystem")
 except:
     lsystem = ximport("__init__")
-    reload(lsystem)
+    importlib.reload(lsystem)
 
 # Aperiodic Penrose tiling.
 # http://en.wikipedia.org/wiki/Penrose_tiling

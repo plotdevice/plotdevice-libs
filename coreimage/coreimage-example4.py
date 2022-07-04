@@ -1,3 +1,4 @@
+import importlib
 # The Membrane example.
 # This example uses Core Image Dynamics
 # to stack layer manipulations in a real-time animation.
@@ -9,7 +10,7 @@ try:
     coreimage = ximport("coreimage")
 except:
     coreimage = ximport("__init__")
-    reload(coreimage)
+    importlib.reload(coreimage)
 
 def setup():
     

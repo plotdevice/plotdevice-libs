@@ -1,3 +1,4 @@
+import importlib
 size(400,250)
 speed(100)
 
@@ -5,7 +6,7 @@ try:
     coreimage = ximport("coreimage")
 except:
     coreimage = ximport("__init__")
-    reload(coreimage)
+    importlib.reload(coreimage)
 
 def setup():
     

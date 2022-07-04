@@ -36,42 +36,42 @@ class SqliteTypeTests(unittest.TestCase):
         self.con.close()
 
     def CheckString(self):
-        self.cur.execute("insert into test(s) values (?)", (u"Österreich",))
+        self.cur.execute("insert into test(s) values (?)", ("Österreich",))
         self.cur.execute("select s from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], u"Österreich")
+        self.assertEqual(row[0], "Österreich")
 
     def CheckSmallInt(self):
         self.cur.execute("insert into test(i) values (?)", (42,))
         self.cur.execute("select i from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], 42)
+        self.assertEqual(row[0], 42)
 
     def CheckLargeInt(self):
         num = 2**40
         self.cur.execute("insert into test(i) values (?)", (num,))
         self.cur.execute("select i from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], num)
+        self.assertEqual(row[0], num)
 
     def CheckFloat(self):
         val = 3.14
         self.cur.execute("insert into test(f) values (?)", (val,))
         self.cur.execute("select f from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], val)
+        self.assertEqual(row[0], val)
 
     def CheckBlob(self):
         val = buffer("Guglhupf")
         self.cur.execute("insert into test(b) values (?)", (val,))
         self.cur.execute("select b from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], val)
+        self.assertEqual(row[0], val)
 
     def CheckUnicodeExecute(self):
-        self.cur.execute(u"select 'Österreich'")
+        self.cur.execute("select 'Österreich'")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], u"Österreich")
+        self.assertEqual(row[0], "Österreich")
 
 class DeclTypesTests(unittest.TestCase):
     class Foo:
@@ -119,14 +119,14 @@ class DeclTypesTests(unittest.TestCase):
         self.cur.execute("insert into test(s) values (?)", ("foo",))
         self.cur.execute("select s from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], "foo")
+        self.assertEqual(row[0], "foo")
 
     def CheckSmallInt(self):
         # default
         self.cur.execute("insert into test(i) values (?)", (42,))
         self.cur.execute("select i from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], 42)
+        self.assertEqual(row[0], 42)
 
     def CheckLargeInt(self):
         # default
@@ -134,7 +134,7 @@ class DeclTypesTests(unittest.TestCase):
         self.cur.execute("insert into test(i) values (?)", (num,))
         self.cur.execute("select i from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], num)
+        self.assertEqual(row[0], num)
 
     def CheckFloat(self):
         # custom
@@ -142,35 +142,35 @@ class DeclTypesTests(unittest.TestCase):
         self.cur.execute("insert into test(f) values (?)", (val,))
         self.cur.execute("select f from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], 47.2)
+        self.assertEqual(row[0], 47.2)
 
     def CheckBool(self):
         # custom
         self.cur.execute("insert into test(b) values (?)", (False,))
         self.cur.execute("select b from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], False)
+        self.assertEqual(row[0], False)
 
         self.cur.execute("delete from test")
         self.cur.execute("insert into test(b) values (?)", (True,))
         self.cur.execute("select b from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], True)
+        self.assertEqual(row[0], True)
 
     def CheckUnicode(self):
         # default
-        val = u"\xd6sterreich"
+        val = "\xd6sterreich"
         self.cur.execute("insert into test(u) values (?)", (val,))
         self.cur.execute("select u from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], val)
+        self.assertEqual(row[0], val)
 
     def CheckFoo(self):
         val = DeclTypesTests.Foo("bla")
         self.cur.execute("insert into test(foo) values (?)", (val,))
         self.cur.execute("select foo from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], val)
+        self.assertEqual(row[0], val)
 
     def CheckUnsupportedSeq(self):
         class Bar: pass
@@ -200,7 +200,7 @@ class DeclTypesTests(unittest.TestCase):
         self.cur.execute("insert into test(bin) values (?)", (val,))
         self.cur.execute("select bin from test")
         row = self.cur.fetchone()
-        self.failUnlessEqual(row[0], val)
+        self.assertEqual(row[0], val)
 
 class ColNamesTests(unittest.TestCase):
     def setUp(self):
@@ -223,29 +223,29 @@ class ColNamesTests(unittest.TestCase):
         self.cur.execute("insert into test(x) values (?)", ("xxx",))
         self.cur.execute("select x from test")
         val = self.cur.fetchone()[0]
-        self.failUnlessEqual(val, "[xxx]")
+        self.assertEqual(val, "[xxx]")
 
     def CheckNone(self):
         self.cur.execute("insert into test(x) values (?)", (None,))
         self.cur.execute("select x from test")
         val = self.cur.fetchone()[0]
-        self.failUnlessEqual(val, None)
+        self.assertEqual(val, None)
 
     def CheckExc(self):
         # Exceptions in type converters result in returned Nones
         self.cur.execute('select 5 as "x [exc]"')
         val = self.cur.fetchone()[0]
-        self.failUnlessEqual(val, None)
+        self.assertEqual(val, None)
 
     def CheckColName(self):
         self.cur.execute("insert into test(x) values (?)", ("xxx",))
         self.cur.execute('select x as "x [bar]" from test')
         val = self.cur.fetchone()[0]
-        self.failUnlessEqual(val, "<xxx>")
+        self.assertEqual(val, "<xxx>")
 
         # Check if the stripping of colnames works. Everything after the first
         # whitespace should be stripped.
-        self.failUnlessEqual(self.cur.description[0][0], "x")
+        self.assertEqual(self.cur.description[0][0], "x")
 
 class ObjectAdaptationTests(unittest.TestCase):
     def cast(obj):
@@ -269,7 +269,7 @@ class ObjectAdaptationTests(unittest.TestCase):
     def CheckCasterIsUsed(self):
         self.cur.execute("select ?", (4,))
         val = self.cur.fetchone()[0]
-        self.failUnlessEqual(type(val), float)
+        self.assertEqual(type(val), float)
 
 class DateTimeTests(unittest.TestCase):
     def setUp(self):
@@ -286,14 +286,14 @@ class DateTimeTests(unittest.TestCase):
         self.cur.execute("insert into test(d) values (?)", (d,))
         self.cur.execute("select d from test")
         d2 = self.cur.fetchone()[0]
-        self.failUnlessEqual(d, d2)
+        self.assertEqual(d, d2)
 
     def CheckSqliteTimestamp(self):
         ts = sqlite.Timestamp(2004, 2, 14, 7, 15, 0)
         self.cur.execute("insert into test(ts) values (?)", (ts,))
         self.cur.execute("select ts from test")
         ts2 = self.cur.fetchone()[0]
-        self.failUnlessEqual(ts, ts2)
+        self.assertEqual(ts, ts2)
 
     def CheckSqlTimestamp(self):
         # The date functions are only available in SQLite version 3.1 or later
@@ -305,15 +305,15 @@ class DateTimeTests(unittest.TestCase):
         self.cur.execute("insert into test(ts) values (current_timestamp)")
         self.cur.execute("select ts from test")
         ts = self.cur.fetchone()[0]
-        self.failUnlessEqual(type(ts), datetime.datetime)
-        self.failUnlessEqual(ts.year, now.year)
+        self.assertEqual(type(ts), datetime.datetime)
+        self.assertEqual(ts.year, now.year)
 
     def CheckDateTimeSubSeconds(self):
         ts = sqlite.Timestamp(2004, 2, 14, 7, 15, 0, 500000)
         self.cur.execute("insert into test(ts) values (?)", (ts,))
         self.cur.execute("select ts from test")
         ts2 = self.cur.fetchone()[0]
-        self.failUnlessEqual(ts, ts2)
+        self.assertEqual(ts, ts2)
 
 def suite():
     sqlite_type_suite = unittest.makeSuite(SqliteTypeTests, "Check")

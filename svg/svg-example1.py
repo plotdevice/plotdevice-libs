@@ -1,10 +1,11 @@
+import importlib
 size(500, 500)
 
 try:
     svg = ximport("svg")
 except:
     svg = ximport("__init__")
-    reload(svg)
+    importlib.reload(svg)
 
 # The parse() command will return
 # a list of the shapes in the SVG file.

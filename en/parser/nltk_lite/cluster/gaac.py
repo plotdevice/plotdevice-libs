@@ -55,7 +55,7 @@ class GroupAverageAgglomerative(VectorSpace):
             # merge them and replace in cluster list
             i, j = best[1:]
             sum = clusters[i] + clusters[j]
-            if trace: print 'merging %d and %d' % (i, j)
+            if trace: print('merging %d and %d' % (i, j))
 
             clusters[i] = sum
             del clusters[j]
@@ -125,19 +125,19 @@ def demo():
     clusterer = cluster.GroupAverageAgglomerative(4)
     clusters = clusterer.cluster(vectors, True)
 
-    print 'Clusterer:', clusterer
-    print 'Clustered:', vectors
-    print 'As:', clusters
-    print
+    print('Clusterer:', clusterer)
+    print('Clustered:', vectors)
+    print('As:', clusters)
+    print()
     
     # show the dendogram
     clusterer.dendogram().show()
 
     # classify a new vector
     vector = array([3, 3])
-    print 'classify(%s):' % vector,
-    print clusterer.classify(vector)
-    print
+    print('classify(%s):' % vector, end=' ')
+    print(clusterer.classify(vector))
+    print()
 
 
 if __name__ == '__main__':

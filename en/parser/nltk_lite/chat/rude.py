@@ -78,9 +78,9 @@ pairs = (
 rude = Chat(pairs, reflections) 
 
 def demo():    
-    print "Unpleasant Chatbot (type 'quit' to exit)."
-    print '='*72
-    print "I suppose I should say hello."
+    print("Unpleasant Chatbot (type 'quit' to exit).")
+    print('='*72)
+    print("I suppose I should say hello.")
     converse(rude)
 
 if __name__ == "__main__":

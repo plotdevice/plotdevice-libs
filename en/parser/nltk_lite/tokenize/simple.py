@@ -68,15 +68,15 @@ def demo():
     """
     # Define the test string.
     s = "Good muffins cost $3.88\nin New York.  Please buy me\ntwo of them.\n\nThanks."
-    print 'Input text:'
-    print `s`
-    print
-    print 'Tokenize using individual space characters:'
-    print list(space(s))
-    print
-    print 'Tokenize by lines:'
-    print list(line(s))
-    print
+    print('Input text:')
+    print(repr(s))
+    print()
+    print('Tokenize using individual space characters:')
+    print(list(space(s)))
+    print()
+    print('Tokenize by lines:')
+    print(list(line(s)))
+    print()
     
 if __name__ == '__main__':
     demo()

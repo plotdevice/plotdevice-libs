@@ -5,9 +5,9 @@
 # Based on the Ruby Linguistics module by Michael Granger:
 # http://www.deveiate.org/projects/Linguistics/wiki/English
 
-from article import article
-from numeral import spoken_number, thousands as numeral_thousands
-from plural import plural
+from .article import article
+from .numeral import spoken_number, thousands as numeral_thousands
+from .plural import plural
 from math import log, pow
 
 quantify_custom_plurals = {
@@ -72,7 +72,7 @@ def conjunction(words, generalize=False):
     # Keep a count of each object in the list of words.
     count = {}
     for word in words:
-        if count.has_key(word):
+        if word in count:
             count[word] += 1
         else:
             count[word] = 1

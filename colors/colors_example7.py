@@ -1,10 +1,11 @@
+import importlib
 # SHADER
 
 try:
     colors = ximport("colors")
 except ImportError:
     colors = ximport("__init__")
-    reload(colors)
+    importlib.reload(colors)
 
 # Deep green gradient background.
 size(400, 400)

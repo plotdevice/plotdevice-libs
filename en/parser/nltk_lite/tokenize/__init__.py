@@ -10,5 +10,5 @@
 Functions for tokenizing text.
 """
 
-from simple import *
-from regexp import *
+from .simple import *
+from .regexp import *

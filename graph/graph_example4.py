@@ -9,10 +9,11 @@ try:
     graph = ximport("graph")
 except ImportError:
     graph = ximport("__init__")
-    reload(graph)
+    importlib.reload(graph)
 
 import en
 from random import shuffle
+import importlib
 
 #### WORDNET GRAPH ###################################################################################
 

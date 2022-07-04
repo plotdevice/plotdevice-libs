@@ -4,7 +4,7 @@ colors.themes
 
 """
 
-from __future__ import with_statement, division
+
 import sys
 import os
 import sqlite3
@@ -137,7 +137,7 @@ class ColorTheme(list):
         weights = []
         for clr, rng, weight in self.ranges:
             h = clr.nearest_hue(primary=False)
-            if grouped.has_key(h):
+            if h in grouped:
                 ranges, total_weight = grouped[h]
                 ranges.append((clr, rng, weight))
                 total_weight += weight
@@ -147,7 +147,7 @@ class ColorTheme(list):
 
         # Calculate the normalized (0.0-1.0) weight for each hue,
         # and transform the dictionary to a list.
-        s = 1.0 * sum([w for r, w in grouped.values()])
+        s = 1.0 * sum([w for r, w in list(grouped.values())])
         grouped = [(grouped[h][1], grouped[h][1]/s, h, grouped[h][0]) for h in grouped]
         grouped.sort()
         grouped.reverse()
@@ -223,7 +223,7 @@ class ColorTheme(list):
         """ Saves the color information to the DB.
         """
 
-        # print "update", self.name, self.cache, self.json
+        # print("update", self.name, self.cache, self.json)
         self.db.update(self.name, self.cache, self.json)
 
         # if not os.path.exists(self.cache):
@@ -244,11 +244,11 @@ class ColorTheme(list):
         """
 
         self.cache, theme = self.db.query(self.name, self.cache)
-        for name, mixture in theme.items()[:top]:
+        for name, mixture in list(theme.items())[:top]:
             if name == "blue": name = blue
             w = mixture['weight']
             clr = color(name)
-            for name, weight in mixture['shades'].items():
+            for name, weight in list(mixture['shades'].items()):
                 self.ranges.append( (clr, shade(name), w*weight) )
         return bool(theme)
 
@@ -457,7 +457,7 @@ class ColorThemeDB(object):
   @property
   def collections(self):
     """A list of collection names. Use one as a query argument to focus the search."""
-    return self._collections.keys()
+    return list(self._collections.keys())
 
   @property
   def _collections(self):
@@ -467,7 +467,7 @@ class ColorThemeDB(object):
 
   @property
   def colors(self):
-    return self._colors.keys()
+    return list(self._colors.keys())
 
   @property
   def _colors(self):
@@ -476,7 +476,7 @@ class ColorThemeDB(object):
 
   @property
   def shades(self):
-    return self._shades.keys()
+    return list(self._shades.keys())
 
   @property
   def _shades(self):
@@ -526,9 +526,9 @@ class ColorThemeDB(object):
       # write the new theme data to the weights table
       colors, shades = self._colors, self._shades
       weights = []
-      for name, color in theme.items():
+      for name, color in list(theme.items()):
         weights.append([query_id, colors[name], None, color['weight']])
-        for shade, weight in color['shades'].items():
+        for shade, weight in list(color['shades'].items()):
           weights.append([query_id, colors[name], shades[shade], weight])
       c.executemany('''INSERT INTO weights (query, color, shade, weight) VALUES (?,?,?,?)''', weights)
       c.execute('''UPDATE collections SET last=? WHERE id=?''',[int(time.time()), collection_id])
@@ -577,7 +577,7 @@ class ColorThemeDB(object):
           # didn't find the query string in any of them
           return collection, {}
 
-      found_in = dict(zip(collections.values(), collections.keys()))[query['collection']]
+      found_in = dict(list(zip(list(collections.values()), list(collections.keys()))))[query['collection']]
       c.execute("""SELECT color.name AS color, shade.name AS shade, mixture.weight
                    FROM weights AS mixture
                    LEFT JOIN words AS color ON mixture.color = color.id
@@ -703,8 +703,8 @@ class ColorThemeDB(object):
     with self.cursor as c:
       if collection is None or not exists(self.path):
         # set up tables in the new db file
-        print "Aggregating color themes in %s"%self.path.replace(os.getenv('HOME'),'~')
-        print "This should be a one-time process when you first access the colors library."
+        print(("Aggregating color themes in %s"%self.path.replace(os.getenv('HOME'),'~')))
+        print("This should be a one-time process when you first access the colors library.")
         c.execute('''CREATE TABLE words (id integer PRIMARY KEY AUTOINCREMENT UNIQUE DEFAULT 1, name text, kind text)''')
         for color in sorted(['blue', 'pink', 'purple', 'yellow', 'black', 'cyan', 'orange', 'green', 'white', 'red']):
           c.execute('''INSERT INTO words (name, kind) VALUES (?, ?)''', [color, 'color'])
@@ -764,16 +764,16 @@ class ColorThemeDB(object):
             queries[root.attrib['query']] = colors
 
         if collection is None: # Only be noisy when doing the big batch-install up front
-          print " ", (fn if fn.endswith('.json') else fn+'/*xml').replace(os.getenv('HOME'),'~')
+          print((" ", (fn if fn.endswith('.json') else fn+'/*xml').replace(os.getenv('HOME'),'~')))
 
-        for query, colors in queries.items():
+        for query, colors in list(queries.items()):
           c.execute('''INSERT INTO queries (name, collection) VALUES (?, ?)''', [query, group_ids[group]])
           query_id = c.lastrowid
 
           weights = []
-          for name, color in colors.items():
+          for name, color in list(colors.items()):
             weights.append([query_id, words['colors'][name], None, color['weight']])
-            for shade, weight in color['shades'].items():
+            for shade, weight in list(color['shades'].items()):
               weights.append([query_id, words['colors'][name], words['shades'][shade], weight])
 
           c.executemany('''INSERT INTO weights (query, color, shade, weight) VALUES (?,?,?,?)''', weights)

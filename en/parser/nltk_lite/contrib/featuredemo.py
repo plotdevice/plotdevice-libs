@@ -14,7 +14,7 @@ generated and any resulting parse trees.
 
 def text_parse(grammar, sent, trace=2, drawtrees=False, latex=False):
 	parser = grammar.earley_parser(trace=trace)
-	print parser._grammar
+	print(parser._grammar)
 	tokens = list(tokenize.whitespace(sent))
 	trees = parser.get_parse_list(tokens)
 	if drawtrees:
@@ -22,8 +22,8 @@ def text_parse(grammar, sent, trace=2, drawtrees=False, latex=False):
 		TreeView(trees)
 	else:
 		for tree in trees:
-			if latex: print tree.latex_qtree()
-			else: print tree
+			if latex: print(tree.latex_qtree())
+			else: print(tree)
 
 def main():
 	import sys
@@ -85,7 +85,7 @@ Distributed under the GPL. See LICENSE.TXT for information.""" % globals()
 			sentence = line.strip()
 			if sentence == '': continue
 			if sentence[0] == '#': continue
-			print "Sentence: %s" % sentence
+			print("Sentence: %s" % sentence)
 			text_parse(grammar, sentence, trace, False, options.latex)
 		infile.close()
 

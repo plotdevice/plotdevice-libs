@@ -106,7 +106,7 @@ class FeatureTreeEdge(TreeEdge):
         @return: the value of the right-hand side with variables set.
         @rtype: C{Category}
         """
-        return tuple([apply(x, self._vars) for x in TreeEdge.rhs(self)])
+        return tuple([x(*self._vars) for x in TreeEdge.rhs(self)])
     def orig_rhs(self):
         """
         @return: the value of the right-hand side with no variables set.
@@ -207,7 +207,7 @@ class FeatureEarleyChartParse(EarleyChartParse):
     """
     def __init__(self, grammar, lexicon, trace=0):
         # Build a case-insensitive lexicon.
-        ci_lexicon = dict([(k.upper(), v) for k, v in lexicon.iteritems()])
+        ci_lexicon = dict([(k.upper(), v) for k, v in lexicon.items()])
         # Call the super constructor.
         EarleyChartParse.__init__(self, grammar, ci_lexicon, trace)
 
@@ -218,7 +218,7 @@ class FeatureEarleyChartParse(EarleyChartParse):
         # Width, for printing trace edges.
         #w = 40/(chart.num_leaves()+1)
         w = 2
-        if self._trace > 0: print ' '*9, chart.pp_leaves(w)
+        if self._trace > 0: print(' '*9, chart.pp_leaves(w))
 
         # Initialize the chart with a special "starter" edge.
         root = GrammarCategory(pos='[INIT]')
@@ -232,7 +232,7 @@ class FeatureEarleyChartParse(EarleyChartParse):
         #scanner = FeatureScannerRule(self._lexicon)
 
         for end in range(chart.num_leaves()+1):
-            if self._trace > 1: print 'Processing queue %d' % end
+            if self._trace > 1: print('Processing queue %d' % end)
             
             # Scanner rule substitute, i.e. this is being used in place
             # of a proper FeatureScannerRule at the moment.
@@ -245,13 +245,13 @@ class FeatureEarleyChartParse(EarleyChartParse):
                         FeatureBindings())
                     chart.insert(new_pos_edge, (new_leaf_edge,))
                     if self._trace > 0:
-                        print  'Scanner  ', chart.pp_edge(new_leaf_edge,w)
+                        print('Scanner  ', chart.pp_edge(new_leaf_edge,w))
             
             for edge in chart.select(end=end):
                 if edge.is_incomplete():
                     for e in predictor.apply(chart, grammar, edge):
                         if self._trace > 0:
-                            print 'Predictor', chart.pp_edge(e,w)
+                            print('Predictor', chart.pp_edge(e,w))
                 #if edge.is_incomplete():
                 #    for e in scanner.apply(chart, grammar, edge):
                 #        if self._trace > 0:
@@ -259,7 +259,7 @@ class FeatureEarleyChartParse(EarleyChartParse):
                 if edge.is_complete():
                     for e in completer.apply(chart, grammar, edge):
                         if self._trace > 0:
-                            print 'Completer', chart.pp_edge(e,w)
+                            print('Completer', chart.pp_edge(e,w))
 
         # Output a list of complete parses.
         return chart.parses(root)
@@ -305,14 +305,14 @@ def demo():
         earley_lexicon.setdefault(prod.rhs()[0].upper(), []).append(prod.lhs())
 
     sent = 'I saw John with a dog with my cookie'
-    print "Sentence:\n", sent
+    print("Sentence:\n", sent)
     from en.parser.nltk_lite import tokenize
     tokens = list(tokenize.whitespace(sent))
     t = time.time()
     cp = FeatureEarleyChartParse(earley_grammar, earley_lexicon, trace=1)
     trees = cp.get_parse_list(tokens)
-    print "Time: %s" % (time.time() - t)
-    for tree in trees: print tree
+    print("Time: %s" % (time.time() - t))
+    for tree in trees: print(tree)
 
 def run_profile():
     import profile

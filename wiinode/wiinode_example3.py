@@ -1,3 +1,4 @@
+import importlib
 # A WiiMote visualizer. This shows all the captured inputs;
 # useful for developing your own scripts.
 
@@ -10,7 +11,7 @@ except ImportError:
     # we may need to try something different when
     # the library is not located in /Application Support
     wiinode = ximport("__init__")
-    reload(wiinode)
+    importlib.reload(wiinode)
 
 size(550, 320)
 speed(30)

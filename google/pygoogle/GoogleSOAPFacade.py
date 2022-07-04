@@ -44,7 +44,7 @@ except ImportError:
     #warn( "SOAPpy not imported. Trying legacy SOAP.py.",
     #      DeprecationWarning )
     try:
-        import SOAP
+        from . import SOAP
     except ImportError:
         raise RuntimeError( "Unable to find SOAPpy or SOAP. Can't continue.\n" )
 

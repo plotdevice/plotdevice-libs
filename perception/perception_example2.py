@@ -1,10 +1,11 @@
+import importlib
 # COMPARATIVES
 
 try:
     perception = ximport("perception")
 except ImportError:
     perception = ximport("__init__")
-    reload(perception)
+    importlib.reload(perception)
 
 size(1000, 1000)
 
@@ -29,4 +30,4 @@ g.draw(weighted=True, directed=True, traffic=3)
 # with the most relevant first.
 for concept1, comparisons in cmp.rank(g):
     for concept2 in comparisons:
-        print concept1, cmp.relation, concept2
+        print(concept1, cmp.relation, concept2)

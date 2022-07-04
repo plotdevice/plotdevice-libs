@@ -20,7 +20,7 @@ epsilon = None
 
 # inserting and deleting elements from sets stored in hashes
 def _hashed_set_insert(hash, key, item):
-    if hash.has_key(key):
+    if key in hash:
         hash[key].add(item)
     else:
         hash[key] = set([item])
@@ -69,7 +69,7 @@ class FSA:
         return tuple(self._finals)
 
     def states(self):
-        return range(self._num+1)
+        return list(range(self._num+1))
 
     def add_final(self, state):
         self._finals.add(state)
@@ -137,16 +137,16 @@ class FSA:
 
     def transitions(self):
         return [(s1,label,s2)
-                for ((s1,s2),label) in self._labels.items()]
+                for ((s1,s2),label) in list(self._labels.items())]
 
     def forward_traverse(self, state):
-        if self._forward.has_key(state):
+        if state in self._forward:
             return tuple(self._forward[state])
         else:
             return ()
 
     def reverse_traverse(self, state):
-        if self._reverse.has_key(state):
+        if state in self._reverse:
             return tuple(self._reverse[state])
         else:
             return ()
@@ -171,7 +171,7 @@ class FSA:
 
     def outgoing_transitions(self, state):
         transitions = []
-        if self._forward.has_key(s1):
+        if s1 in self._forward:
             s2 = self._forward[s1]
             label = self._labels((s1,s2))
             transitions.append((s1, labels, s2))
@@ -246,7 +246,7 @@ class FSA:
                 dfa.add_final(dfa_state)
             for label in self.sigma():
                 nfa_next = self.e_closure(self.move(map[dfa_state], label))
-                if map.has_key(nfa_next):
+                if nfa_next in map:
                     dfa_next = map[nfa_next]
                 else:
                     dfa_next = dfa.new_state()
@@ -277,7 +277,7 @@ class FSA:
     def generate(self, maxlen, state=0, prefix=""):
         if maxlen > 0:
             if state in self._finals:
-                print prefix
+                print(prefix)
             for (s1, labels, s2) in self.outgoing_transitions(state):
                 for label in labels():
                     self.generate(maxlen-1, s2, prefix+label)
@@ -286,8 +286,8 @@ class FSA:
         t = self.transitions()
         t.sort()
         for (s1, label, s2) in t:
-            print s1, ':', label, '->', s2
-        print "Final:", self._finals
+            print(s1, ':', label, '->', s2)
+        print("Final:", self._finals)
 
 ### FUNCTIONS TO BUILD FSA FROM REGEXP
 
@@ -387,20 +387,20 @@ def demo():
     
     # Use a regular expression to initialize the FSA.
     re = 'ab*'
-    print 'Regular Expression:', re
+    print('Regular Expression:', re)
     fsa.empty()
     re2nfa(fsa, re)
-    print "NFA:"
+    print("NFA:")
     fsa.pp()
 
     # Convert the (nondeterministic) FSA to a deterministic FSA.
     dfa = fsa.dfa()
-    print "DFA:"
+    print("DFA:")
     dfa.pp()
 
     # Prune the DFA
     dfa.prune()
-    print "PRUNED DFA:"
+    print("PRUNED DFA:")
     dfa.pp()
 
     # Use the FSA to generate all strings of length less than 3

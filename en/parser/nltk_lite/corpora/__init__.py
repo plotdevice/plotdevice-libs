@@ -26,7 +26,7 @@ def get_basedir():
     return _BASEDIR
 
 # Find a default base directory.
-if os.environ.has_key('NLTK_LITE_CORPORA'):
+if 'NLTK_LITE_CORPORA' in os.environ:
     set_basedir(os.environ['NLTK_LITE_CORPORA'])
 elif sys.platform.startswith('win'):
     if os.path.isdir(os.path.join(sys.prefix, 'nltk_lite')):

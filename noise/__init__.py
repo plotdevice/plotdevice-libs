@@ -9,7 +9,7 @@
 ######################################################################################################
 
 import random
-from sys import maxint
+from sys import maxsize
 from math import floor
 from warnings import warn
 
@@ -20,7 +20,7 @@ try:
     """ Attempt to load the C library which is faster.
     """
     
-    import _noise
+    from . import _noise
 
     def seed(i=None):
     	if i == None: 

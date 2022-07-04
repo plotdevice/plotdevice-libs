@@ -88,7 +88,7 @@ class Grammar(cfg.Grammar):
         for production in productions:
             probs[production.lhs()] = (probs.get(production.lhs(), 0) +
                                        production.prob())
-        for (lhs, p) in probs.items():
+        for (lhs, p) in list(probs.items()):
             if not ((1-Grammar.EPSILON) < p < (1+Grammar.EPSILON)):
                 raise ValueError("cfg.Productions for %r do not sum to 1" % lhs)
 
@@ -194,23 +194,23 @@ def demo():
                   pcfg.Production(C, ['b'], prob=0.9)]
 
     pcfg_prod = pcfg_prods[2]
-    print 'A PCFG production:', `pcfg_prod`
-    print '    pcfg_prod.lhs()  =>', `pcfg_prod.lhs()`
-    print '    pcfg_prod.rhs()  =>', `pcfg_prod.rhs()`
-    print '    pcfg_prod.prob() =>', `pcfg_prod.prob()`
-    print
+    print('A PCFG production:', repr(pcfg_prod))
+    print('    pcfg_prod.lhs()  =>', repr(pcfg_prod.lhs()))
+    print('    pcfg_prod.rhs()  =>', repr(pcfg_prod.rhs()))
+    print('    pcfg_prod.prob() =>', repr(pcfg_prod.prob()))
+    print()
 
     # Create and print a PCFG
     grammar = pcfg.Grammar(S, pcfg_prods)
-    print 'A PCFG grammar:', `grammar`
-    print '    grammar.start()       =>', `grammar.start()`
-    print '    grammar.productions() =>',
+    print('A PCFG grammar:', repr(grammar))
+    print('    grammar.start()       =>', repr(grammar.start()))
+    print('    grammar.productions() =>', end=' ')
     # Use string.replace(...) is to line-wrap the output.
-    print `grammar.productions()`.replace(',', ',\n'+' '*26)
-    print
+    print(repr(grammar.productions()).replace(',', ',\n'+' '*26))
+    print()
 
     # extract productions from three trees and induce the PCFG
-    print "Induce PCFG grammar from treebank data:"
+    print("Induce PCFG grammar from treebank data:")
 
     productions = []
     for tree in islice(treebank.parsed(),3):
@@ -221,17 +221,17 @@ def demo():
         productions += tree.productions()
 
     grammar = pcfg.induce(S, productions)
-    print grammar
-    print
+    print(grammar)
+    print()
 
-    print "Parse sentence using induced grammar:"
+    print("Parse sentence using induced grammar:")
 
     parser = pchart.InsideParse(grammar)
     parser.trace(3)
 
     sent = extract(0, treebank.raw())
-    print sent
+    print(sent)
     for parse in parser.get_parse_list(sent):
-        print parse
+        print(parse)
 
 if __name__ == '__main__': demo()

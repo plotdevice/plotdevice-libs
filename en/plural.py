@@ -257,7 +257,7 @@ def plural(word, pos=NOUN, classical=True, custom={}):
 	
 	"""
 	
-	if word in custom.keys():
+	if word in list(custom.keys()):
 		return custom[word]
 
 	# Recursion of genitives
@@ -286,7 +286,7 @@ def plural(word, pos=NOUN, classical=True, custom={}):
 			return word.replace(words[-1], plural(words[-1], classical, custom))
     
 	# Only a very few number of adjectives inflect.
-	n = range(len(plural_rules))
+	n = list(range(len(plural_rules)))
 	if pos == ADJECTIVE:
 		n = [0, 1]
 

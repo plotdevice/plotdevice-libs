@@ -9,7 +9,7 @@ except ImportError:
     # we may need to try something different when
     # the library is not located in /Application Support
     colors = ximport("__init__")
-    reload(colors)
+    importlib.reload(colors)
 
 size(600, 600)
 
@@ -71,7 +71,7 @@ for i in range(50):
 
 """
 # Some type, with a heart symbol!
-heart = u"\u2665"
+heart = u"\\u2665"
 s1 = "strands of analogous curves "+heart
 s2 = "gratuitous type always looks cool on these things"   
 fill(1, 1, 1, 0.85)
@@ -83,3 +83,4 @@ stroke(1)
 strokewidth(1)
 line(0, HEIGHT/2, 60, HEIGHT/2)
 """
+import importlib

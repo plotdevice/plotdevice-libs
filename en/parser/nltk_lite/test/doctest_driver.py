@@ -28,7 +28,7 @@ import os, os.path, sys, unittest, pdb, bdb, re, tempfile, traceback
 from doctest import *
 from doctest import DocTestCase
 from optparse import OptionParser, OptionGroup, Option
-from StringIO import StringIO
+from io import StringIO
 
 __version__ = '0.1'
 
@@ -236,9 +236,9 @@ class Debugger:
         if args == (None,):
             pass
         elif len(args) == 1:
-            print `args[0]`
+            print(repr(args[0]))
         else:
-            print `args` # not quite right: >>> 1,
+            print(repr(args)) # not quite right: >>> 1,
 
     def _comment_line(self, line):
         "Return a commented form of the given line"
@@ -359,7 +359,7 @@ class Debugger:
 
     def _get_optionflags(self, example):
         optionflags = 0
-        for (flag, val) in example.options.items():
+        for (flag, val) in list(example.options.items()):
             if val:
                 optionflags |= flag
             else:
@@ -407,7 +407,7 @@ class Debugger:
                 try:
                     sys.stdout = _SpoofOut()
                     try:
-                        execfile(srcfilename, test.globs)
+                        exec(compile(open(srcfilename, "rb").read(), srcfilename, 'exec'), test.globs)
                     except bdb.BdbQuit:
                         return
                     except:
@@ -485,10 +485,10 @@ def find(name):
 def import_from_name(name):
     try:
         return __import__(name, globals(), locals(), ['*'])
-    except Exception, e:
-        raise ValueError, str(e)
+    except Exception as e:
+        raise ValueError(str(e))
     except:
-        raise ValueError, 'Error importing %r' % name
+        raise ValueError('Error importing %r' % name)
 
 def find_module_from_filename(filename):
     """
@@ -529,9 +529,9 @@ def run(names, optionflags, verbosity):
         try:
             for test in find(name):
                 suite.addTest(DocTestCase(test, optionflags))
-        except ValueError, e:
-            print >>sys.stderr, ('%s: Error processing %s -- %s' %
-                                 (sys.argv[0], name, e))
+        except ValueError as e:
+            print(('%s: Error processing %s -- %s' %
+                                 (sys.argv[0], name, e)), file=sys.stderr)
     unittest.TextTestRunner(verbosity=verbosity).run(suite)
 
 def debug(names, optionflags, verbosity, pm=True):
@@ -540,10 +540,10 @@ def debug(names, optionflags, verbosity, pm=True):
         try:
             for test in find(name):
                 debugger.debug(test, pm)
-        except ValueError, e:
+        except ValueError as e:
             raise
-            print >>sys.stderr, ('%s: Error processing %s -- %s' %
-                                 (sys.argv[0], name, e))
+            print(('%s: Error processing %s -- %s' %
+                                 (sys.argv[0], name, e)), file=sys.stderr)
 
 def update(names, optionflags, verbosity):
     parser = DocTestParser()
@@ -561,29 +561,29 @@ def update(names, optionflags, verbosity):
 
             # Confirm the changes.
             if failures == 0:
-                print 'No updates needed!'
+                print('No updates needed!')
             else:
-                print '*'*70
-                print '%d examples updated.' % failures
-                print '-'*70
+                print('*'*70)
+                print('%d examples updated.' % failures)
+                print('-'*70)
                 sys.stdout.write('Accept updates? [y/N] ')
                 sys.stdout.flush()
                 if sys.stdin.readline().lower().strip() in ('y', 'yes'):
                     # Make a backup of the original contents.
                     backup = test.filename+'.bak'
-                    print 'Renaming %s -> %s' % (name, backup)
+                    print('Renaming %s -> %s' % (name, backup))
                     os.rename(test.filename, backup)
                     # Write the new contents.
-                    print 'Writing updated version to %s' % test.filename
+                    print('Writing updated version to %s' % test.filename)
                     out = open(test.filename, 'w')
                     out.write(test.docstring)
                     out.close()
                 else:
-                    print 'Updates rejected!'
-        except ValueError, e:
+                    print('Updates rejected!')
+        except ValueError as e:
             raise
-            print >>sys.stderr, ('%s: Error processing %s -- %s' %
-                                 (sys.argv[0], name, e))
+            print(('%s: Error processing %s -- %s' %
+                                 (sys.argv[0], name, e)), file=sys.stderr)
 
 ###########################################################################
 # Main script

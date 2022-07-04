@@ -1,8 +1,9 @@
+import importlib
 try:
     beziereditor = ximport("beziereditor")
 except:
     beziereditor = ximport("__init__")
-    reload(beziereditor)
+    importlib.reload(beziereditor)
 
 speed(100)
 size(400, 400)

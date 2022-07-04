@@ -153,7 +153,7 @@ RegexpChunk
 """
 
 from en.parser.nltk_lite.parse import ParseI, AbstractParse
-from tree import Tree
+from .tree import Tree
 from en.parser.nltk_lite import tokenize
 import types, re
 
@@ -395,7 +395,7 @@ class ChunkScore(object):
         @rtype: C{String}
         @return: a concise representation of this C{ChunkScoring}.
         """
-        return '<ChunkScoring of '+`len(self)`+' chunks>'
+        return '<ChunkScoring of '+repr(len(self))+' chunks>'
 
     def __str__(self):
         """
@@ -519,12 +519,12 @@ class ChunkString(object):
         self._debug = debug_level
 
     def _tag(self, tok):
-        if type(tok) == types.TupleType:
+        if type(tok) == tuple:
             return tok[1]
         elif isinstance(tok, Tree):
             return tok.node
         else:
-            raise ValueError, 'chunk structures must contain tokens and trees'
+            raise ValueError('chunk structures must contain tokens and trees')
                       
     def _verify(self, verify_tags):
         """
@@ -697,7 +697,7 @@ class ChunkString(object):
                 <ChunkString: '{<DT><JJ><NN>}<VBN><IN>{<DT><NN>}'>
         
         """
-        return '<ChunkString: %s>' % `self._str`
+        return '<ChunkString: %s>' % repr(self._str)
 
     def __str__(self):
         """
@@ -827,7 +827,7 @@ class RegexpChunkRule(object):
         if type(regexp).__name__ == 'SRE_Pattern': regexp = regexp.pattern
         self._repl = repl
         self._descr = descr
-        if type(regexp) == types.StringType:
+        if type(regexp) == bytes:
             self._regexp = re.compile(regexp)
         else:
             self._regexp = regexp
@@ -868,8 +868,8 @@ class RegexpChunkRule(object):
              description string; that string can be accessed
              separately with the C{descr} method.
         """
-        return ('<RegexpChunkRule: '+`self._regexp.pattern`+
-                '->'+`self._repl`+'>')
+        return ('<RegexpChunkRule: '+repr(self._regexp.pattern)+
+                '->'+repr(self._repl)+'>')
         
 class ChunkRule(RegexpChunkRule):
     """
@@ -911,7 +911,7 @@ class ChunkRule(RegexpChunkRule):
              description string; that string can be accessed
              separately with the C{descr} method.
         """
-        return '<ChunkRule: '+`self._pattern`+'>'
+        return '<ChunkRule: '+repr(self._pattern)+'>'
 
 class ChinkRule(RegexpChunkRule):
     """
@@ -953,7 +953,7 @@ class ChinkRule(RegexpChunkRule):
              description string; that string can be accessed
              separately with the C{descr} method.
         """
-        return '<ChinkRule: '+`self._pattern`+'>'
+        return '<ChinkRule: '+repr(self._pattern)+'>'
 
 class UnChunkRule(RegexpChunkRule):
     """
@@ -992,7 +992,7 @@ class UnChunkRule(RegexpChunkRule):
              description string; that string can be accessed
              separately with the C{descr} method.
         """
-        return '<UnChunkRule: '+`self._pattern`+'>'
+        return '<UnChunkRule: '+repr(self._pattern)+'>'
 
 class MergeRule(RegexpChunkRule):
     """
@@ -1045,8 +1045,8 @@ class MergeRule(RegexpChunkRule):
              description string; that string can be accessed
              separately with the C{descr} method.
         """
-        return ('<MergeRule: '+`self._left_tag_pattern`+', '+
-                `self._right_tag_pattern`+'>')
+        return ('<MergeRule: '+repr(self._left_tag_pattern)+', '+
+                repr(self._right_tag_pattern)+'>')
 
 class SplitRule(RegexpChunkRule):
     """
@@ -1098,8 +1098,8 @@ class SplitRule(RegexpChunkRule):
              description string; that string can be accessed
              separately with the C{descr} method.
         """
-        return ('<SplitRule: '+`self._left_tag_pattern`+', '+
-                `self._right_tag_pattern`+'>')
+        return ('<SplitRule: '+repr(self._left_tag_pattern)+', '+
+                repr(self._right_tag_pattern)+'>')
 
 class ExpandLeftRule(RegexpChunkRule):
     """
@@ -1152,8 +1152,8 @@ class ExpandLeftRule(RegexpChunkRule):
              description string; that string can be accessed
              separately with the C{descr} method.
         """
-        return ('<ExpandLeftRule: '+`self._left_tag_pattern`+', '+
-                `self._right_tag_pattern`+'>')
+        return ('<ExpandLeftRule: '+repr(self._left_tag_pattern)+', '+
+                repr(self._right_tag_pattern)+'>')
 
 class ExpandRightRule(RegexpChunkRule):
     """
@@ -1206,8 +1206,8 @@ class ExpandRightRule(RegexpChunkRule):
              description string; that string can be accessed
              separately with the C{descr} method.
         """
-        return ('<ExpandRightRule: '+`self._left_tag_pattern`+', '+
-                `self._right_tag_pattern`+'>')
+        return ('<ExpandRightRule: '+repr(self._left_tag_pattern)+', '+
+                repr(self._right_tag_pattern)+'>')
 
 ##//////////////////////////////////////////////////////
 ##  RegexpChunk
@@ -1275,15 +1275,15 @@ class RegexpChunk(ChunkParseI, AbstractParse):
         """
         indent = ' '*(35-len(str(chunkstr))/2)
         
-        print 'Input:'
-        print indent, chunkstr
+        print('Input:')
+        print(indent, chunkstr)
         for rule in self._rules:
             rule.apply(chunkstr)
             if verbose:
-                print rule.descr()+' ('+`rule`+'):'
+                print(rule.descr()+' ('+repr(rule)+'):')
             else:
-                print rule.descr()+':'
-            print indent, chunkstr
+                print(rule.descr()+':')
+            print(indent, chunkstr)
         
     def _notrace_apply(self, chunkstr):
         """
@@ -1318,7 +1318,7 @@ class RegexpChunk(ChunkParseI, AbstractParse):
             used to define this C{RegexpChunk}.
         """
         if len(tokens) == 0:
-            print 'Warning: parsing empty text'
+            print('Warning: parsing empty text')
             return Tree(self._top_node, [])
         
         # Use the default trace value?
@@ -1363,11 +1363,11 @@ class RegexpChunk(ChunkParseI, AbstractParse):
         for rule in self._rules:
             margin = max(margin, len(rule.descr()))
         if margin < 35:
-            format = "    %" + `-(margin+3)` + "s%s\n"
+            format = "    %" + repr(-(margin+3)) + "s%s\n"
         else:
             format = "    %s\n      %s\n"
         for rule in self._rules:
-            s += format % (rule.descr(), `rule`)
+            s += format % (rule.descr(), repr(rule))
         return s[:-1]
             
 ##//////////////////////////////////////////////////////
@@ -1398,7 +1398,7 @@ def demo_eval(chunkparser, text):
     from en.parser.nltk_lite.parse import tree
     
     for sentence in text.split('\n'):
-        print sentence
+        print(sentence)
         sentence = sentence.strip()
         if not sentence: continue
         gold = tree.chunk(sentence)
@@ -1406,33 +1406,33 @@ def demo_eval(chunkparser, text):
         test = chunkparser.parse(tree.Tree('S', tokens))
         chunkscore.score(gold, test)
 
-    print '/'+('='*75)+'\\'
-    print 'Scoring', chunkparser
-    print ('-'*77)
-    print 'Precision: %5.1f%%' % (chunkscore.precision()*100), ' '*4,
-    print 'Recall: %5.1f%%' % (chunkscore.recall()*100), ' '*6,
-    print 'F-Measure: %5.1f%%' % (chunkscore.f_measure()*100)
+    print('/'+('='*75)+'\\')
+    print('Scoring', chunkparser)
+    print(('-'*77))
+    print('Precision: %5.1f%%' % (chunkscore.precision()*100), ' '*4, end=' ')
+    print('Recall: %5.1f%%' % (chunkscore.recall()*100), ' '*6, end=' ')
+    print('F-Measure: %5.1f%%' % (chunkscore.f_measure()*100))
     
 
     # Missed chunks.
     if chunkscore.missed():
-        print 'Missed:'
+        print('Missed:')
         missed = chunkscore.missed()
         for chunk in missed[:10]:
-            print '  ', chunk
+            print('  ', chunk)
         if len(chunkscore.missed()) > 10:
-               print '  ...'
+               print('  ...')
 
     # Incorrect chunks.
     if chunkscore.incorrect():
-        print 'Incorrect:'
+        print('Incorrect:')
         incorrect = chunkscore.incorrect()
         for chunk in incorrect[:10]:
-            print '  ', chunk
+            print('  ', chunk)
         if len(chunkscore.incorrect()) > 10:
-               print '  ...'
+               print('  ...')
     
-    print '\\'+('='*75)+'/'
+    print('\\'+('='*75)+'/')
 
 def demo_cascade(chunkparsers, text):
     """
@@ -1447,15 +1447,15 @@ def demo_cascade(chunkparsers, text):
     from en.parser.nltk_lite.parse.tree import Tree
     
     for sentence in text.split('\n'):
-        print sentence
+        print(sentence)
         sentence = sentence.strip()
         if not sentence: continue
         gold = tree.chunk(sentence)
         pieces = gold.leaves()
         for chunkparser in chunkparsers:
             pieces = chunkparser.parse(Tree('S', pieces))
-            print pieces
-        print
+            print(pieces)
+        print()
 
 def demo():
     """
@@ -1474,23 +1474,23 @@ def demo():
     [ John/NNP ] saw/VBD [the/DT cat/NN] [the/DT dog/NN] liked/VBD ./.
     [ John/NNP ] saw/VBD [the/DT cat/NN] the/DT cat/NN liked/VBD ./."""
 
-    print '*'*75
-    print 'Evaluation text:'
-    print text
-    print '*'*75
+    print('*'*75)
+    print('Evaluation text:')
+    print(text)
+    print('*'*75)
 
     # Use a simple regexp to define regular expressions.
     r1 = parse.ChunkRule(r'<DT>?<JJ>*<NN.*>', 'Chunk NPs')
     cp = parse.RegexpChunk([r1], chunk_node='NP', trace=1)
     parse.demo_eval(cp, text)
-    print
+    print()
 
     # Use a chink rule to remove everything that's *not* an NP
     r1 = parse.ChunkRule(r'<.*>+', 'Chunk everything')
     r2 = parse.ChinkRule(r'<VB.*>|<IN>|<\.>', 'Unchunk VB and IN and .')
     cp = parse.RegexpChunk([r1, r2], chunk_node='NP', trace=1)
     parse.demo_eval(cp, text)
-    print
+    print()
 
     # Unchunk non-NP words, and then merge consecutive NPs
     r1 = parse.ChunkRule(r'(<.*>)', 'Chunk each tag')
@@ -1498,17 +1498,17 @@ def demo():
     r3 = parse.MergeRule(r'<DT|JJ|NN.*>', r'<DT|JJ|NN.*>', 'Merge NPs')
     cp = parse.RegexpChunk([r1,r2,r3], chunk_node='NP', trace=1)
     parse.demo_eval(cp, text)
-    print
+    print()
 
     # Chunk sequences of NP words, and split them at determiners
     r1 = parse.ChunkRule(r'(<DT|JJ|NN.*>+)', 'Chunk sequences of DT&JJ&NN')
     r2 = parse.SplitRule('', r'<DT>', 'Split before DT')
     cp = parse.RegexpChunk([r1,r2], chunk_node='NP', trace=1)
     parse.demo_eval(cp, text)
-    print
+    print()
 
-    print "============== Cascaded Chunking =============="
-    print
+    print("============== Cascaded Chunking ==============")
+    print()
 
     np_chunk = parse.ChunkRule(r'<DT|JJ|NN.*>+', 'Chunk sequences of DT, JJ, NN')
     np_parse = parse.RegexpChunk([np_chunk], chunk_node='NP')
@@ -1526,7 +1526,7 @@ def demo():
     sent = Tree('S', ttoks)
     for chunkparser in chunkparsers:
         sent = chunkparser.parse(sent)
-        print sent
+        print(sent)
 
 if __name__ == '__main__':
     demo()

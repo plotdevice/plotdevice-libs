@@ -37,6 +37,7 @@ L{ConditionalProbDist}, a derived distribution.
 """
 
 import types, math 
+from functools import reduce
 try: import numpy
 except: pass
 
@@ -122,7 +123,7 @@ class FreqDist(object):
             to determine the count for each sample.
         @rtype: C{list}
         """
-        return self._count.keys()
+        return list(self._count.keys())
 
     def Nr(self, r, bins=None):
         """
@@ -136,7 +137,7 @@ class FreqDist(object):
             C{bins-self.B()}.  If C{bins} is not specified, it
             defaults to C{self.B()} (so Nr(0) will be 0).
         """
-        if r < 0: raise IndexError, 'FreqDist.Nr(): r must be non-negative'
+        if r < 0: raise IndexError('FreqDist.Nr(): r must be non-negative')
         
         # Special case for Nr(0):
         if r == 0:
@@ -210,7 +211,7 @@ class FreqDist(object):
         if self._max_cache is None:
             best_sample = None
             best_count = -1
-            for sample in self._count.keys():
+            for sample in list(self._count.keys()):
                 if self._count[sample] > best_count:
                     best_sample = sample
                     best_count = self._count[sample]
@@ -227,7 +228,7 @@ class FreqDist(object):
         @return: The set of samples in sorted order.
         @rtype: sequence of any
         """
-        items = [(-count,sample) for (sample,count) in self._count.items()]
+        items = [(-count,sample) for (sample,count) in list(self._count.items())]
         items.sort()
         return [sample for (neg_count,sample) in items]
 
@@ -255,7 +256,7 @@ class FreqDist(object):
         @param sample: The sample to search for.
         @type sample: any
         """
-        return self._count.has_key(sample)
+        return sample in self._count
 
 ##//////////////////////////////////////////////////////
 ##  Probability Distributions
@@ -276,7 +277,7 @@ class ProbDistI(object):
     """
     def __init__(self):
         if self.__class__ == ProbDistI:
-            raise AssertionError, "Interfaces can't be instantiated"
+            raise AssertionError("Interfaces can't be instantiated")
         
     def prob(self, sample):
         """
@@ -377,23 +378,23 @@ class DictionaryProbDist(ProbDistI):
         # Normalize the distribution, if requested.
         if normalize:
             if log:
-                value_sum = sum_logs(self._prob_dict.values())
+                value_sum = sum_logs(list(self._prob_dict.values()))
                 if value_sum <= _NINF:
-                    logp = math.log(1.0/len(prob_dict.keys()))
-                    for x in prob_dict.keys():
+                    logp = math.log(1.0/len(list(prob_dict.keys())))
+                    for x in list(prob_dict.keys()):
                         self._prob_dict[x] = logp
                 else:
-                    for (x, p) in self._prob_dict.items():
+                    for (x, p) in list(self._prob_dict.items()):
                         self._prob_dict[x] -= value_sum
             else:
                 value_sum = sum(self._prob_dict.values())
                 if value_sum == 0:
-                    p = 1.0/len(prob_dict.keys())
-                    for x in prob_dict.keys():
+                    p = 1.0/len(list(prob_dict.keys()))
+                    for x in list(prob_dict.keys()):
                         self._prob_dict[x] = p
                 else:
                     norm_factor = 1.0/value_sum
-                    for (x, p) in self._prob_dict.items():
+                    for (x, p) in list(self._prob_dict.items()):
                         self._prob_dict[x] *= norm_factor
                     
     def prob(self, sample):
@@ -412,10 +413,10 @@ class DictionaryProbDist(ProbDistI):
 
     def max(self):
         if not hasattr(self, '_max'):
-            self._max = max([(p,v) for (v,p) in self._prob_dict.items()])[1]
+            self._max = max([(p,v) for (v,p) in list(self._prob_dict.items())])[1]
         return self._max
     def samples(self):
-        return self._prob_dict.keys()
+        return list(self._prob_dict.keys())
     def __repr__(self):
         return '<ProbDist with %d samples>' % len(self._prob_dict)
         
@@ -1137,7 +1138,7 @@ class ConditionalFreqDist(object):
         @type condition: any
         """
         # Create the conditioned freq dist, if it doesn't exist
-        if not self._fdists.has_key(condition):
+        if condition not in self._fdists:
             self._fdists[condition] = FreqDist()
             
         return self._fdists[condition]
@@ -1151,7 +1152,7 @@ class ConditionalFreqDist(object):
             may contain zero sample outcomes.
         @rtype: C{list}
         """
-        return self._fdists.keys()
+        return list(self._fdists.keys())
 
     def __repr__(self):
         """
@@ -1176,7 +1177,7 @@ class ConditionalProbDistI(object):
     condition.
     """
     def __init__(self):
-        raise AssertionError, 'ConditionalProbDistI is an interface'
+        raise AssertionError('ConditionalProbDistI is an interface')
     
     def __getitem__(self, condition):
         """
@@ -1271,7 +1272,7 @@ class ConditionalProbDist(ConditionalProbDistI):
             self._pdists[c] = pdist
 
     def __getitem__(self, condition):
-        if not self._pdists.has_key(condition):
+        if condition not in self._pdists:
             # If it's a condition we haven't seen, create a new prob
             # dist from the empty freq dist.  Typically, this will
             # give a uniform prob dist.
@@ -1281,7 +1282,7 @@ class ConditionalProbDist(ConditionalProbDistI):
         return self._pdists[condition]
 
     def conditions(self):
-        return self._pdists.keys()
+        return list(self._pdists.keys())
 
     def __repr__(self):
         """
@@ -1313,7 +1314,7 @@ class DictionaryConditionalProbDist(ConditionalProbDistI):
 
     def conditions(self):
         # inherit documentation
-        return self._dict.keys()
+        return list(self._dict.keys())
 
 ##//////////////////////////////////////////////////////
 ## Adding in log-space.
@@ -1439,9 +1440,9 @@ class ProbabilisticMixIn(object):
 
 class ImmutableProbabilisticMixIn(ProbabilisticMixIn):
     def set_prob(self, prob):
-        raise ValueError, '%s is immutable' % self.__class__.__name__
+        raise ValueError('%s is immutable' % self.__class__.__name__)
     def set_logprob(self, prob):
-        raise ValueError, '%s is immutable' % self.__class__.__name__
+        raise ValueError('%s is immutable' % self.__class__.__name__)
 
 ##//////////////////////////////////////////////////////
 ##  Demonstration
@@ -1516,31 +1517,31 @@ def demo(numsamples=6, numoutcomes=500):
                           [pdist.prob(n) for pdist in pdists]))
 
     # Print the results in a formatted table.
-    print ('%d samples (1-%d); %d outcomes were sampled for each FreqDist' %
-           (numsamples, numsamples, numoutcomes))
-    print '='*9*(len(pdists)+2)
+    print(('%d samples (1-%d); %d outcomes were sampled for each FreqDist' %
+           (numsamples, numsamples, numoutcomes)))
+    print('='*9*(len(pdists)+2))
     FORMATSTR = '      FreqDist '+ '%8s '*(len(pdists)-1) + '|  Actual'
-    print FORMATSTR % tuple([`pdist`[1:9] for pdist in pdists[:-1]])
-    print '-'*9*(len(pdists)+2)
+    print(FORMATSTR % tuple([repr(pdist)[1:9] for pdist in pdists[:-1]]))
+    print('-'*9*(len(pdists)+2))
     FORMATSTR = '%3d   %8.6f ' + '%8.6f '*(len(pdists)-1) + '| %8.6f'
     for val in vals:
-        print FORMATSTR % val
+        print(FORMATSTR % val)
     
     # Print the totals for each column (should all be 1.0)
-    zvals = zip(*vals)
+    zvals = list(zip(*vals))
     def sum(lst): return reduce(lambda x,y:x+y, lst, 0)
     sums = [sum(val) for val in zvals[1:]]
-    print '-'*9*(len(pdists)+2)
+    print('-'*9*(len(pdists)+2))
     FORMATSTR = 'Total ' + '%8.6f '*(len(pdists)) + '| %8.6f'
-    print  FORMATSTR % tuple(sums)
-    print '='*9*(len(pdists)+2)
+    print(FORMATSTR % tuple(sums))
+    print('='*9*(len(pdists)+2))
     
     # Display the distributions themselves, if they're short enough.
-    if len(`str(fdist1)`) < 70:
-        print '  fdist1:', str(fdist1)
-        print '  fdist2:', str(fdist2)
-        print '  fdist3:', str(fdist3)
-    print
+    if len(repr(str(fdist1))) < 70:
+        print('  fdist1:', str(fdist1))
+        print('  fdist2:', str(fdist2))
+        print('  fdist3:', str(fdist3))
+    print()
 
 if __name__ == '__main__':
     demo(6, 10)

@@ -6,11 +6,11 @@ __date__ = "$Date: 2004/02/06 21:00:53 $"
 __copyright__ = "Copyright (c) 2002 Mark Pilgrim"
 __license__ = "Python"
 
-import google
+from . import google
 import unittest
 import sys, os
-import GoogleSOAPFacade
-from StringIO import StringIO
+from . import GoogleSOAPFacade
+from io import StringIO
 
 class BaseClass(unittest.TestCase):
     q = "python unit testing"

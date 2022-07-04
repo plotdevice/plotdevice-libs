@@ -1,3 +1,4 @@
+import importlib
 # Import the library
 try:
     # This is the statement you normally use.
@@ -7,7 +8,7 @@ except ImportError:
     # we may need to try something different when
     # the library is not located in /Application Support
     graph = ximport("__init__")
-    reload(graph)
+    importlib.reload(graph)
 
 size(500, 500)
 

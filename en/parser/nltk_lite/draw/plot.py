@@ -65,8 +65,9 @@ __all__ = ['Plot']
 
 from types import *
 from math import log, log10, ceil, floor
-import Tkinter, sys, time
+import tkinter, sys, time
 from en.parser.nltk_lite.draw import ShowText, in_idle
+import importlib
 
 class PlotFrameI(object):
     """
@@ -76,34 +77,34 @@ class PlotFrameI(object):
     """
     def postscript(self, filename):
         'Print the contents of the plot to the given file'
-        raise AssertionError, 'PlotFrameI is an interface'
+        raise AssertionError('PlotFrameI is an interface')
     def config_axes(self, xlog, ylog):
         'Set the scale for the axes (linear/logarithmic)'
-        raise AssertionError, 'PlotFrameI is an interface'
+        raise AssertionError('PlotFrameI is an interface')
     def invtransform(self, x, y):
         'Transform pixel coordinates to plot coordinates'
-        raise AssertionError, 'PlotFrameI is an interface'
+        raise AssertionError('PlotFrameI is an interface')
     def zoom(self, i1, j1, i2, j2):
         'Zoom to the given range'
-        raise AssertionError, 'PlotFrameI is an interface'
+        raise AssertionError('PlotFrameI is an interface')
     def visible_area(self):
         'Return the visible area rect (in plot coordinates)'
-        raise AssertionError, 'PlotFrameI is an interface'
+        raise AssertionError('PlotFrameI is an interface')
     def create_zoom_marker(self):
         'mark the zoom region, for drag-zooming'
-        raise AssertionError, 'PlotFrameI is an interface'
+        raise AssertionError('PlotFrameI is an interface')
     def adjust_zoom_marker(self, x0, y0, x1, y1):
         'adjust the zoom region marker, for drag-zooming'
-        raise AssertionError, 'PlotFrameI is an interface'
+        raise AssertionError('PlotFrameI is an interface')
     def delete_zoom_marker(self):
         'delete the zoom region marker (for drag-zooming)'
-        raise AssertionError, 'PlotFrameI is an interface'
+        raise AssertionError('PlotFrameI is an interface')
     def bind(self, *args): 
         'bind an event to a function'
-        raise AssertionError, 'PlotFrameI is an interface'
+        raise AssertionError('PlotFrameI is an interface')
     def unbind(self, *args): 
         'unbind an event'
-        raise AssertionError, 'PlotFrameI is an interface'
+        raise AssertionError('PlotFrameI is an interface')
 
 class CanvasPlotFrame(PlotFrameI):
     def __init__(self, root, vals, rng):
@@ -111,17 +112,17 @@ class CanvasPlotFrame(PlotFrameI):
         self._original_rng = rng
         self._original_vals = vals
         
-        self._frame = Tkinter.Frame(root)
+        self._frame = tkinter.Frame(root)
         self._frame.pack(expand=1, fill='both')
 
         # Set up the canvas
-        self._canvas = Tkinter.Canvas(self._frame, background='white')
+        self._canvas = tkinter.Canvas(self._frame, background='white')
         self._canvas['scrollregion'] = (0,0,200,200)
 
         # Give the canvas scrollbars.
-        sb1 = Tkinter.Scrollbar(self._frame, orient='vertical')
+        sb1 = tkinter.Scrollbar(self._frame, orient='vertical')
         sb1.pack(side='right', fill='y')
-        sb2 = Tkinter.Scrollbar(self._frame, orient='horizontal')
+        sb2 = tkinter.Scrollbar(self._frame, orient='horizontal')
         sb2.pack(side='bottom', fill='x')
         self._canvas.pack(side='left', fill='both', expand=1)
 
@@ -320,7 +321,7 @@ class BLTPlotFrame(PlotFrameI):
 
         # Create top-level frame.
         self._root = root
-        self._frame = Tkinter.Frame(root)
+        self._frame = tkinter.Frame(root)
         self._frame.pack(expand=1, fill='both')
         
         # Create the graph.
@@ -328,7 +329,7 @@ class BLTPlotFrame(PlotFrameI):
             import Pmw
             # This reload is needed to prevent an error if we create
             # more than 1 graph in the same interactive session:
-            reload(Pmw.Blt)
+            importlib.reload(Pmw.Blt)
             
             Pmw.initialise()
             self._graph = Pmw.Blt.Graph(self._frame)
@@ -336,9 +337,9 @@ class BLTPlotFrame(PlotFrameI):
             raise ImportError('Pmw not installed!')
 
         # Add scrollbars.
-        sb1 = Tkinter.Scrollbar(self._frame, orient='vertical')
+        sb1 = tkinter.Scrollbar(self._frame, orient='vertical')
         sb1.pack(side='right', fill='y')
-        sb2 = Tkinter.Scrollbar(self._frame, orient='horizontal')
+        sb2 = tkinter.Scrollbar(self._frame, orient='horizontal')
         sb2.pack(side='bottom', fill='x')
         self._graph.pack(side='left', fill='both', expand='yes')
         self._yscroll = sb1
@@ -511,36 +512,36 @@ class Plot(object):
             if rng is None: rng = [x*0.1 for x in range(-100, 100)]
             try: vals = [vals(i) for i in rng]
             except TypeError:
-                raise TypeError, 'Bad range type: %s' % type(rng)
+                raise TypeError('Bad range type: %s' % type(rng))
 
         # If vals isn't a function, make sure it's a sequence:
         elif type(vals) not in (ListType, TupleType):
-            raise ValueError, 'Bad values type: %s' % type(vals)
+            raise ValueError('Bad values type: %s' % type(vals))
 
         # If vals is a list of points, unzip it.
         elif len(vals) > 0 and type(vals[0]) in (ListType, TupleType):
             if rng is not None:
                 estr = "Can't specify a range when vals is a list of points."
-                raise ValueError, estr
-            (rng, vals) = zip(*vals)
+                raise ValueError(estr)
+            (rng, vals) = list(zip(*vals))
 
         # If vals & rng are both lists, make sure their lengths match.
         elif type(rng) in (ListType, TupleType):
             if len(rng) != len(vals):
                 estr = 'Range list and value list have different lengths.'
-                raise ValueError, estr
+                raise ValueError(estr)
 
         # If rng is unspecified, take it to be integers starting at zero
         elif rng is None:
-            rng = range(len(vals))
+            rng = list(range(len(vals)))
 
         # If it's an unknown range type, then fail.
         else:
-            raise TypeError, 'Bad range type: %s' % type(rng)
+            raise TypeError('Bad range type: %s' % type(rng))
 
         # Check that we have something to plot
         if len(vals) == 0:
-            raise ValueError, 'Nothing to plot!'
+            raise ValueError('Nothing to plot!')
 
         # Set _rng/_vals
         self._rng = rng
@@ -565,7 +566,7 @@ class Plot(object):
             raise ValueError("Nothing to plot")
         
         # Set up the tk window
-        self._root = Tkinter.Tk()
+        self._root = tkinter.Tk()
         self._init_bindings(self._root)
 
         # Create the actual plot frame
@@ -575,8 +576,8 @@ class Plot(object):
             self._plot = CanvasPlotFrame(self._root, vals, rng)
 
         # Set up the axes
-        self._ilog = Tkinter.IntVar(self._root); self._ilog.set(0)
-        self._jlog = Tkinter.IntVar(self._root); self._jlog.set(0)
+        self._ilog = tkinter.IntVar(self._root); self._ilog.set(0)
+        self._jlog = tkinter.IntVar(self._root); self._jlog.set(0)
         scale = kwargs.get('scale', 'linear')
         if scale in ('log-linear', 'log_linear', 'log'): self._ilog.set(1)
         if scale in ('linear-log', 'linear_log', 'log'): self._jlog.set(1)
@@ -598,16 +599,16 @@ class Plot(object):
         self._root.bind('<F1>', self.help)
         
     def _init_menubar(self, parent):
-        menubar = Tkinter.Menu(parent)
+        menubar = tkinter.Menu(parent)
 
-        filemenu = Tkinter.Menu(menubar, tearoff=0)
+        filemenu = tkinter.Menu(menubar, tearoff=0)
         filemenu.add_command(label='Print to Postscript', underline=0,
                              command=self.postscript, accelerator='Ctrl-p')
         filemenu.add_command(label='Exit', underline=1,
                              command=self.destroy, accelerator='Ctrl-x')
         menubar.add_cascade(label='File', underline=0, menu=filemenu)
 
-        zoommenu = Tkinter.Menu(menubar, tearoff=0)
+        zoommenu = tkinter.Menu(menubar, tearoff=0)
         zoommenu.add_command(label='Zoom in', underline=5,
                              command=self._zoom_in, accelerator='left click')
         zoommenu.add_command(label='Zoom out', underline=5,
@@ -616,7 +617,7 @@ class Plot(object):
                              accelerator='Ctrl-a')
         menubar.add_cascade(label='Zoom', underline=0, menu=zoommenu)
 
-        axismenu = Tkinter.Menu(menubar, tearoff=0)
+        axismenu = tkinter.Menu(menubar, tearoff=0)
         if self._imin > 0: xstate = 'normal'
         else: xstate = 'disabled'
         if self._jmin > 0: ystate = 'normal'
@@ -629,7 +630,7 @@ class Plot(object):
                                  command=self._log)
         menubar.add_cascade(label='Axes', underline=0, menu=axismenu)
 
-        helpmenu = Tkinter.Menu(menubar, tearoff=0)
+        helpmenu = tkinter.Menu(menubar, tearoff=0)
         helpmenu.add_command(label='About', underline=0,
                              command=self.about)
         helpmenu.add_command(label='Instructions', underline=0,
@@ -651,7 +652,7 @@ class Plot(object):
         if isinstance(self._plot, BLTPlotFrame):
             ABOUT += '\n\nBased on the BLT Widget'
         try:
-            from tkMessageBox import Message
+            from tkinter.messagebox import Message
             Message(message=ABOUT, title=TITLE).show()
         except:
             ShowText(self._root, TITLE, ABOUT)
@@ -677,7 +678,7 @@ class Plot(object):
         Print the (currently visible) contents of the plot window to a
         postscript file.
         """
-        from tkFileDialog import asksaveasfilename
+        from tkinter.filedialog import asksaveasfilename
         ftypes = [('Postscript files', '.ps'),
                   ('All files', '*')]
         filename = asksaveasfilename(filetypes=ftypes, defaultextension='.ps')

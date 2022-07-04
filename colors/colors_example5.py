@@ -1,10 +1,11 @@
+import importlib
 # SHADES
 
 try:
     colors = ximport("colors")
 except ImportError:
     colors = ximport("__init__")
-    reload(colors)
+    importlib.reload(colors)
     
 var("hue", NUMBER, 0.8, 0.0, 1.0)
 clr = colors.hsb(hue, 1, 1)

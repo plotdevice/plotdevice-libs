@@ -9,6 +9,7 @@ __copyright__ = "Copyright (c) 2008 Tom De Smedt"
 __license__   = "GPL"
 
 from plotdevice.lib import register
+import importlib
 _ctx = register(__name__)
 
 ### NODEBOX GRID #####################################################################################
@@ -33,10 +34,10 @@ _ctx = register(__name__)
 
 ######################################################################################################
 
-import proportion as _proportion
-import content as _content
-import style
-import text
+from . import proportion as _proportion
+from . import content as _content
+from . import style
+from . import text
 
 from random import random, shuffle
 from types import MethodType, FunctionType
@@ -83,7 +84,7 @@ format = format()
 ### TEXT #############################################################################################
 # Rewire the functions in the text module that need a drawing context.
 
-reload(text)
+importlib.reload(text)
 text._keep_together = text.keep_together
 text._split = text.split
 text._divide = text.divide
@@ -184,7 +185,7 @@ class statistics(object):
     def _used(self):
         """ Counts the cells that have content.
         """
-        return len(filter(lambda cell: cell.has_content(), self))
+        return len([cell for cell in self if cell.has_content()])
     used = property(_used)
 
     def _empty(self):
@@ -194,7 +195,7 @@ class statistics(object):
     def _numeric(self):
         """ Counts the cells that have numeric content.
         """
-        return filter(lambda cell: cell.has_content() and cell.content.is_numeric(), self)
+        return [cell for cell in self if cell.has_content() and cell.content.is_numeric()]
     numeric = property(_numeric)
 
     def _numbers(self):
@@ -645,7 +646,7 @@ class grid(list, splitter, statistics):
     def __getattr__(self, name):
         x = self.find(name)
         if x != None: return x
-        raise AttributeError, "grid instance has no attribute '"+name+"'"
+        raise AttributeError("grid instance has no attribute '"+name+"'")
 
     def cell(self, i, j):
         """ Returns the cell in row i, column j.
@@ -910,7 +911,7 @@ class grid(list, splitter, statistics):
             # We store "the things" in self._state so we can reuse them in leave().
             try: s = self.styles[self.style]
             except KeyError:
-                raise KeyError, "no style with name '"+self.style+"'"
+                raise KeyError("no style with name '"+self.style+"'")
             self._state = style.begin_grob(s, self, 0, 0)
         def leave(self):
             s = self.styles[self.style]
@@ -932,7 +933,7 @@ class grid(list, splitter, statistics):
             if len(self) == 0 and not self.has_content() and self.content != None:
                 try: s = self.styles[self.style]
                 except KeyError:
-                    raise KeyError, "no style with name '"+self.style+"'"
+                    raise KeyError("no style with name '"+self.style+"'")
                 _ctx.font(s.font, s.fontsize)
                 _ctx.lineheight(s.lineheight)
                 _ctx.align(style.alignment(s.horizontal))
@@ -1037,7 +1038,7 @@ def highlight(grid, clr=None, recursive=False, _label="", _group=False):
     # Label each nested cell.
     # When recursive, call highlight() on each cell.
     for i in range(len(grid.rows)):
-        for j in reversed(range(len(grid.rows[i]))):
+        for j in reversed(list(range(len(grid.rows[i])))):
             cell = grid.rows[i][j]
             label = _label+"("+str(i)+","+str(j)+")"
             if not recursive:

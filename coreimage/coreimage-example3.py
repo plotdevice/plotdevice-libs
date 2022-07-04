@@ -10,7 +10,7 @@ try:
     coreimage = ximport("coreimage")
 except:
     coreimage = ximport("__init__")
-    reload(coreimage)
+    importlib.reload(coreimage)
 
 # Import the MorgueFile library
 try: 
@@ -19,6 +19,7 @@ except:
     morguefile = ximport("morguefile")
 
 from random import shuffle
+import importlib
 
 # Download some images from morguefile.com
 # The script will create a folder and put

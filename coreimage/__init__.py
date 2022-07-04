@@ -269,15 +269,15 @@ class Canvas:
         """
 
         x = y = w = h = None
-        if kwargs.has_key("x"): x = kwargs["x"]
-        if kwargs.has_key("y"): y = kwargs["y"]
-        if kwargs.has_key("w"): w = kwargs["w"]
-        if kwargs.has_key("h"): h = kwargs["h"]
+        if "x" in kwargs: x = kwargs["x"]
+        if "y" in kwargs: y = kwargs["y"]
+        if "w" in kwargs: w = kwargs["w"]
+        if "h" in kwargs: h = kwargs["h"]
 
         name = ""
         type = ""
-        if kwargs.has_key("name"): name = kwargs["name"]
-        if kwargs.has_key("type"): type = kwargs["type"]
+        if "name" in kwargs: name = kwargs["name"]
+        if "type" in kwargs: type = kwargs["type"]
 
         # Creates a new Layer object in the Canvas.
         def _add_layer(data, type, x=None, y=None, w=None, h=None, s=Point(1.0,1.0)):
@@ -312,7 +312,7 @@ class Canvas:
             r, g, b, a = args[1].r, args[1].g, args[1].b, args[1].a
             if type == "radial":
                 type = LAYER_RADIAL_GRADIENT
-                if not kwargs.has_key("spread") \
+                if "spread" not in kwargs \
                 or kwargs["spread"] == None:
                     kwargs["spread"] = 0.0
                 return _add_layer((args[0], args[1], float(kwargs["spread"])), type, x, y, w, h)
@@ -610,11 +610,11 @@ class Layers(list):
                     try: return layer.data.layers[index]
                     except:
                         pass
-            raise KeyError, index
+            raise KeyError(index)
         # Layer by index number.
         if isinstance(index, int):
             return list.__getitem__(self, index)
-        raise IndexError, "list index out of range"
+        raise IndexError("list index out of range")
 
     def __getattr__(self, name, cls="Layers"):
         """ You can also do: canvas.layers.layer_name (without recursion).
@@ -624,7 +624,7 @@ class Layers(list):
                 return layer
         # This method is also called from the Canvas object,
         # In that case, the cls parameter will be "Canvas".
-        raise AttributeError, cls+" instance has no attribute '"+name+"'"
+        raise AttributeError(cls+" instance has no attribute '"+name+"'")
 
 ### LAYER ############################################################################################
 
@@ -1454,7 +1454,7 @@ class CoreImageRenderer(Renderer):
         filter.setDefaults()
         if input != None:
             filter.setValue_forKey_(input, "inputImage")
-        for key in parameters.keys():
+        for key in list(parameters.keys()):
             value = parameters[key]
             filter.setValue_forKey_(value, key)
         return filter.valueForKey_("outputImage")
@@ -2272,7 +2272,7 @@ class CoreImageRenderer(Renderer):
                 "inputBottomLeft"  : 3,
                 "inputBottomRight" : 2
             }
-            for k in p.keys():
+            for k in list(p.keys()):
                 i = p[k]
                 dx =  layer._distort[i].x * w
                 dy = -layer._distort[i].y * h
@@ -2889,7 +2889,7 @@ class CoreImageHelper:
         # For each parameter,
         # find the defaults in the corresponding CIFilter.
         f = CIFilter.filterWithName_(filter)
-        a = f.attributes().items()
+        a = list(f.attributes().items())
         for param in self.renderer.filters[filter]:
 
             n = param + "_" + str(self._i)

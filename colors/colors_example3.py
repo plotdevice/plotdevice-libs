@@ -1,10 +1,11 @@
+import importlib
 # COLOR RULES
 
 try:
     colors = ximport("colors")
 except ImportError:
     colors = ximport("__init__")
-    reload(colors)
+    importlib.reload(colors)
 
 var("H", NUMBER, 0.55, 0.0, 1.0)
 var("S", NUMBER, 1.0, 0.0, 1.0)

@@ -1,3 +1,4 @@
+import importlib
 # SVG as layers in Core Image.
 
 size(500, 500)
@@ -6,7 +7,7 @@ try:
     svg = ximport("svg")
 except:
     svg = ximport("__init__")
-    reload(svg)
+    importlib.reload(svg)
 
 # We'll need the Core Image library.
 coreimage = ximport("coreimage")

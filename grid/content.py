@@ -2,8 +2,8 @@
 # See LICENSE.txt for details.
 
 import os
-import text
-from style import draw_text, draw_image
+from . import text
+from .style import draw_text, draw_image
 from types import MethodType, FunctionType
 
 #### CONTENT #########################################################################################

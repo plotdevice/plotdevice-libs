@@ -1,8 +1,9 @@
+import importlib
 try:
     ants = ximport("ants")
 except:
     ants = ximport("__init__")
-    reload(ants)
+    importlib.reload(ants)
 
 
 size(500,500)

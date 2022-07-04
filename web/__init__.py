@@ -32,11 +32,11 @@ _ctx = register(__name__)
 ######################################################################################################
 
 import os
-import cache
-import url
-import html
-import page
-import json
+from . import cache
+from . import url
+from . import html
+from . import page
+from . import json
 
 packages = [
     "yahoo", "google",

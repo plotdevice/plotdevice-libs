@@ -1,10 +1,11 @@
+import importlib
 # GRADIENT LIST
 
 try:
     colors = ximport("colors")
 except ImportError:
     colors = ximport("__init__")
-    reload(colors)
+    importlib.reload(colors)
 
 size(550, 330)
 background(0, 0.1, 0.2)

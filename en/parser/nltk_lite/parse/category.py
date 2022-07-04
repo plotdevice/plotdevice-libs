@@ -55,9 +55,9 @@ class Category(FeatureStructure, cfg.Nonterminal):
         FeatureStructure.__init__(self, **features)
         self._required = self.__class__.requiredFeatures
         for name in self._required:
-            if not self._features.has_key(name):
+            if name not in self._features:
                 self._features[name] = None
-        items = self._features.items()
+        items = list(self._features.items())
         items.sort()
         self._hash = None
         self._frozen = False
@@ -101,7 +101,7 @@ class Category(FeatureStructure, cfg.Nonterminal):
 
     def __hash__(self):
         if self._hash is not None: return self._hash
-        items = self._features.items()
+        items = list(self._features.items())
         items.sort()
         return hash(tuple(items))
     
@@ -112,7 +112,7 @@ class Category(FeatureStructure, cfg.Nonterminal):
 
         @return: self
         """
-        for val in self._features.values():
+        for val in list(self._features.values()):
             if isinstance(val, Category) and not val.frozen():
                 val.freeze()
         self._hash = hash(self)
@@ -156,7 +156,7 @@ class Category(FeatureStructure, cfg.Nonterminal):
         features = newcopy._features
 
         # Fill out the features.
-        for (fname, fval) in self._features.items():
+        for (fname, fval) in list(self._features.items()):
             if isinstance(fval, FeatureStructure):
                 features[fname] = fval.deepcopy()
             else:
@@ -171,8 +171,7 @@ class Category(FeatureStructure, cfg.Nonterminal):
         """
         @return: a list of all features that have values.
         """
-        return filter(lambda x: not (x in self._required and self[x] is None),
-        self._features.keys())
+        return [x for x in list(self._features.keys()) if not (x in self._required and self[x] is None)]
     
     def get_feature(self, *args):
         try:
@@ -193,7 +192,7 @@ class Category(FeatureStructure, cfg.Nonterminal):
         return selfcopy
 
     def _remove_unbound_vars(self):
-        for (fname, fval) in self._features.items():
+        for (fname, fval) in list(self._features.items()):
             if isinstance(fval, FeatureVariable):
                 del self._features[fname]
             elif isinstance(fval, Category):
@@ -326,7 +325,7 @@ class Category(FeatureStructure, cfg.Nonterminal):
                 #'application': re.compile(r'(app)\((\?[a-z][a-z]*)\s*,\s*(\?[a-z][a-z]*)\)'),
                  'disjunct': re.compile(r'\s*\|\s*'),
                  'whitespace': re.compile(r'\s*')}
-    for (k, v) in FeatureStructure._PARSE_RE.iteritems():
+    for (k, v) in FeatureStructure._PARSE_RE.items():
         assert k not in _PARSE_RE
         _PARSE_RE[k] = v
     
@@ -429,14 +428,14 @@ class Category(FeatureStructure, cfg.Nonterminal):
         # Semantic value of the form <app(?x, ?y) >'; return an ApplicationExpression
         match = _PARSE_RE['application'].match(s, position)
         if match is not None:
-            fun = ParserSubstitute(match.group(2)).next()
-            arg = ParserSubstitute(match.group(3)).next()
+            fun = next(ParserSubstitute(match.group(2)))
+            arg = next(ParserSubstitute(match.group(3)))
             return ApplicationExpressionSubst(fun, arg), match.end()       
 
         # other semantic value enclosed by '< >'; return value given by the lambda expr parser
         match = _PARSE_RE['semantics'].match(s, position)
         if match is not None:
-            return ParserSubstitute(match.group(1)).next(), match.end()	
+            return next(ParserSubstitute(match.group(1))), match.end()	
         
         # String value
         if s[position] in "'\"":
@@ -495,11 +494,11 @@ class Category(FeatureStructure, cfg.Nonterminal):
         position = 0
         try:
             lhs, position = cls._parse(s, position)
-        except ValueError, e:
+        except ValueError as e:
             estr = ('Error parsing field structure\n\n\t' +
                     s + '\n\t' + ' '*e.args[1] + '^ ' +
                     'Expected %s\n' % e.args[0])
-            raise ValueError, estr
+            raise ValueError(estr)
         lhs.freeze()
 
         match = _PARSE_RE['arrow'].match(s, position)
@@ -511,11 +510,11 @@ class Category(FeatureStructure, cfg.Nonterminal):
             while position < len(s) and _PARSE_RE['disjunct'].match(s, position) is None:
                 try:
                     val, position = cls._parseval(s, position, {})
-                except ValueError, e:
+                except ValueError as e:
                     estr = ('Error parsing field structure\n\n\t' +
                         s + '\n\t' + ' '*e.args[1] + '^ ' +
                         'Expected %s\n' % e.args[0])
-                    raise ValueError, estr
+                    raise ValueError(estr)
                 if isinstance(val, Category): val.freeze()
                 rhs.append(val)
                 position = _PARSE_RE['whitespace'].match(s, position).end()
@@ -591,7 +590,7 @@ class GrammarCategory(Category):
     _PARSE_RE = {'semantics': re.compile(r'<([^>]+)>'), 
                  'application': re.compile(r'<(app)\((\?[a-z][a-z]*)\s*,\s*(\?[a-z][a-z]*)\)>'),
                  'slash': re.compile(r'\s*/\s*')}
-    for (k, v) in Category._PARSE_RE.iteritems():
+    for (k, v) in Category._PARSE_RE.items():
         assert k not in _PARSE_RE
         _PARSE_RE[k] = v
     # These we actually do want to override.
@@ -705,14 +704,14 @@ class ApplicationExpressionSubst(logic.ApplicationExpression, SubstituteBindings
         return newval
 
 def demo():
-    print "Category(pos='n', agr=Category(number='pl', gender='f')):"
-    print
-    print Category(pos='n', agr=Category(number='pl', gender='f'))
-    print
-    print "GrammarCategory.parse('VP[+fin]/NP[+pl]'):"
-    print
-    print GrammarCategory.parse('VP[+fin]/NP[+pl]')
-    print
+    print("Category(pos='n', agr=Category(number='pl', gender='f')):")
+    print()
+    print(Category(pos='n', agr=Category(number='pl', gender='f')))
+    print()
+    print("GrammarCategory.parse('VP[+fin]/NP[+pl]'):")
+    print()
+    print(GrammarCategory.parse('VP[+fin]/NP[+pl]'))
+    print()
     
 if __name__ == '__main__':
     demo()

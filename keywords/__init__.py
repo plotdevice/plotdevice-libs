@@ -159,13 +159,13 @@ def keywords(str, top=10, nouns=True, singularize=True, filters=[]):
         and not word in filters \
         and not is_connective(word) \
         and (not nouns or noun):
-            if word in count.keys():
+            if word in list(count.keys()):
                 count[word] += 1
             else:
                 count[word] = 1
     
     sorted = []
-    for word in count.keys():
+    for word in list(count.keys()):
         sorted.append((count[word], word))
     sorted.sort()
     sorted.reverse()

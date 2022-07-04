@@ -340,7 +340,7 @@ def demo():
     
     # convert tree back to bracketed text
     sentence2 = treetransforms.toTreebank(original)
-    print "Sentences the same? ", sentence == sentence2
+    print("Sentences the same? ", sentence == sentence2)
     
     draw_trees(tree, collapsedTree, cnfTree, parentTree, original)
 

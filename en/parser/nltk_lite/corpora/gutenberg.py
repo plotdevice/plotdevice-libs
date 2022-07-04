@@ -80,7 +80,7 @@ def demo():
     from itertools import islice
 
     for word in islice(gutenberg.raw('bible-kjv'), 0, 100):
-        print word,
+        print(word, end=' ')
 
 if __name__ == '__main__':
     demo()

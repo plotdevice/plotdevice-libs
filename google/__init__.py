@@ -4,7 +4,7 @@
 # Copyright (c) 2007 by Tom De Smedt, Frederik De Bleser
 # See LICENSE.txt for details.
 
-from pygoogle import google as pygoogle
+from .pygoogle import google as pygoogle
 import sys
 
 class Output:
@@ -77,7 +77,7 @@ def search(query, page=1):
         o.on()
         raise GoogleLicenseError
         
-    except Exception, e:
+    except Exception as e:
         o.on()
         if dry(): raise GoogleLimitError
         else: raise GoogleError
@@ -106,7 +106,7 @@ def results(query):
         o.on()
         raise GoogleLicenseError
     
-    except Exception, e:
+    except Exception as e:
         o.on()
         if dry(): raise GoogleLimitError
         else: raise GoogleError

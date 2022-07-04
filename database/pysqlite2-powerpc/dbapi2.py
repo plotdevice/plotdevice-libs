@@ -40,13 +40,13 @@ Time = datetime.time
 Timestamp = datetime.datetime
 
 def DateFromTicks(ticks):
-    return apply(Date,time.localtime(ticks)[:3])
+    return Date(*time.localtime(ticks)[:3])
 
 def TimeFromTicks(ticks):
-    return apply(Time,time.localtime(ticks)[3:6])
+    return Time(*time.localtime(ticks)[3:6])
 
 def TimestampFromTicks(ticks):
-    return apply(Timestamp,time.localtime(ticks)[:6])
+    return Timestamp(*time.localtime(ticks)[:6])
 
 _major, _minor, _micro = version.split(".")
 version_info = (int(_major), int(_minor), _micro)
@@ -62,13 +62,13 @@ def adapt_datetime(val):
     return val.isoformat(" ")
 
 def convert_date(val):
-    return datetime.date(*map(int, val.split("-")))
+    return datetime.date(*list(map(int, val.split("-"))))
 
 def convert_timestamp(val):
     datepart, timepart = val.split(" ")
-    year, month, day = map(int, datepart.split("-"))
+    year, month, day = list(map(int, datepart.split("-")))
     timepart_full = timepart.split(".")
-    hours, minutes, seconds = map(int, timepart_full[0].split(":"))
+    hours, minutes, seconds = list(map(int, timepart_full[0].split(":")))
     if len(timepart_full) == 2:
         microseconds = int(float("0." + timepart_full[1]) * 1000000)
     else:

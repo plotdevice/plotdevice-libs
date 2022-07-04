@@ -1,3 +1,4 @@
+import importlib
 # Import the library
 try: 
     # This is the statement you normally use.
@@ -7,7 +8,7 @@ except:
     # we may need to try something different when
     # the library is not located in /Application Support
     lsystem = ximport("__init__")
-reload(lsystem)
+importlib.reload(lsystem)
 
 # Create a simple treelike pattern.
 tree = lsystem.create()

@@ -1,8 +1,9 @@
+import importlib
 try: 
     grid = ximport("grid")
 except:
     grid = ximport("__init__")
-    reload(grid)
+    importlib.reload(grid)
 
 w, h = grid.format.A4
 size(w+0, h+0)

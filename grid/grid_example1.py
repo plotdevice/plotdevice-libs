@@ -1,3 +1,4 @@
+import importlib
 # Import the library
 try: 
     # This is the statement you normally use.
@@ -7,7 +8,7 @@ except:
     # we may need to try something different when
     # the library is not located in /Application Support
     grid = ximport("__init__")
-    reload(grid)
+    importlib.reload(grid)
 
 g = grid.create(3, 1, width=400, height=500)
 g.bottom.split(1, 3)

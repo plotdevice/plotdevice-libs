@@ -12,6 +12,6 @@ set-theoretic models.
 """
 
 
-from evaluate import *
-from logic import *
-from utilities import *
+from .evaluate import *
+from .logic import *
+from .utilities import *

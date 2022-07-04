@@ -153,7 +153,7 @@ class Porter(StemI):
             }
 
         self.pool = {}
-        for key in irregular_forms.keys():
+        for key in list(irregular_forms.keys()):
             for val in irregular_forms[key]:
                 self.pool[val] = key
 
@@ -488,7 +488,7 @@ class Porter(StemI):
         self.k = j
         self.k0 = i
 
-        if self.pool.has_key(self.b[self.k0:self.k+1]):
+        if self.b[self.k0:self.k+1] in self.pool:
             return self.pool[self.b[self.k0:self.k+1]]
         
         if self.k <= self.k0 + 1:
@@ -512,7 +512,7 @@ class Porter(StemI):
 
         ret = ""
 
-        for x in xrange(len(stem)):
+        for x in range(len(stem)):
             if lower[x] == stem[x]:
                 ret = ret + word[x]
             else:
@@ -598,11 +598,11 @@ def demo():
     original = re.sub(r"(.{,70})\s", r'\1\n', original+' ').rstrip()
 
     # Print the results.
-    print '-Original-'.center(70).replace(' ', '*').replace('-', ' ')
-    print original
-    print '-Results-'.center(70).replace(' ', '*').replace('-', ' ')
-    print results
-    print '*'*70
+    print('-Original-'.center(70).replace(' ', '*').replace('-', ' '))
+    print(original)
+    print('-Results-'.center(70).replace(' ', '*').replace('-', ' '))
+    print(results)
+    print('*'*70)
 
 ##--NLTK--
 ## Call demo() if we're invoked directly.

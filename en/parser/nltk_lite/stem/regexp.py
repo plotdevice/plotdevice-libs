@@ -49,10 +49,10 @@ def demo():
     tokens = tokenize.whitespace(text)
 
     # Print the results.
-    print stemmer
+    print(stemmer)
     for word in tokens:
-        print '%20s => %s' % (word, stemmer.stem(word))
-    print
+        print('%20s => %s' % (word, stemmer.stem(word)))
+    print()
         
 
 if __name__ == '__main__': demo()

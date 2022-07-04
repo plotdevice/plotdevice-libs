@@ -1,10 +1,11 @@
+import importlib
 # ENGLISH PLACEHOLDER TEXT, FLIPPED CONTENT, CUSTOM BACKGROUND
 
 try: 
     grid = ximport("grid")
 except:
     grid = ximport("__init__")
-    reload(grid)
+    importlib.reload(grid)
     
 size(*grid.format.A4)
 

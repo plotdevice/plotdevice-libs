@@ -5,32 +5,32 @@ from random import random, choice, randrange
 
 #### SYMBOLS #########################################################################################
 
-toxic      = u"\u2620"
-radiation  = u"\u2622"
-biohazard  = u"\u2623"
-recycling  = u"\u2672"
-arrow1     = u"\u27A1"
-arrow2     = u"\u27B2"
-heart      = u"\u2764"
-bullet     = u"\u2022"
-check      = u"\u2714"
-cross      = u"\u2715"
-telephone  = u"\u260F"
-mail       = u"\u2709"
-warning    = u"\u26A0"
-sad        = u"\u2639"
-happy      = u"\u263A"
-euro       = u"\u20AC"
-pound      = u"\u00A3"
-yen        = u"\u00A5"
-trademark  = u"\u2122"
-copyright  = u"\u00A9"
-registered = u"\u00AE"
+toxic      = "\u2620"
+radiation  = "\u2622"
+biohazard  = "\u2623"
+recycling  = "\u2672"
+arrow1     = "\u27A1"
+arrow2     = "\u27B2"
+heart      = "\u2764"
+bullet     = "\u2022"
+check      = "\u2714"
+cross      = "\u2715"
+telephone  = "\u260F"
+mail       = "\u2709"
+warning    = "\u26A0"
+sad        = "\u2639"
+happy      = "\u263A"
+euro       = "\u20AC"
+pound      = "\u00A3"
+yen        = "\u00A5"
+trademark  = "\u2122"
+copyright  = "\u00A9"
+registered = "\u00AE"
 
 def superscript(i):
     s = str(i)
-    digits = [u"\u2070", u"\u00B9", u"\u00B2", u"\u00B3", u"\u2074",
-              u"\u2075", u"\u2076", u"\u2077", u"\u2078", u"\u2079"]
+    digits = ["\u2070", "\u00B9", "\u00B2", "\u00B3", "\u2074",
+              "\u2075", "\u2076", "\u2077", "\u2078", "\u2079"]
     for i, digit in enumerate(digits):
         s = s.replace(str(i), digits[i])
     return s
@@ -96,7 +96,7 @@ class _placeholder:
         s = ""
         first = True
         for i in range(n):
-            s += self.paragraph(choice((short, middle, long))(), first)
+            s += self.paragraph(choice((short, middle, int))(), first)
             s += "\n\n"
             first = False
         return s

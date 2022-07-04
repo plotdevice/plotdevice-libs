@@ -56,8 +56,8 @@ class Tree(list):
         """
         Construct a new tree.
         """
-        if isinstance(children, (str, unicode)):
-            raise TypeError, 'children should be a list, not a string'
+        if isinstance(children, str):
+            raise TypeError('children should be a list, not a string')
         list.__init__(self, children)
         self.node = node
 
@@ -201,7 +201,7 @@ class Tree(list):
         @type: filter: C{function}
         @param: filter: the function to filter all local trees
         """
-        if not filter or filter(self):
+        if not filter or list(filter(self)):
             yield self
         for child in self:
             if isinstance(child, Tree):
@@ -218,7 +218,7 @@ class Tree(list):
         """
 
         if not isinstance(self.node, str):
-            raise TypeError, 'Productions can only be generated from trees having node labels that are strings'
+            raise TypeError('Productions can only be generated from trees having node labels that are strings')
 
         prods = [cfg.Production(cfg.Nonterminal(self.node), _child_names(self))]
         for child in self:
@@ -350,29 +350,29 @@ class Tree(list):
 
 class ImmutableTree(Tree):
     def __setitem__(self):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def __setslice__(self):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def __delitem__(self):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def __delslice__(self):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def __iadd__(self):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def __imul__(self):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def append(self, v):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def extend(self, v):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def pop(self, v=None):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def remove(self, v):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def reverse(self):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def sort(self):
-        raise ValueError, 'ImmutableTrees may not be modified'
+        raise ValueError('ImmutableTrees may not be modified')
     def __hash__(self):
         return hash( (self.node, tuple(self)) )
 
@@ -504,7 +504,7 @@ def bracket_parse(s):
             stack[-1].append(leaf)
             pos = match.end()
 
-    raise ValueError, 'mismatched parens'
+    raise ValueError('mismatched parens')
 
 def chunk(s, chunk_node="NP", top_node="S"):
     """
@@ -529,7 +529,7 @@ def chunk(s, chunk_node="NP", top_node="S"):
     VALID = re.compile(r'^([^\[\]]+|\[[^\[\]]*\])*$')
 
     if not VALID.match(s):
-        raise ValueError, 'Invalid token string (bad brackets)'
+        raise ValueError('Invalid token string (bad brackets)')
         
     stack = [Tree(top_node, [])]
     for match in WORD_OR_BRACKET.finditer(s):
@@ -567,7 +567,7 @@ def conll_chunk(s, chunk_types=("NP",), top_node="S"):
         # Decode the line.
         match = _LINE_RE.match(line)
         if match is None:
-            raise ValueError, 'Error on line %d' % lineno
+            raise ValueError('Error on line %d' % lineno)
         (word, tag, state, chunk_type) = match.groups()
 
         # If it's a chunk type we don't care about, treat it as O.
@@ -612,7 +612,7 @@ def _ieer_read_text(s, top_node):
         try:
             if piece.startswith('<b_'):
                 m = _IEER_TYPE_RE.match(piece)
-                if m is None: print 'XXXX', piece
+                if m is None: print('XXXX', piece)
                 chunk = Tree(m.group('type'), [])
                 stack[-1].append(chunk)
                 stack.append(chunk)
@@ -675,58 +675,58 @@ def demo():
     # Demonstrate tree parsing.
     s = '(S (NP (DT the) (NN cat)) (VP (VBD ate) (NP (DT a) (NN cookie))))'
     t = tree.bracket_parse(s)
-    print "Convert bracketed string into tree:"
-    print t
+    print("Convert bracketed string into tree:")
+    print(t)
 
-    print "Display tree properties:"
-    print t.node           # tree's constituent type
-    print t[0]             # tree's first child
-    print t[1]             # tree's second child
-    print t.height()
-    print t.leaves()
-    print t[1]
-    print t[1,1]
-    print t[1,1,0]
+    print("Display tree properties:")
+    print(t.node)           # tree's constituent type
+    print(t[0])             # tree's first child
+    print(t[1])             # tree's second child
+    print(t.height())
+    print(t.leaves())
+    print(t[1])
+    print(t[1,1])
+    print(t[1,1,0])
 
     # Demonstrate tree modification.
     the_cat = t[0]
     the_cat.insert(1, tree.bracket_parse('(JJ big)'))
-    print "Tree modification:"
-    print t
+    print("Tree modification:")
+    print(t)
     t[1,1,1] = tree.bracket_parse('(NN cake)')
-    print t
-    print
+    print(t)
+    print()
 
     # Demonstrate probabilistic trees.
 
     pt = tree.ProbabilisticTree('x', ['y', 'z'], prob=0.5)
-    print "Probabilistic Tree:"
-    print pt
-    print
+    print("Probabilistic Tree:")
+    print(pt)
+    print()
 
     # Demonstrate parsing of treebank output format.
     t = tree.bracket_parse(t.pp_treebank())[0]
-    print "Convert tree to bracketed string and back again:"
-    print t.pp_treebank()
-    print t
-    print
+    print("Convert tree to bracketed string and back again:")
+    print(t.pp_treebank())
+    print(t)
+    print()
 
     # Demonstrate LaTeX output
-    print "LaTeX output:"
-    print t.pp_latex_qtree()
-    print
+    print("LaTeX output:")
+    print(t.pp_latex_qtree())
+    print()
 
     # Demonstrate Productions
-    print "Production output:"
-    print t.productions()
-    print
+    print("Production output:")
+    print(t.productions())
+    print()
 
     # Demonstrate chunk parsing
     s = "[ Pierre/NNP Vinken/NNP ] ,/, [ 61/CD years/NNS ] old/JJ ,/, will/MD join/VB [ the/DT board/NN ] ./."
-    from tree import chunk
-    print "Chunk Parsing:"
-    print chunk(s, chunk_node='NP').pp()
-    print
+    from .tree import chunk
+    print("Chunk Parsing:")
+    print(chunk(s, chunk_node='NP').pp())
+    print()
 
     s = """
 These DT B-NP
@@ -757,11 +757,11 @@ still RB B-ADJP
 better JJR I-ADJP
 . . O
 """
-    print conll_chunk(s, chunk_types=('NP', 'PP', 'VP')).pp()
+    print(conll_chunk(s, chunk_types=('NP', 'PP', 'VP')).pp())
 
     # Demonstrate tree nodes containing objects other than strings
     t.node = ('test', 3)
-    print t
+    print(t)
 
 if __name__ == '__main__':
     demo()

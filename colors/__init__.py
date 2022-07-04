@@ -96,7 +96,7 @@ def hex_to_rgb(hex):
 
     hex = hex.lstrip("#")
     if len(hex) == 3:
-        hex = "".join(map("".join, zip(hex,hex)))
+        hex = "".join(map("".join, list(zip(hex,hex))))
     elif len(hex) < 6:
         hex += hex[-1] * (6-len(hex))
 
@@ -258,7 +258,7 @@ primary_and_secondary_hues = [
 
 # HTML named colors.
 
-named_colors = json.load(file('%s/names.json'%os.path.dirname(__file__)))
+named_colors = json.load(open('%s/names.json'%os.path.dirname(__file__)))
 
 ### COLOR CONTEXT ####################################################################################
 
@@ -278,10 +278,10 @@ class ColorContext(dict):
             # if not os.path.exists(self.pth):
             #     copyfile('%s/context.json'%os.path.dirname(__file__), self.pth)
             try:
-                self.update({col:sorted(lst) for col, lst in json.load(file(self.pth)).items()})
+                self.update({col:sorted(lst) for col, lst in list(json.load(open(self.pth)).items())})
             except ValueError as e:
                 e.args = ("Error decoding %s"%self.pth.replace(os.getenv('HOME'),'~'),)+e.args
-                raise
+                raise e
         return super(ColorContext, self).__getitem__(key)
 context = ColorContext()
 
@@ -325,7 +325,7 @@ class BaseColor:
         elif len(a) >= 3:
             alpha, mode = 1, "rgb"
             if len(a) > 3: alpha = a[-1]
-            if kwargs.has_key("mode"):
+            if "mode" in kwargs:
                 mode = kwargs["mode"].lower()
             if mode == "rgb":
                 self.r, self.g, self.b, self.a = a[0], a[1], a[2], alpha
@@ -361,7 +361,7 @@ class BaseColor:
 
     def _hasattrs(self, list):
         for a in list:
-            if not self.__dict__.has_key(a):
+            if a not in self.__dict__:
                 return False
         return True
 
@@ -422,7 +422,7 @@ class BaseColor:
 
         """
 
-        if self.__dict__.has_key(a):
+        if a in self.__dict__:
             return a
         elif a == "black":
             return self.__dict__["__k"]
@@ -434,7 +434,7 @@ class BaseColor:
                    "c", "m", "y", "k", "cyan", "magenta", "yellow"]:
             return self.__dict__["__"+a[0]]
 
-        raise AttributeError, "'"+str(self.__class__)+"' object has no attribute '"+a+"'"
+        raise AttributeError("'"+str(self.__class__)+"' object has no attribute '"+a+"'")
 
 try:
     # The generic BaseColor is pretty nifty but we want to use Color from NodeBox whenever available.
@@ -477,7 +477,7 @@ class Color(BaseColor):
         # either hexadecimal color key
         # or a named color or descriptive word.
         if len(args) == 1 \
-        and isinstance(args[0], (str, unicode)):
+        and isinstance(args[0], str):
             if args[0].startswith("#"):
                 r, g, b = hex_to_rgb(args[0])
                 a = 1.0
@@ -505,11 +505,11 @@ class Color(BaseColor):
                 BaseColor.__init__(self, args[0].r, args[0].g, args[0].b, args[0].a)
 
         # Lab color values.
-        elif kwargs.has_key("mode") \
+        elif "mode" in kwargs \
         and kwargs["mode"].lower() == "lab":
-            if kwargs.has_key("l") and \
-               kwargs.has_key("a") and \
-               kwargs.has_key("b"):
+            if "l" in kwargs and \
+               "a" in kwargs and \
+               "b" in kwargs:
                 r, g, b = lab_to_rgb(kwargs["l"], kwargs["a"], kwargs["b"])
             else:
                 r, g, b = lab_to_rgb(*args)
@@ -520,19 +520,19 @@ class Color(BaseColor):
                 BaseColor.__init__(self, r, g, b)
 
         # RGB, HSB or CMYK color values.
-        elif (kwargs.has_key("mode") \
+        elif ("mode" in kwargs \
         and kwargs["mode"].lower() in modes) \
         or mode in modes:
             m, r = mode, range
-            if kwargs.has_key("mode"): m = kwargs["mode"]
-            if kwargs.has_key("range"): r = kwargs["range"]
+            if "mode" in kwargs: m = kwargs["mode"]
+            if "range" in kwargs: r = kwargs["range"]
             if nodebox:
                 _ctx.colormode(m, r)
                 BaseColor.__init__(self, *args)
             else:
                 BaseColor.__init__(self, args, mode=m)
 
-        if kwargs.has_key("name") and kwargs["name"] != "":
+        if "name" in kwargs and kwargs["name"] != "":
             self.name = kwargs["name"]
         elif self.name == "":
             self.name = self.nearest_hue()
@@ -563,7 +563,7 @@ class Color(BaseColor):
         #    clr = color(named_hues[str], 1, 1, mode="hsb")
         #    return clr.r, clr.g, clr.b
 
-        if named_colors.has_key(str):
+        if str in named_colors:
             return named_colors[str]
 
         for suffix in ["ish", "ed", "y", "like"]:
@@ -757,7 +757,7 @@ class Color(BaseColor):
         if primary:
             hues = primary_hues
         else:
-            hues = named_hues.keys()
+            hues = list(named_hues.keys())
         nearest, d = "", 1.0
         for hue in hues:
             if abs(self.hue-named_hues[hue])%1 < d:
@@ -911,10 +911,10 @@ class ColorList(_list):
                         self.append(color(clr))
 
             # From a string (image/name/context).
-            if isinstance(arg, (str, unicode)):
+            if isinstance(arg, str):
                 if os.path.exists(arg):
                     n = 10
-                    if "n" in kwargs.keys(): n = kwargs["n"]
+                    if "n" in list(kwargs.keys()): n = kwargs["n"]
                     self.image_to_rgb(arg, n)
                 else:
                     clr = Color(arg)
@@ -925,9 +925,9 @@ class ColorList(_list):
                         self.extend(self.context_to_rgb(arg))
                         self.tags = arg
 
-        if "name" in kwargs.keys():
+        if "name" in kwargs:
             self.name = kwargs["name"]
-        if "tags" in kwargs.keys():
+        if "tags" in kwargs:
             self.tags = kwargs["tags"]
 
     def image_to_rgb(self, path, n=10):
@@ -940,7 +940,7 @@ class ColorList(_list):
         """
 
         try:
-            coreimage = _ctx.ximport("coreimage")
+            import coreimage
             w, h = _ctx.imagesize(path)
             img = coreimage.canvas(w,h).layer(path)
             p = img.pixels()
@@ -1367,13 +1367,13 @@ def colorlist(*args, **kwargs):
 list = colorlist
 
 #clrs = list("anger")
-#print red() in clrs
-#print clrs.darkest == black
+#print(red() in clrs)
+#print(clrs.darkest == black)
 #clrs.swatch(100,100)
 
 #clrs = list(yellow(), deeppink(), olive())
 #clrs.swarm(100,100)
-#print clrs.context
+#print(clrs.context)
 
 #clrs = list("sea.jpg")
 #image("sea.jpg", 0, 0)
@@ -1728,13 +1728,13 @@ class Gradient(ColorList):
         self._colors = [color(clr) for clr in self._colors]
 
         self._steps = 100
-        if kwargs.has_key("steps"):
+        if "steps" in kwargs:
             self._steps = kwargs["steps"]
-        if kwargs.has_key("steps"):
+        if "steps" in kwargs:
             self._steps = kwargs["steps"]
 
         self._spread = 0.5
-        if kwargs.has_key("spread"):
+        if "spread" in kwargs:
             self._spread = kwargs["spread"]
 
         self._cache()
@@ -1917,9 +1917,9 @@ class Favorites:
             return self
 
         candidate = None
-        if _favorites.data.has_key(q):
+        if q in _favorites.data:
             candidate = q
-        for name, (tags, colors) in _favorites.data.iteritems():
+        for name, (tags, colors) in list(_favorites.data.items()):
             if q in tags:
                 candidate = name
 
@@ -2315,7 +2315,7 @@ def shade_opposite(shade):
 #    y = 20
 #    x += 50
 
-#print shade_opposite(bright)
+#print(shade_opposite(bright))
 
 #intense(olive(), n=8).swatch(50, 50)
 #neutral(olive(), (n=8).swatch(100, 50)
@@ -2351,7 +2351,7 @@ def guess_name(clr):
 
     return clr.nearest_hue()
 
-#print guess_name(color(0.8,0,0))
+#print(guess_name(color(0.8,0,0)))
 
 #### COLOR SHADER ####################################################################################
 
@@ -2449,7 +2449,7 @@ aggregate = theme
 ## ancient egypt + love = ancient eve!
 ##t2 = colors.aggregate("love")
 ##t = t.recombine(t2)
-##print t.name
+##print(t.name)
 
 #stroke(0)
 #strokewidth(0.2)
@@ -2580,7 +2580,7 @@ class shadow(Grob):
 
         """
 
-        Grob.__init__(self, _ctx)
+        super(shadow, self).__init__()
         if clr == None:
             clr = color(0, 0, 0, alpha, mode="rgb")
         self.dx = dx
@@ -2634,6 +2634,8 @@ class gradientpath(Grob):
         You can tweak this background's opacity with the alpha parameter.
 
         """
+
+        super(gradientpath, self).__init__()
 
         self.path = path
         self.path.inherit()
@@ -2766,7 +2768,7 @@ def gradientbackground(clr1, clr2, type="radial", dx=0, dy=0, spread=1.0, angle=
 
 def colorwheel(x, y, r=250, labels=True, scope=1.0, shift=0.0):
 
-    keys = named_hues.keys()
+    keys = list(named_hues.keys())
     def cmp(a, b):
         if named_hues[a] < named_hues[b]: return 1
         return -1

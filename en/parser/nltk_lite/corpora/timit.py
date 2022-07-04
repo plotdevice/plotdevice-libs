@@ -249,14 +249,14 @@ def play(data):
     @type data: string of bytes of audio samples
     """
     if not PLAY_ENABLED:
-        print >>sys.stderr, "sorry, currently we don't support audio playback on this platform:", sys.platform
+        print("sorry, currently we don't support audio playback on this platform:", sys.platform, file=sys.stderr)
         return
 
     try:
         dsp = ossaudiodev.open('w')
-    except IOError, e:
-        print >>sys.stderr, "can't acquire the audio device; please activate your audio device."
-        print >>sys.stderr, "system error message:", str(e)
+    except IOError as e:
+        print("can't acquire the audio device; please activate your audio device.", file=sys.stderr)
+        print("system error message:", str(e), file=sys.stderr)
         return
     
     dsp.setfmt(ossaudiodev.AFMT_S16_LE)
@@ -268,83 +268,83 @@ def play(data):
 def demo():
     from en.parser.nltk_lite.corpora import timit
 
-    print "6th item (timit.items[5])"
-    print "-------------------------"
+    print("6th item (timit.items[5])")
+    print("-------------------------")
     itemid = timit.items[5]
     spkrid, sentid = itemid.split(':')
-    print "  item id:    ", itemid
-    print "  speaker id: ", spkrid
-    print "  sentence id:", sentid
-    print
+    print("  item id:    ", itemid)
+    print("  speaker id: ", spkrid)
+    print("  sentence id:", sentid)
+    print()
     record = timit.spkrinfo[spkrid]
-    print "  speaker information:"
-    print "    TIMIT speaker id: ", record['id']
-    print "    speaker sex:      ", record['sex']
-    print "    dialect region:   ", record['dr']
-    print "    data type:        ", record['use']
-    print "    recording date:   ", record['recdate']
-    print "    date of birth:    ", record['birthdate']
-    print "    speaker height:   ", record['ht']
-    print "    speaker race:     ", record['race']
-    print "    speaker education:", record['edu']
-    print "    comments:         ", record['comments']
-    print
+    print("  speaker information:")
+    print("    TIMIT speaker id: ", record['id'])
+    print("    speaker sex:      ", record['sex'])
+    print("    dialect region:   ", record['dr'])
+    print("    data type:        ", record['use'])
+    print("    recording date:   ", record['recdate'])
+    print("    date of birth:    ", record['birthdate'])
+    print("    speaker height:   ", record['ht'])
+    print("    speaker race:     ", record['race'])
+    print("    speaker education:", record['edu'])
+    print("    comments:         ", record['comments'])
+    print()
 
-    print "  words of the sentence:"
-    print "   ", timit.raw(sentences=itemid).next()
-    print
+    print("  words of the sentence:")
+    print("   ", next(timit.raw(sentences=itemid)))
+    print()
 
-    print "  words of the sentence with offsets (first 3):"
-    print "   ", timit.raw(sentences=itemid, offset=True).next()[:3]
-    print
+    print("  words of the sentence with offsets (first 3):")
+    print("   ", timit.raw(sentences=itemid, offset=True).next()[:3])
+    print()
     
-    print "  phonemes of the sentence (first 10):"
-    print "   ", timit.phonetic(sentences=itemid).next()[:10]
-    print
+    print("  phonemes of the sentence (first 10):")
+    print("   ", timit.phonetic(sentences=itemid).next()[:10])
+    print()
     
-    print "  phonemes of the sentence with offsets (first 3):"
-    print "   ", timit.phonetic(sentences=itemid, offset=True).next()[:3]
-    print
+    print("  phonemes of the sentence with offsets (first 3):")
+    print("   ", timit.phonetic(sentences=itemid, offset=True).next()[:3])
+    print()
     
-    print "  looking up dictionary for words of the sentence..."
-    words = timit.raw(sentences=itemid).next()
+    print("  looking up dictionary for words of the sentence...")
+    words = next(timit.raw(sentences=itemid))
     for word in words:
-        print "    %-5s:" % word, timit.dictionary[word]
-    print
+        print("    %-5s:" % word, timit.dictionary[word])
+    print()
 
 
-    print "audio playback:"
-    print "---------------"
-    print "  playing sentence", sentid, "by speaker", spkrid, "(a.k.a. %s)"%record["id"], "..."
+    print("audio playback:")
+    print("---------------")
+    print("  playing sentence", sentid, "by speaker", spkrid, "(a.k.a. %s)"%record["id"], "...")
     data = timit.audiodata(itemid)
     timit.play(data)
-    print
-    print "  playing words:"
-    words = timit.raw(sentences=itemid, offset=True).next()
+    print()
+    print("  playing words:")
+    words = next(timit.raw(sentences=itemid, offset=True))
     for word, start, end in words:
-        print "    playing %-10s in 1.5 seconds ..." % `word`
+        print("    playing %-10s in 1.5 seconds ..." % repr(word))
         time.sleep(1.5)
         data = timit.audiodata(itemid, start, end)
         timit.play(data)
-    print
-    print "  playing phonemes (first 10):"
-    phones = timit.phonetic(sentences=itemid, offset=True).next()
+    print()
+    print("  playing phonemes (first 10):")
+    phones = next(timit.phonetic(sentences=itemid, offset=True))
     for phone, start, end in phones[:10]:
-        print "    playing %-10s in 1.5 seconds ..." % `phone`
+        print("    playing %-10s in 1.5 seconds ..." % repr(phone))
         time.sleep(1.5)
         data = timit.audiodata(itemid, start, end)
         timit.play(data)
-    print
+    print()
     
     # play sentence sa1 of all female speakers
     sentid = 'sa1'
     for spkr in timit.speakers:
         if timit.spkrinfo[spkr]['sex'] == 'F':
             itemid = spkr + ':' + sentid
-            print "  playing sentence %s of speaker %s ..." % (sentid, spkr)
+            print("  playing sentence %s of speaker %s ..." % (sentid, spkr))
             data = timit.audiodata(itemid)
             timit.play(data)
-    print
+    print()
     
 if __name__ == '__main__':
     demo()

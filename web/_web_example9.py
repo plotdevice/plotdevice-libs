@@ -1,10 +1,11 @@
+import importlib
 # Clearing the cache.
 
 try:
     web = ximport("web")
 except:
     web = ximport("__init__")
-    reload(web)
+    importlib.reload(web)
 
 # Queries and images are cached locally for speed,
 # so it's a good idea to empty the cache now and then.

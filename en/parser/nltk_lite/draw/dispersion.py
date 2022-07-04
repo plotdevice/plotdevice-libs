@@ -9,7 +9,7 @@
 A utility for displaying lexical dispersion.
 """
 
-from Tkinter import Canvas
+from tkinter import Canvas
 
 def plot(text, words, rowheight=15, rowwidth=800):
     """

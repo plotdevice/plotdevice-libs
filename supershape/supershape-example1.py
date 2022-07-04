@@ -1,9 +1,10 @@
 from math import sin, cos
+import importlib
 try:
     supershape = ximport("supershape")
 except:
     supershape = ximport("__init__")
-    reload(supershape)
+    importlib.reload(supershape)
 
 speed(100)
 size(400, 400)

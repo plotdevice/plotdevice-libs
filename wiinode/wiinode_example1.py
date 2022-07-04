@@ -8,6 +8,7 @@
 # Try to shoot all the nasties before they reach the bottom of the screen.
 
 from math import sin, cos, pow, sqrt
+import importlib
 
 # Import the library
 try:
@@ -18,7 +19,7 @@ except ImportError:
     # we may need to try something different when
     # the library is not located in /Application Support
     wiinode = ximport("__init__")
-    reload(wiinode)
+    importlib.reload(wiinode)
 
 size(600, 400)
 speed(30)

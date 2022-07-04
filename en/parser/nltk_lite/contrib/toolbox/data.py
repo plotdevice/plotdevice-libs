@@ -25,11 +25,11 @@ class ToolboxData(toolbox.ToolboxData):
 
         first = dict()
         gram = dict()
-        for sym, value in grammar.items():
+        for sym, value in list(grammar.items()):
             first[sym] = value[0]
             gram[sym] = value[0] + value[1]
         parse_table = dict()
-        for state in gram.keys():
+        for state in list(gram.keys()):
             parse_table[state] = dict()
             for to_sym in gram[state]:        
                 if to_sym in grammar:
@@ -93,7 +93,7 @@ class ToolboxData(toolbox.ToolboxData):
         field_iter = self.fields(**kwargs)
         loop = True
         try:
-            mkr, value = field_iter.next()
+            mkr, value = next(field_iter)
         except StopIteration:
             loop = False
         while loop:
@@ -114,8 +114,7 @@ class ToolboxData(toolbox.ToolboxData):
                                 builder.end(state)
                                 pstack.pop()
                             else:
-                                raise ValueError, \
-                                      'Line %d: syntax error, unexpected marker %s.' % (self.line_num, mkr)
+                                raise ValueError('Line %d: syntax error, unexpected marker %s.' % (self.line_num, mkr))
                     else:
                         # start of terminal marker
                         add = True
@@ -125,7 +124,7 @@ class ToolboxData(toolbox.ToolboxData):
                             builder.data(value)
                             builder.end(mkr)
                         try:
-                            mkr, value = field_iter.next()
+                            mkr, value = next(field_iter)
                         except StopIteration:
                             loop = False
                 else:
@@ -138,8 +137,7 @@ class ToolboxData(toolbox.ToolboxData):
                     builder.end(state)
                     pstack.pop()
                 else:
-                    raise ValueError, \
-                          'Line %d: syntax error, unexpected marker %s.' % (self.line_num, mkr)
+                    raise ValueError('Line %d: syntax error, unexpected marker %s.' % (self.line_num, mkr))
         for state, first_elems in reversed(pstack):
             builder.end(state)
         return builder.close()

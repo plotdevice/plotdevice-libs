@@ -47,7 +47,7 @@ class ConnectionFactoryTests(unittest.TestCase):
         self.con.close()
 
     def CheckIsInstance(self):
-        self.failUnless(isinstance(self.con,
+        self.assertTrue(isinstance(self.con,
                                    MyConnection),
                         "connection is not instance of MyConnection")
 
@@ -60,7 +60,7 @@ class CursorFactoryTests(unittest.TestCase):
 
     def CheckIsInstance(self):
         cur = self.con.cursor(factory=MyCursor)
-        self.failUnless(isinstance(cur,
+        self.assertTrue(isinstance(cur,
                                    MyCursor),
                         "cursor is not instance of MyCursor")
 
@@ -72,7 +72,7 @@ class RowFactoryTests(unittest.TestCase):
         cur = self.con.cursor(factory=MyCursor)
         cur.execute("select 4+5 as foo")
         row = cur.fetchone()
-        self.failUnless(isinstance(row,
+        self.assertTrue(isinstance(row,
                                    dict),
                         "row is not instance of dict")
         cur.close()

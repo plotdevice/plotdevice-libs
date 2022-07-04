@@ -1,10 +1,11 @@
+import importlib
 # COLOR LIST FROM PIXELS
 
 try:
     colors = ximport("colors")
 except ImportError:
     colors = ximport("__init__")
-    reload(colors)
+    importlib.reload(colors)
     
 size(550, 400)
 

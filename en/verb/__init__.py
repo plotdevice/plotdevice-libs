@@ -162,7 +162,7 @@ def verb_all_tenses():
     """Returns all possible verb tenses.
     """
     
-    return verb_tenses_keys.keys()
+    return list(verb_tenses_keys.keys())
 
 def verb_tense(v):
     

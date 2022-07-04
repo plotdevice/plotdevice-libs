@@ -76,7 +76,7 @@ class GrammarFile(object):
 
 def demo():
 	g = GrammarFile.read_file("test.cfg")
-	print g.grammar()
+	print(g.grammar())
 
 if __name__ == '__main__':
 	demo()

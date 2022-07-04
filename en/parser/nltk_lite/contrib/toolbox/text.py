@@ -10,7 +10,7 @@ of a Shoebox text without reference to its metadata.
 """
 
 import re
-from utilities import Field, SequentialDictionary
+from .utilities import Field, SequentialDictionary
 from en.parser.nltk_lite.corpora.shoebox import ShoeboxFile
 
 
@@ -185,7 +185,7 @@ class Line:
 
     def get_field_markers(self):
         """Obtain list of unique fields for the line."""
-        return self._fields.keys()
+        return list(self._fields.keys())
 
     def get_field_as_string(self,
                             field_marker,
@@ -224,7 +224,7 @@ class Line:
       
     def get_field_values(self):
         """Obtain list of field values for the line."""
-        return self._fields.values()
+        return list(self._fields.values())
 
     def get_label(self):
         """Obtain identifier for line."""
@@ -246,7 +246,7 @@ class Line:
         """Obtain a list of morpheme objects for the line."""
         morphemes = []
         indices = get_indices(self.getFieldValueByFieldMarker("m"))
-        print "%s" % indices
+        print("%s" % indices)
         morphemeFormField = self.getFieldValueByFieldMarker("m")
         morphemeGlossField = self.getFieldValueByFieldMarker("g")
         morphemeFormSlices = get_slices_by_indices(morphemeFormField, indices)
@@ -519,7 +519,7 @@ def get_indices(str):
     """This method finds the indices for the leftmost boundaries
     of the units in a line of aligned text.
 
-    Given the field \um, this function will find the
+    Given the field \\um, this function will find the
     indices identifing leftmost word boundaries, as
     follows::
 
@@ -527,7 +527,7 @@ def get_indices(str):
             |    |  |   |               
             |||||||||||||||||||||||||||
         \sf dit  is een goede           <- surface form
-        \um dit  is een goed      -e    <- underlying morphemes
+        \\um dit  is een goed      -e    <- underlying morphemes
         \mg this is a   good      -ADJ  <- morpheme gloss
         \gc DEM  V  ART ADJECTIVE -SUFF <- grammatical categories
         \ft This is a good explanation. <- free translation

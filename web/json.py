@@ -1,4 +1,4 @@
-import json
+from . import json
 
 def read(str):
 	return json.loads(str)

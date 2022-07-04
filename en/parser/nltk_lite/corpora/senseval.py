@@ -124,10 +124,10 @@ def demo():
     for (senses, position, context) in senseval.raw('line'):
         if senses not in seen:
             seen.add(senses)
-            print "senses:", senses
-            print "position:", position
-            print "context:", ' '.join(['%s/%s' % ttok for ttok in context])
-            print
+            print("senses:", senses)
+            print("position:", position)
+            print("context:", ' '.join(['%s/%s' % ttok for ttok in context]))
+            print()
         
 if __name__ == '__main__':
     demo()

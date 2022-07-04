@@ -1,3 +1,4 @@
+import importlib
 # CLOUDSCAPE
 
 # We're going to put perlin noise as a texture
@@ -8,7 +9,7 @@ try:
     noise = ximport("noise")
 except:
     noise = ximport("__init__")
-    reload(noise)
+    importlib.reload(noise)
 
 size(400,400)
 

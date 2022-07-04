@@ -1,8 +1,9 @@
+import importlib
 try:
     cornu = ximport("cornu")
 except:
     cornu = ximport("__init__")
-    reload(cornu)
+    importlib.reload(cornu)
 
 size(600,600)
 

@@ -7,11 +7,11 @@
 # See LICENSE.txt for details.
 
 import os
-import socket, urllib, urllib2, urlparse
-import thread, time
+import socket, urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse, urllib.parse
+import _thread, time
 from warnings import warn
 
-from cache import Cache
+from .cache import Cache
 
 ### SETTINGS #########################################################################################
 
@@ -77,7 +77,7 @@ class URLParser:
         # http://user:pass@example.com:992/animal/bird?species=seagull#wings
         # protocol: http
         # domain: example.com
-        url = urlparse.urlsplit(url)
+        url = urllib.parse.urlsplit(url)
         self.protocol = url[0]
         self.domain = url[1]
         
@@ -147,7 +147,7 @@ class URLParser:
         if self.path     != ""  : url += self.path
         if self.page     != ""  : url += self.page
         if self.method == "get" and \
-           len(self.query) > 0  : url += "?" + urllib.urlencode(self.query)
+           len(self.query) > 0  : url += "?" + urllib.parse.urlencode(self.query)
         if self.anchor   != ""  : url += "#" + self.anchor
 
         return url
@@ -191,7 +191,7 @@ def open(url, wait=10):
     # If the url is a URLParser, get any POST parameters.
     post = None
     if isinstance(url, URLParser) and url.method == "post":
-        post = urllib.urlencode(url.query)
+        post = urllib.parse.urlencode(url.query)
     
     # If the url is a URLParser (or a YahooResult or something), 
     # use its string representation.
@@ -199,24 +199,24 @@ def open(url, wait=10):
     
     # Use urllib instead of urllib2 for local files.
     if os.path.exists(url):
-        return urllib.urlopen(url)
+        return urllib.request.urlopen(url)
  
     else:
         socket.setdefaulttimeout(wait)
         try:
             #connection = urllib2.urlopen(url, post)
-            request = urllib2.Request(url, post, {"User-Agent": USER_AGENT, "Referer": REFERER})
+            request = urllib.request.Request(url, post, {"User-Agent": USER_AGENT, "Referer": REFERER})
             if PROXY:
-                p = urllib2.ProxyHandler({PROXY[1]: PROXY[0]})
-                o = urllib2.build_opener(p, urllib2.HTTPHandler)
-                urllib2.install_opener(o)
-            connection = urllib2.urlopen(request)
-        except urllib2.HTTPError, e:
+                p = urllib.request.ProxyHandler({PROXY[1]: PROXY[0]})
+                o = urllib.request.build_opener(p, urllib.request.HTTPHandler)
+                urllib.request.install_opener(o)
+            connection = urllib.request.urlopen(request)
+        except urllib.error.HTTPError as e:
             if e.code == 401: raise HTTP401Authentication
             if e.code == 403: raise HTTP403Forbidden
             if e.code == 404: raise HTTP404NotFound
             raise HTTPError
-        except urllib2.URLError, e:
+        except urllib.error.URLError as e:
             if e.reason[0] == 36: raise URLTimeout
             raise URLError
 
@@ -363,7 +363,7 @@ class URLAccumulator:
  
         # Synchronous downloads wait until completed,
         # otherwise check the done property.
-        thread.start_new_thread(self._retrieve, (self.url,))
+        _thread.start_new_thread(self._retrieve, (self.url,))
         if not asynchronous:
             while not self._done():
                 time.sleep(0.1)
@@ -395,8 +395,8 @@ class URLAccumulator:
                 self.redirect = connection.geturl()
                 if self.redirect == str(url):
                     self.redirect = None
-            except Exception, e:
-                self.data = u""
+            except Exception as e:
+                self.data = ""
                 self.error = e
         
         self._busy = False
@@ -412,7 +412,7 @@ class URLAccumulator:
         and not self._queued():                                           # 1
             if self.data == None and \
                self.error == None:
-                self.data = u""
+                self.data = ""
                 self.error = URLTimeout()
                 self.load(self.data)
                 self._busy = False

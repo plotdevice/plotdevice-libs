@@ -21,20 +21,20 @@ __license__   = "GPL"
 
 ######################################################################################################
 
-import article
-import commonsense
-import numeral
-import ordinal
-import parser
-import singular
-import plural
-import quantify
-import tags
-import verb as verb_lib
-import wordnet
-import rid
-import spelling
-import ogden
+from . import article
+from . import commonsense
+from . import numeral
+from . import ordinal
+from . import parser
+from . import singular
+from . import plural
+from . import quantify
+from . import tags
+from . import verb as verb_lib
+from . import wordnet
+from . import rid
+from . import spelling
+from . import ogden
 
 def is_number(value):
     return numeral.is_number(value)

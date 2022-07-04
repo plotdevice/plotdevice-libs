@@ -1,3 +1,4 @@
+import importlib
 # This example plays "the association game": based on a word in WordNet,
 # we traverse the network to find a wrong defintion, occasionally giving
 # humorous results.
@@ -10,7 +11,7 @@ try:
     wordnet = ximport("wordnet")
 except ImportError:
     wordnet = ximport("__init__")
-    reload(wordnet)
+    importlib.reload(wordnet)
 
 # Start with any noun that's in WordNet.
 the_word = "dictator"

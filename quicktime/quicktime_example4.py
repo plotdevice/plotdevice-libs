@@ -1,12 +1,13 @@
+import importlib
 try:
     quicktime = ximport("quicktime")
 except:
     quicktime = ximport("__init__")
-    reload(quicktime)
+    importlib.reload(quicktime)
 
 size(500, 500)
 
-reload(quicktime)
+importlib.reload(quicktime)
 
 audio = quicktime.audio("modron_cube.mp3")
 

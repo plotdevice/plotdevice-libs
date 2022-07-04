@@ -61,15 +61,15 @@ def demo():
     from en.parser.nltk_lite.corpora import genesis
     from itertools import islice
 
-    print 'English:'
+    print('English:')
     for word in islice(genesis.raw(), 27):
-        print word,
-    print
+        print(word, end=' ')
+    print()
 
-    print 'Finnish:'
+    print('Finnish:')
     for word in islice(genesis.raw('finnish'), 27):
-        print word,
-    print
+        print(word, end=' ')
+    print()
 
 if __name__ == '__main__':
     demo()

@@ -133,7 +133,7 @@ class AbstractParse(ParseI):
         """
         # Make sure we're not directly instantiated:
         if self.__class__ == AbstractParse:
-            raise AssertionError, "Abstract classes can't be instantiated"
+            raise AssertionError("Abstract classes can't be instantiated")
 
     def parse(self, token):
         return self.get_parse(token)
@@ -151,12 +151,12 @@ class AbstractParse(ParseI):
         if tree is None: return []
         else: return [tree]
 
-from tree import *
-from cfg import *
-from pcfg import *
-from featurestructure import *
-from sr import *
-from rd import *
-from chunk import *
-from chart import *
-from viterbi import *
+from .tree import *
+from .cfg import *
+from .pcfg import *
+from .featurestructure import *
+from .sr import *
+from .rd import *
+from .chunk import *
+from .chart import *
+from .viterbi import *

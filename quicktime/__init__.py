@@ -37,11 +37,11 @@ class Media:
         if isinstance(data, tuple) and isinstance(data[1], QTMovie):
             self.path = data[0]
             self._qtmovie = QTMovie.movie().initWithMovie_timeRange_error_(data[1], data[2], None)
-            print "MOVIE", self._qtmovie
+            print("MOVIE", self._qtmovie)
             self._qtmovie = self._qtmovie[0]
         
         self.duration = self._qtmovie.duration()
-        print "DURATION",  self.duration
+        print("DURATION",  self.duration)
         self.duration = 1.0 * self.duration.timeValue / self.duration.timeScale
         self.timescale = self._qtmovie.attributeForKey_("QTMovieTimeScaleAttribute")
 

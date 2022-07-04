@@ -2,7 +2,7 @@
 # See LICENSE.txt for details.
 
 import warnings
-import text
+from . import text
 
 #### ATTRIBUTES WITH ATTRIBUTES ######################################################################
 
@@ -38,7 +38,7 @@ class styles(dict):
         k = kwargs.get("template", "default")
         s = self[stylename] = self[k].copy(stylename)
         for attr in kwargs:
-            if s.__dict__.has_key(attr):
+            if attr in s.__dict__:
                 s.__dict__[attr] = kwargs[attr]
         return s
 
@@ -48,29 +48,29 @@ class styles(dict):
     def __getattr__(self, a):
         """ Keys in the dictionaries are accessible as attributes.
         """
-        if self.has_key(a):
+        if a in self:
             return self[a]
         if a in ("padding", "margin", "background", "strokewidth", "align"):
-            return attributes_with_attributes([getattr(style, a) for style in self.values()])
-        raise AttributeError, "'styles' object has no attribute '"+a+"'"
+            return attributes_with_attributes([getattr(style, a) for style in list(self.values())])
+        raise AttributeError("'styles' object has no attribute '"+a+"'")
 
     def __setattr__(self, a, v):
         """ Setting an attribute is like setting it in all of the contained styles.
         """
         if   a == "_ctx"  : self.__dict__["_ctx"] = v
         elif a == "guide" : self.__dict__["guide"] = v
-        elif hasattr(self.values()[0], a):
-            for style in self.values():
+        elif hasattr(list(self.values())[0], a):
+            for style in list(self.values()):
                 setattr(style, a, v)
         else:
-            raise AttributeError, "'style' object has no attribute '"+a+"'"
+            raise AttributeError("'style' object has no attribute '"+a+"'")
 
     def copy(self, grob):
         """ Returns a copy of all styles and a copy of the styleguide.
         """
         s = styles(self._ctx, grob)
         s.guide = self.guide.copy(grob)
-        dict.__init__(s, [(v.name, v.copy()) for v in self.values()])
+        dict.__init__(s, [(v.name, v.copy()) for v in list(self.values())])
         return s
 
 #### STYLE GUIDE #####################################################################################
@@ -99,11 +99,11 @@ class styleguide(dict):
         """ Check the rules for each grob and apply the style.
         We expect a grob to have an all() method that yields all grobs to check.
         """
-        sorted = self.order + self.keys()
+        sorted = self.order + list(self.keys())
         unique = []; [unique.append(x) for x in sorted if x not in unique]
         for node in self.grob.all():
             for s in unique:
-                if self.has_key(s) and self[s](grob):
+                if s in self and self[s](grob):
                     grob.style = s
 
     def copy(self, grob):
@@ -111,7 +111,7 @@ class styleguide(dict):
         """
         g = styleguide(grob)
         g.order = self.order
-        dict.__init__(g, [(k, v) for k, v in self.iteritems()])
+        dict.__init__(g, [(k, v) for k, v in self.items()])
         return g
 
 #### SPACING #########################################################################################
@@ -236,7 +236,7 @@ class style(object):
 
         # Each of the attributes is an optional named parameter in __init__().
         for attr in kwargs:
-            if self.__dict__.has_key(attr):
+            if attr in self.__dict__:
                 self.__dict__[attr] = kwargs[attr]
 
     def copy(self, name=None):

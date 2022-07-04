@@ -30,8 +30,8 @@ import md5
 import glob
 from re import sub
 from socket import setdefaulttimeout
-from urllib2 import urlopen
-import cPickle as pickle
+from urllib.request import urlopen
+import pickle as pickle
 from random import random
 
 import graph
@@ -169,7 +169,7 @@ class Rules(list):
 			rule.concept2 = _vote(rule.concept2, rank)
 		# A search for "schrodinger" yields a cluster with "Schrödinger" as root.
 		if self._root not in rank:
-			for concept in rank.keys():
+			for concept in list(rank.keys()):
 				if normalize(concept) == self._root.lower():
 					self._root = concept
 					break
@@ -208,7 +208,7 @@ def query(concept, relation=None, context=None, author=None, depth=1, max=None, 
             setdefaulttimeout(wait)
             response = urlopen(api).read()
             cache(api, response)
-        except Exception, e:
+        except Exception as e:
             raise InternetError
 
     rules = Rules()
@@ -461,7 +461,7 @@ def neighbors(node, nodes=None, distance=2, heuristic=None):
     	return path != None and len(path) <= 1+distance
     if nodes == None:
         nodes = node.graph.nodes
-    return filter(lambda n: _is_nearby(n), nodes)
+    return [n for n in nodes if _is_nearby(n)]
 
 graph.node.neighbors = graph.node.neighbours = neighbors
 
@@ -470,13 +470,13 @@ class cost(dict):
     """
     def __init__(self, costs={}, graph=None):
         self.graph = graph
-        for k, v in costs.iteritems():
+        for k, v in costs.items():
             self[k] = v
     def tax(self, relation, cost):
         self[relation] = cost
     def __call__(self, id1, id2):
         e = self.graph.edge(id1, id2)
-        if self.has_key(e.relation):
+        if e.relation in self:
             return self[e.relation]
         else:
             return 0
@@ -496,7 +496,7 @@ def graph_enumerate_rules(graph, relation, distance=2, heuristic=None, reversed=
     nodes  = sorted(nodes, lambda a, b: (a.betweenness < b.betweenness)*2-1) # XXX - use betweenness or eigenvalue?
     nodes += graph.nodes_by_eigenvalue(-1)
     nodes  = unique(nodes)
-    nodes  = filter(lambda n: n.has_rule(relation, reversed=reversed), nodes)
+    nodes  = [n for n in nodes if n.has_rule(relation, reversed=reversed)]
     if graph.root and distance != None:
         if isinstance(heuristic, cost):
             heuristic.graph = graph
@@ -526,11 +526,11 @@ def graph_specific(graph, proper=False, fringe=1):
     else:
         nodes = graph.nodes
     if graph.root:
-        nodes = filter(lambda n: n.is_a(graph.root, direct=False), nodes)
+        nodes = [n for n in nodes if n.is_a(graph.root, direct=False)]
     else:
-        nodes = filter(lambda n: n.has_rule("is-a", direct=True), nodes)
+        nodes = [n for n in nodes if n.has_rule("is-a", direct=True)]
     if proper:
-        nodes = filter(lambda n: n in graph.proper_nouns(), nodes)
+        nodes = [n for n in nodes if n in graph.proper_nouns()]
     return nodes
 
 # "Illustrate what wild is like" -> landscape, anger, sea, rodeo, ...
@@ -545,7 +545,7 @@ def graph_objects(graph, distance=2, heuristic=None):
         heuristic=cost({"is-opposite-of": 10})
     if graph.root.is_property:
         nodes = graph.enumerate_rules("is-property-of", distance, heuristic, reversed=True)
-        nodes = filter(lambda n: not n.is_property, nodes)
+        nodes = [n for n in nodes if not n.is_property]
     else:
         nodes = graph.specific(proper=False)
     return nodes
@@ -751,11 +751,11 @@ class _solver:
             index.name = self.index
             _SOLVER_CACHE.clear()
         if len(index) == 0:
-            raise IndexError, "index '"+index.name+\
-                "' to use with solver is empty or non-existent"
+            raise IndexError("index '"+index.name+\
+                "' to use with solver is empty or non-existent")
         if not hasattr(graph.graph, self.method):
-            raise MethodError, "'"+self.method+\
-                "' is not an existing cluster method the solver can call"
+            raise MethodError("'"+self.method+\
+                "' is not an existing cluster method the solver can call")
         self.analysis = analysis()
 
     def _retrieve(self, concept, depth=3, cached=True):
@@ -948,9 +948,9 @@ def count(list):
 
 def clean(word):
 	word = word.strip(",;:.?!'`\"-[()]")
-	word = word.strip(u"‘“")
+	word = word.strip("‘“")
 	if word.endswith( "'s"): word = word[:-2]
-	if word.endswith(u"’s"): word = word[:-2]
+	if word.endswith("’s"): word = word[:-2]
 	return word.strip()
 
 #--- SIMILE ------------------------------------------------------------------------------------------
@@ -975,7 +975,7 @@ def suggest_properties(noun, cached=True):
 		service="google",
 		cached=cached
 	)
-	matches = filter(lambda word: word not in ("well", "much"), matches)
+	matches = [word for word in matches if word not in ("well", "much")]
 	return count(matches)
 
 def suggest_objects(adjective, cached=True):
@@ -998,7 +998,7 @@ def suggest_objects(adjective, cached=True):
 			service="google",
 			cached=cached
 		)
-	matches = filter(lambda word: len(word) > 1 and word not in ("****"), matches)
+	matches = [word for word in matches if len(word) > 1 and word not in ("****")]
 	return count(matches)
 
 #--- COMPARATIVE -------------------------------------------------------------------------------------

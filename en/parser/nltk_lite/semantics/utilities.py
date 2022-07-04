@@ -16,8 +16,8 @@ from en.parser.nltk_lite import tokenize
 from en.parser.nltk_lite.parse.category import GrammarCategory
 from en.parser.nltk_lite.parse.grammarfile import GrammarFile
 from en.parser.nltk_lite.parse.tree import Tree
-from evaluate import *
-from logic import *
+from .evaluate import *
+from .logic import *
 
 ##############################################################
 ## Utility functions for connecting parse output to semantics
@@ -62,7 +62,7 @@ def semrep(node, beta_reduce=True):
             semrep = semrep.simplify()
         return semrep
     except KeyError:
-        print "Node has no 'sem' feature specification"
+        print("Node has no 'sem' feature specification")
     raise
 
 def root_semrep(syntree, beta_reduce=True):

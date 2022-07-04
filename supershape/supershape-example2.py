@@ -1,8 +1,9 @@
+import importlib
 try:
     supershape = ximport("supershape")
 except:
     supershape = ximport("__init__")
-    reload(supershape)
+    importlib.reload(supershape)
 
 size(400, 400)
 

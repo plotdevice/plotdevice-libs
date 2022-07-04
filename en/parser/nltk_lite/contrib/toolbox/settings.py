@@ -115,7 +115,7 @@ class MarkerSet :
         """Obtain a list of all of the field markers for the marker set.
         @returns: list of field markers
         @rtype: list of strings"""
-        return self._dict.keys()
+        return list(self._dict.keys())
 
     def add_field_metadata(self, fmeta) :
         """Add FieldMetadata object to dictionary of marker sets, keyed by field marker.
@@ -436,54 +436,54 @@ class TextSettings(ToolboxSettings) :
             else :
                 pass
 
-            print "----- Interlinear Process -----"
-            print "  FROM:            [%s]" % ip.get_from_marker()
-            print "  TO:              [%s]" % ip.get_to_marker()
-            print "  GLOSS SEP:       [%s]" % ip.get_gloss_separator()
-            print "  FAIL MARK:       [%s]" % ip.get_failure_marker()
-            print "  SHOW FAIL MARK:  [%s]" % ip.show_failure_marker()
-            print "  SHOW ROOT GUESS: [%s]" % ip.show_root_guess()
-            print "  PARSE PROCESS:   [%s]" % ip.is_parse_process()            
+            print("----- Interlinear Process -----")
+            print("  FROM:            [%s]" % ip.get_from_marker())
+            print("  TO:              [%s]" % ip.get_to_marker())
+            print("  GLOSS SEP:       [%s]" % ip.get_gloss_separator())
+            print("  FAIL MARK:       [%s]" % ip.get_failure_marker())
+            print("  SHOW FAIL MARK:  [%s]" % ip.show_failure_marker())
+            print("  SHOW ROOT GUESS: [%s]" % ip.show_root_guess())
+            print("  PARSE PROCESS:   [%s]" % ip.is_parse_process())            
 
             trilook = proc.find("triLook")
             if trilook :
-                print "  -- trilook --"
-                print "    DB TYPE:       [%s]" % self.__parse_value(trilook, "dbtyp")            
-                print "    MKR OUTPUT:    [%s]" % self.__parse_value(trilook, "mkrOut")
+                print("  -- trilook --")
+                print("    DB TYPE:       [%s]" % self.__parse_value(trilook, "dbtyp"))            
+                print("    MKR OUTPUT:    [%s]" % self.__parse_value(trilook, "mkrOut"))
 
             tripref = proc.find("triPref")
             if tripref :
-                print "  -- tripref --"
-                print "    DB TYPE:       [%s]" % self.__parse_value(tripref, "dbtyp")            
-                print "    MKR OUTPUT:    [%s]" % self.__parse_value(tripref, "mkrOut")
+                print("  -- tripref --")
+                print("    DB TYPE:       [%s]" % self.__parse_value(tripref, "dbtyp"))            
+                print("    MKR OUTPUT:    [%s]" % self.__parse_value(tripref, "mkrOut"))
                 try :
                     for d in tripref.findall("drflst/drf") :
-                        print "    DB:            [%s]" % self.__parse_value(d, "File")
+                        print("    DB:            [%s]" % self.__parse_value(d, "File"))
                 except :
                     pass
                 try :
                     for d in tripref.find("mrflst") :
-                        print "    MKR:           [%s]" % d.text
+                        print("    MKR:           [%s]" % d.text)
                 except :
                     pass
 
             triroot = proc.find("triRoot")
             if triroot :
-                print "  -- triroot --"
-                print "    DB TYPE:       [%s]" % self.__parse_value(triroot, "dbtyp")
-                print "    MKR OUTPUT:    [%s]" % self.__parse_value(triroot, "mkrOut")
+                print("  -- triroot --")
+                print("    DB TYPE:       [%s]" % self.__parse_value(triroot, "dbtyp"))
+                print("    MKR OUTPUT:    [%s]" % self.__parse_value(triroot, "mkrOut"))
                 try :
                     for d in triroot.findall("drflst/drf") :
-                        print "    DB:            [%s]" % self.__parse_value(d, "File")
+                        print("    DB:            [%s]" % self.__parse_value(d, "File"))
                 except :
                     pass
                 try :
                     for d in triroot.find("mrflst") :
-                        print "    MKR:           [%s]" % d.text
+                        print("    MKR:           [%s]" % d.text)
                 except :
                     pass
 
-            print ""
+            print("")
             
         # Handle metadata for field markers (aka, marker set)
         for mkr in self._tree.findall('mkrset/mkr') :
@@ -537,9 +537,9 @@ def demo():
     settings = ToolboxSettings()
     settings.open('demos/MDF_AltH.typ')
     tree = settings.parse(unwrap=False, encoding='gbk')
-    print tree.find('expset/expMDF/rtfPageSetup/paperSize').text
+    print(tree.find('expset/expMDF/rtfPageSetup/paperSize').text)
     tree.write('test.xml')
-    print to_settings_string(tree).encode('gbk')
+    print(to_settings_string(tree).encode('gbk'))
 
 if __name__ == '__main__':
     demo()

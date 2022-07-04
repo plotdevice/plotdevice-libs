@@ -17,8 +17,8 @@ Module for reading, writing and manipulating Toolbox databases.
 import os, re
 from en.parser.nltk_lite.corpora import get_basedir
 from string import split
-from itertools import imap
-from StringIO import StringIO
+
+from io import StringIO
 from en.parser.nltk_lite.etree.ElementTree import TreeBuilder, Element
 
 class StandardFormat(object):
@@ -56,7 +56,7 @@ class StandardFormat(object):
         # need to get first line outside the loop for correct handling
         # of the first marker if it spans multiple lines
         file_iter = iter(self._file)
-        line = file_iter.next()
+        line = next(file_iter)
         mobj = re.match(line_pat, line)
         mkr, line_value = mobj.groups()
         value_lines = [line_value,]
@@ -100,7 +100,7 @@ class StandardFormat(object):
         @rtype: iterator over C{(marker, value)} tuples
         """
         if encoding is None and unicode_fields is not None:
-            raise ValueError, 'unicode_fields is set but not encoding.'
+            raise ValueError('unicode_fields is set but not encoding.')
         unwrap_pat = re.compile(r'\n+')
         for mkr, val in self.raw_fields():
             if encoding:
@@ -254,10 +254,9 @@ def to_sfm_string(tree, encoding=None, errors='strict', unicode_fields=None):
         tree = root
 
     if tree.tag != 'toolbox_data':
-        raise ValueError, "not a toolbox_data element structure"
+        raise ValueError("not a toolbox_data element structure")
     if encoding is None and unicode_fields is not None:
-        raise ValueError, \
-            "if encoding is not specified then neither should unicode_fields"
+        raise ValueError("if encoding is not specified then neither should unicode_fields")
     l = []
     for rec in tree:
         l.append('\n')
@@ -270,9 +269,9 @@ def to_sfm_string(tree, encoding=None, errors='strict', unicode_fields=None):
                 else:
                     cur_encoding = encoding
                 if re.search(_is_value, value):
-                    l.append((u"\\%s %s\n" % (mkr, value)).encode(cur_encoding, errors))
+                    l.append(("\\%s %s\n" % (mkr, value)).encode(cur_encoding, errors))
                 else:
-                    l.append((u"\\%s%s\n" % (mkr, value)).encode(cur_encoding, errors))
+                    l.append(("\\%s%s\n" % (mkr, value)).encode(cur_encoding, errors))
             else:
                 if re.search(_is_value, value):
                     l.append("\\%s %s\n" % (mkr, value))
@@ -350,7 +349,7 @@ def dictionary(files='rotokas.dic', include_header=False) :
     @type include_header: boolean
     @rtype: iterator over L{dict}
     """       
-    return imap(dict, raw(files, include_header))
+    return map(dict, raw(files, include_header))
 
 def _dict_list_entry(entry):
     d = {}
@@ -385,25 +384,25 @@ def demo():
     from itertools import islice
     from pprint import pprint
 
-    print 'Raw:'
+    print('Raw:')
     pprint(list(islice(toolbox.raw(), 3)))
 
-    print 'Dictionary:'
+    print('Dictionary:')
     pprint(list(islice(toolbox.dictionary(), 3)))
 
-    print 'Dictionary-List:'
+    print('Dictionary-List:')
     pprint(list(islice(toolbox.dict_list(), 3)))
 
-    print 'Complex test cases, no header'
+    print('Complex test cases, no header')
     pprint(list(toolbox.raw("test.dic")))
 
-    print 'Complex test cases, no header, dictionary'
+    print('Complex test cases, no header, dictionary')
     pprint(list(toolbox.dictionary("test.dic")))
 
-    print 'Complex test cases, no header, dictionary list'
+    print('Complex test cases, no header, dictionary list')
     pprint(list(toolbox.dict_list("test.dic")))
 
-    print 'Complex test cases, with header'
+    print('Complex test cases, with header')
     pprint(list(toolbox.raw("test.dic", include_header=True)))
 
 if __name__ == '__main__':

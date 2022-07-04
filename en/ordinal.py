@@ -46,7 +46,7 @@ def ordinal(number):
     """
     
     if isinstance(number, int):
-        if ordinal_nth.has_key(number%100):
+        if number%100 in ordinal_nth:
             return str(number) + ordinal_nth[number%100]
         else:
             return str(number) + ordinal_nth[number%10]

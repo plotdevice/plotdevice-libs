@@ -217,7 +217,7 @@ class Word:
     def __init__(self, line):
         """Initialize the word from a line of a WN POS file."""
 	tokens = string.split(line)
-	ints = map(int, tokens[int(tokens[3]) + 4:])
+	ints = list(map(int, tokens[int(tokens[3]) + 4:]))
 	self.form = string.replace(tokens[0], '_', ' ')
         "Orthographic representation of the word."
 	self.pos = _normalizePOS(tokens[1])
@@ -251,7 +251,7 @@ class Word:
 
     # Deprecated.  Present for backwards compatability.
     def senses(self):
-        import wordnet
+        from . import wordnet
         #warningKey = 'SENSE_DEPRECATION_WARNING'
         #if not wordnet.has_key(warningKey):
         #    print 'Word.senses() has been deprecated.  Use Word.sense() instead.'
@@ -276,7 +276,7 @@ class Word:
 	positions = {}
 	for sense in self.getSenses():
 	    positions[sense.position] = 1
-	return positions.keys()
+	return list(positions.keys())
 
     adjectivePositions = getAdjectivePositions # backwards compatability
     
@@ -307,12 +307,12 @@ class Word:
 	"""
 	if ReadableRepresentations:
 	    return str(self)
-	return "getWord" + `(self.form, self.pos)`
+	return "getWord" + repr((self.form, self.pos))
 	
     #
     # Sequence protocol (a Word's elements are its Senses)
     #
-    def __nonzero__(self):
+    def __bool__(self):
 	return 1
     
     def __len__(self):
@@ -374,7 +374,7 @@ class Synset:
 	if pos == VERB:
 	    (vfTuples, remainder) = _partition(remainder[1:], 3, int(remainder[0]))
 	    def extractVerbFrames(index, vfTuples):
-		return tuple(map(lambda t:string.atoi(t[1]), filter(lambda t,i=index:string.atoi(t[2],16) in (0, i), vfTuples)))
+		return tuple([string.atoi(t[1]) for t in list(filter(lambda t,i=index:string.atoi(t[2],16) in (0, i), vfTuples))])
 	    senseVerbFrames = []
 	    for index in range(1, len(self._senseTuples) + 1):
 		senseVerbFrames.append(extractVerbFrames(index, vfTuples))
@@ -425,7 +425,7 @@ class Synset:
 	    return self._pointers
 	else:
 	    _requirePointerType(pointerType)
-	    return filter(lambda pointer, type=pointerType: pointer.type == type, self._pointers)
+	    return list(filter(lambda pointer, type=pointerType: pointer.type == type, self._pointers))
 
     pointers = getPointers # backwards compatability
     
@@ -441,7 +441,7 @@ class Synset:
 	>>> N['dog'][0].getPointerTargets(HYPERNYM)
 	[{noun: canine, canid}]
 	"""
-	return map(Pointer.target, self.getPointers(pointerType))
+	return list(map(Pointer.target, self.getPointers(pointerType)))
 
     pointerTargets = getPointerTargets # backwards compatability
     
@@ -453,7 +453,7 @@ class Synset:
 	>>> N['dog'][1].isTagged()
 	0
 	"""
-	return len(filter(Sense.isTagged, self.getSenses())) > 0
+	return len(list(filter(Sense.isTagged, self.getSenses()))) > 0
     
     def __str__(self):
 	"""Return a human-readable representation.
@@ -461,7 +461,7 @@ class Synset:
 	>>> str(N['dog'][0].synset)
 	'{noun: dog, domestic dog, Canis familiaris}'
 	"""
-	return "{" + self.pos + ": " + string.joinfields(map(lambda sense:sense.form, self.getSenses()), ", ") + "}"
+	return "{" + self.pos + ": " + string.joinfields([sense.form for sense in self.getSenses()], ", ") + "}"
     
     def __repr__(self):
 	"""If ReadableRepresentations is true, return a human-readable
@@ -472,7 +472,7 @@ class Synset:
 	"""
 	if ReadableRepresentations:
 	    return str(self)
-	return "getSynset" + `(self.pos, self.offset)`
+	return "getSynset" + repr((self.pos, self.offset))
     
     def __cmp__(self, other):
 	return _compareInstances(self, other, ('pos', 'offset'))
@@ -480,7 +480,7 @@ class Synset:
     #
     # Sequence protocol (a Synset's elements are its senses).
     #
-    def __nonzero__(self):
+    def __bool__(self):
 	return 1
     
     def __len__(self):
@@ -505,8 +505,8 @@ class Synset:
 	if isinstance(idx, Word):
 	    idx = idx.form
 	if isinstance(idx, StringType):
-	    idx = _index(idx, map(lambda sense:sense.form, senses)) or \
-		  _index(idx, map(lambda sense:sense.form, senses), _equalsIgnoreCase)
+	    idx = _index(idx, [sense.form for sense in senses]) or \
+		  _index(idx, [sense.form for sense in senses], _equalsIgnoreCase)
 	return senses[idx]
     
     def __getslice__(self, i, j):
@@ -579,7 +579,7 @@ class Sense:
         elif name == 'lexname':
             return self.synset.lexname
 	else:
-	    raise AttributeError, name
+	    raise AttributeError(name)
     
     def __str__(self):
 	"""Return a human-readable representation.
@@ -587,7 +587,7 @@ class Sense:
 	>>> str(N['dog'])
 	'dog(n.)'
 	"""
-	return `self.form` + " in " + str(self.synset)
+	return repr(self.form) + " in " + str(self.synset)
     
     def __repr__(self):
 	"""If ReadableRepresentations is true, return a human-readable
@@ -598,7 +598,7 @@ class Sense:
 	"""
 	if ReadableRepresentations:
 	    return str(self)
-	return "%s[%s]" % (`self.synset`, `self.form`)
+	return "%s[%s]" % (repr(self.synset), repr(self.form))
     
     def getPointers(self, pointerType=None):
 	"""Return a sequence of Pointers.
@@ -615,7 +615,7 @@ class Sense:
 	senseIndex = _index(self, self.synset.getSenses())
 	def pointsFromThisSense(pointer, selfIndex=senseIndex):
 	    return pointer.sourceIndex == 0 or pointer.sourceIndex - 1 == selfIndex
-	return filter(pointsFromThisSense, self.synset.getPointers(pointerType))
+	return list(filter(pointsFromThisSense, self.synset.getPointers(pointerType)))
 
     pointers = getPointers # backwards compatability
 
@@ -631,7 +631,7 @@ class Sense:
 	>>> N['dog'][0].getPointerTargets(HYPERNYM)
 	[{noun: canine, canid}]
 	"""
-	return map(Pointer.target, self.getPointers(pointerType))
+	return list(map(Pointer.target, self.getPointers(pointerType)))
 
     pointerTargets = getPointerTargets # backwards compatability
     
@@ -824,7 +824,7 @@ class Dictionary:
 	if word:
 	    return word
 	else:
-	    raise KeyError, "%s is not in the %s database" % (`form`, `pos`)
+	    raise KeyError("%s is not in the %s database" % (repr(form), repr(pos)))
     
     def getSynset(self, offset):
 	pos = self.pos
@@ -838,7 +838,7 @@ class Dictionary:
     #
     # Sequence protocol (a Dictionary's items are its Words)
     #
-    def __nonzero__(self):
+    def __bool__(self):
 	"""Return false.  (This is to avoid scanning the whole index file
 	to compute len when a Dictionary is used in test position.)
 	
@@ -884,7 +884,7 @@ class Dictionary:
 	    line = self.indexFile[index]
 	    return self.getWord(string.replace(line[:string.find(line, ' ')], '_', ' '), line)
 	else:
-	    raise TypeError, "%s is not a String or Int" % `index`
+	    raise TypeError("%s is not a String or Int" % repr(index))
     
     #
     # Dictionary protocol
@@ -907,7 +907,7 @@ class Dictionary:
     def keys(self):
 	"""Return a sorted list of strings that index words in this
 	dictionary."""
-	return self.indexFile.keys()
+	return list(self.indexFile.keys())
     
     def has_key(self, form):
 	"""Return true iff the argument indexes a word in this dictionary.
@@ -917,7 +917,7 @@ class Dictionary:
 	>>> N.has_key('inu')
 	0
 	"""
-	return self.indexFile.has_key(form)
+	return form in self.indexFile
     
     #
     # Testing
@@ -925,7 +925,7 @@ class Dictionary:
     
     def _testKeys(self):
 	"""Verify that index lookup can find each word in the index file."""
-	print "Testing: ", self
+	print("Testing: ", self)
 	file = open(self.indexFile.file.name, _FILE_OPEN_MODE)
 	counter = 0
 	while 1:
@@ -934,13 +934,13 @@ class Dictionary:
 	    if line[0] != ' ':
 		key = string.replace(line[:string.find(line, ' ')], '_', ' ')
 		if (counter % 1000) == 0:
-		    print "%s..." % (key,),
+		    print("%s..." % (key,), end=' ')
 		    import sys
 		    sys.stdout.flush()
 		counter = counter + 1
 		self[key]
 	file.close()
-	print "done."
+	print("done.")
 
 
 class _IndexFile:
@@ -972,7 +972,7 @@ class _IndexFile:
     #
     # Sequence protocol (an _IndexFile's items are its lines)
     #
-    def __nonzero__(self):
+    def __bool__(self):
 	return 1
     
     def __len__(self):
@@ -987,7 +987,7 @@ class _IndexFile:
 	    lines = lines + 1
 	return lines
     
-    def __nonzero__(self):
+    def __bool__(self):
 	return 1
     
     def __getitem__(self, index):
@@ -1004,12 +1004,12 @@ class _IndexFile:
 		self.file.seek(self.nextOffset)
 		line = self.file.readline()
 		if line == "":
-		    raise IndexError, "index out of range"
+		    raise IndexError("index out of range")
 		self.nextIndex = self.nextIndex + 1
 		self.nextOffset = self.file.tell()
 	    return line
 	else:
-	    raise TypeError, "%s is not a String or Int" % `index`
+	    raise TypeError("%s is not a String or Int" % repr(index))
 	
     #
     # Dictionary protocol
@@ -1025,7 +1025,7 @@ class _IndexFile:
     
     def keys(self):
 	if hasattr(self, 'indexCache'):
-	    keys = self.indexCache.keys()
+	    keys = list(self.indexCache.keys())
 	    keys.sort()
 	    return keys
 	else:
@@ -1041,7 +1041,7 @@ class _IndexFile:
     def has_key(self, key):
 	key = key.replace(' ', '_') # test case: V['haze over']
 	if hasattr(self, 'indexCache'):
-	    return self.indexCache.has_key(key)
+	    return key in self.indexCache
 	return self.get(key) != None
     
     #
@@ -1051,7 +1051,7 @@ class _IndexFile:
     def _buildIndexCacheFile(self):
 	import shelve
 	import os
-	print "Building %s:" % (self.shelfname,),
+	print("Building %s:" % (self.shelfname,), end=' ')
 	tempname = self.shelfname + ".temp"
 	try:
 	    indexCache = shelve.open(tempname)
@@ -1062,7 +1062,7 @@ class _IndexFile:
 		if not line: break
 		key = line[:string.find(line, ' ')]
 		if (count % 1000) == 0:
-		    print "%s..." % (key,),
+		    print("%s..." % (key,), end=' ')
 		    import sys
 		    sys.stdout.flush()
 		indexCache[key] = line
@@ -1072,7 +1072,7 @@ class _IndexFile:
 	finally:
 	    try: os.remove(tempname)
 	    except: pass
-	print "done."
+	print("done.")
 	self.indexCache = shelve.open(self.shelfname, 'r')
 
 
@@ -1100,7 +1100,7 @@ getword, getsense, getsynset = getWord, getSense, getSynset
 
 def _requirePointerType(pointerType):
     if pointerType not in POINTER_TYPES:
-	raise TypeError, `pointerType` + " is not a pointer type"
+	raise TypeError(repr(pointerType) + " is not a pointer type")
     return pointerType
 
 def _compareInstances(a, b, fields):
@@ -1392,13 +1392,13 @@ def _normalizePOS(pos):
     norm = _POSNormalizationTable.get(pos)
     if norm:
 	return norm
-    raise TypeError, `pos` + " is not a part of speech type"
+    raise TypeError(repr(pos) + " is not a part of speech type")
 
 def _dictionaryFor(pos):
     pos = _normalizePOS(pos)
     dict = _POStoDictionaryTable.get(pos)
     if dict == None:
-	raise RuntimeError, "The " + `pos` + " dictionary has not been created"
+	raise RuntimeError("The " + repr(pos) + " dictionary has not been created")
     return dict
 
 def buildIndexFiles():

@@ -10,7 +10,7 @@
 """
 Graphically display a C{Tree}.
 """
-from Tkinter import *
+from tkinter import *
 from en.parser.nltk_lite.parse import tree
 from en.parser.nltk_lite.draw import *
 import sys
@@ -436,7 +436,7 @@ def tree_to_treesegment(canvas, t, make_node=TextWidget,
     leaf_attribs = {}
     loc_attribs = {}
 
-    for (key, value) in attribs.items():
+    for (key, value) in list(attribs.items()):
         if key[:5] == 'tree_': tree_attribs[key[5:]] = value
         elif key[:5] == 'node_': node_attribs[key[5:]] = value
         elif key[:5] == 'leaf_': leaf_attribs[key[5:]] = value
@@ -551,18 +551,18 @@ class TreeWidget(CanvasWidget):
         """
         Add a binding to all tree segments.
         """
-        for tseg in self._expanded_trees.values():
+        for tseg in list(self._expanded_trees.values()):
             tseg.bind_click(callback, button)
-        for tseg in self._collapsed_trees.values():
+        for tseg in list(self._collapsed_trees.values()):
             tseg.bind_click(callback, button)
 
     def bind_drag_trees(self, callback, button=1):
         """
         Add a binding to all tree segments.
         """
-        for tseg in self._expanded_trees.values():
+        for tseg in list(self._expanded_trees.values()):
             tseg.bind_drag(callback, button)
-        for tseg in self._collapsed_trees.values():
+        for tseg in list(self._collapsed_trees.values()):
             tseg.bind_drag(callback, button)
 
     def bind_click_leaves(self, callback, button=1):
@@ -646,50 +646,50 @@ class TreeWidget(CanvasWidget):
             for leaf in self._leaves: leaf[attr[5:]] = value
         elif attr == 'line_color':
             self._line_color = value
-            for tseg in self._expanded_trees.values(): tseg['color'] = value
+            for tseg in list(self._expanded_trees.values()): tseg['color'] = value
         elif attr == 'line_width':
             self._line_width = value
-            for tseg in self._expanded_trees.values(): tseg['width'] = value
-            for tseg in self._collapsed_trees.values(): tseg['width'] = value
+            for tseg in list(self._expanded_trees.values()): tseg['width'] = value
+            for tseg in list(self._collapsed_trees.values()): tseg['width'] = value
         elif attr == 'roof_color':
             self._roof_color = value
-            for tseg in self._collapsed_trees.values(): tseg['color'] = value
+            for tseg in list(self._collapsed_trees.values()): tseg['color'] = value
         elif attr == 'roof_fill':
             self._roof_fill = value
-            for tseg in self._collapsed_trees.values(): tseg['fill'] = value
+            for tseg in list(self._collapsed_trees.values()): tseg['fill'] = value
         elif attr == 'shapeable':
             self._shapeable = value
-            for tseg in self._expanded_trees.values():
+            for tseg in list(self._expanded_trees.values()):
                 tseg['draggable'] = value
-            for tseg in self._collapsed_trees.values():
+            for tseg in list(self._collapsed_trees.values()):
                 tseg['draggable'] = value
             for leaf in self._leaves: leaf['draggable'] = value
         elif attr == 'xspace':
             self._xspace = value
-            for tseg in self._expanded_trees.values():
+            for tseg in list(self._expanded_trees.values()):
                 tseg['xspace'] = value
-            for tseg in self._collapsed_trees.values():
+            for tseg in list(self._collapsed_trees.values()):
                 tseg['xspace'] = value
             self.manage()
         elif attr == 'yspace':
             self._yspace = value
-            for tseg in self._expanded_trees.values():
+            for tseg in list(self._expanded_trees.values()):
                 tseg['yspace'] = value
-            for tseg in self._collapsed_trees.values():
+            for tseg in list(self._collapsed_trees.values()):
                 tseg['yspace'] = value
             self.manage()
         elif attr == 'orientation':
             self._orientation = value
-            for tseg in self._expanded_trees.values():
+            for tseg in list(self._expanded_trees.values()):
                 tseg['orientation'] = value
-            for tseg in self._collapsed_trees.values():
+            for tseg in list(self._collapsed_trees.values()):
                 tseg['orientation'] = value
             self.manage()
         elif attr == 'ordered':
             self._ordered = value
-            for tseg in self._expanded_trees.values():
+            for tseg in list(self._expanded_trees.values()):
                 tseg['ordered'] = value
-            for tseg in self._collapsed_trees.values():
+            for tseg in list(self._collapsed_trees.values()):
                 tseg['ordered'] = value
         else: CanvasWidget.__setitem__(self, attr, value)
 
@@ -713,7 +713,7 @@ class TreeWidget(CanvasWidget):
     def _tags(self): return []
 
     def _manage(self):
-        segs = self._expanded_trees.values() + self._collapsed_trees.values()
+        segs = list(self._expanded_trees.values()) + list(self._collapsed_trees.values())
         for tseg in segs:
             if tseg.hidden():
                 tseg.show()
