@@ -8,6 +8,7 @@ __version__   = "1.9.5"
 __copyright__ = "Copyright (c) 2007 Tom De Smedt"
 __license__   = "GPL"
 
+from plotdevice import Bezier, Color as PDColor, Image as PDImage
 from plotdevice.lib import register
 _ctx = register(__name__)
 
@@ -134,7 +135,7 @@ class Color:
         If three values are given, create an opaque color.
         """
         try:
-            is_nodebox_color = isinstance(r, _ctx.Color().__class__)
+            is_nodebox_color = isinstance(r, PDColor)
         except:
             is_nodebox_color = False
         # One parameter, a Color object.
@@ -193,7 +194,7 @@ class Path:
         self.path = None
         # Path from BezierPath.
         try:
-            b = isinstance(path, _ctx.BezierPath().__class__)
+            b = isinstance(path, Bezier)
             if b: self.path = path._nsBezierPath
         except:
             pass
@@ -380,6 +381,7 @@ class Canvas:
                 kwargs.get("fill", default_fill),
                 kwargs.get("stroke", Transparent())
             ]
+
             for i in range(len(colors)):
                 clr = colors[i]
                 if isinstance(clr, int): clr = float(clr)
@@ -436,7 +438,7 @@ class Canvas:
         # ------------------------------------------------------------------------
         try:
             try:
-                img = _ctx.Image(None, data=args[0])
+                img = PDImage(None, data=args[0])
                 img = img._nsImage
             except:
                 img = args[0]
