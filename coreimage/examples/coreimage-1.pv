@@ -1,19 +1,9 @@
-import importlib
+import coreimage
+
 # The Twisted World example
 # http://nodebox.net/code/index.php/Twisted_world
 
 size(800, 500)
-
-# Import the library
-try: 
-    # This is the statement you normally use.
-    coreimage = ximport("coreimage")
-except:
-    # But since these examples are "inside" the library
-    # we may need to try something different when
-    # the library is not located in /Application Support
-    coreimage = ximport("__init__")
-    importlib.reload(coreimage)
 
 # Draw a dark grey background
 background(0.1)

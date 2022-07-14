@@ -2,11 +2,7 @@
 
 size(600, 800)
 
-try: 
-    coreimage = ximport("coreimage")
-except:
-    coreimage = ximport("__init__")
-    importlib.reload(coreimage)
+import coreimage
     
 c = coreimage.canvas(WIDTH, HEIGHT)
 
@@ -42,7 +38,7 @@ c.draw()
 
 # Some fun converting pixels to curves.
 # Uncomment the code below to grow hair on a sphere.
-'''
+# '''
 l.contrast = 1.1
 
 p = l.pixels()
@@ -52,7 +48,7 @@ strokewidth(0.25)
 autoclosepath(False)
 
 # This is the bounding box of the pixel region.
-print p.x, p.y, p.w, p.h
+print(p.x, p.y, p.w, p.h)
 
 # Traverse each pixel.
 for i in range(p.w):
@@ -98,5 +94,4 @@ for i in range(p.w):
                             WIDTH/2,
                             HEIGHT)
                     path = endpath()                    
-'''
-import importlib
+# '''

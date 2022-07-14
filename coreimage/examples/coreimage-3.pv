@@ -5,18 +5,8 @@
 # What images are we looking for?
 query = "insect"
 
-# Import the Core Image library
-try: 
-    coreimage = ximport("coreimage")
-except:
-    coreimage = ximport("__init__")
-    importlib.reload(coreimage)
-
-# Import the MorgueFile library
-try: 
-    from coreimage import morguefile
-except:
-    morguefile = ximport("morguefile")
+import coreimage
+from coreimage import morguefile
 
 from random import shuffle
 import importlib
@@ -26,11 +16,11 @@ import importlib
 # the downloaded images in it.
 # Next time we will take images from this folder
 # instead of downloading them again.
-if len(files("images/"+ query+"/*")) == 0:
-    images = morguefile.query(query, max=30)
-    shuffle(images)
-    for img in images[:5]:
-        img.download("images/"+query+"/")
+# if len(files("images/"+ query+"/*")) == 0:
+#     images = morguefile.query(query, max=30)
+#     shuffle(images)
+#     for img in images[:5]:
+#         img.download("images/"+query+"/")
 
 # Draw a dark grey background
 fill(0.1)
@@ -43,7 +33,8 @@ canvas = coreimage.canvas(800, 500)
 # Remember, it may take a few seconds to load
 # all the images during the first run.
 for i in range(20):
-    img = choice(files("images/"+ query+"/*"))
+    # img = choice(files("images/"+ query+"/*"))
+    img = choice(files("images/*"))
     l = canvas.append(img)
     
     # Give each layer a gradient mask.

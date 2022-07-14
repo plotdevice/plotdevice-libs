@@ -1,4 +1,3 @@
-import importlib
 # The Membrane example.
 # This example uses Core Image Dynamics
 # to stack layer manipulations in a real-time animation.
@@ -6,11 +5,7 @@ import importlib
 size(350,350)
 speed(50)
 
-try: 
-    coreimage = ximport("coreimage")
-except:
-    coreimage = ximport("__init__")
-    importlib.reload(coreimage)
+import coreimage
 
 def setup():
     
@@ -52,11 +47,11 @@ def draw():
 
     # When the mouse is pressed,
     # bulge the center.
-    if mousedown:        
-        dx = MOUSEX - l.x - 50
-        dy = MOUSEY - l.y - 50       
-        l.filter("bumpdistortion", radius=150, scale=1.0)
-        cache = canvas.flatten()
+    # if mousedown:
+    #     dx = MOUSEX - l.x - 50
+    #     dy = MOUSEY - l.y - 50
+    #     l.filter("bumpdistortion", radius=150, scale=1.0)
+    #     cache = canvas.flatten()
     
     l = canvas.append(color(1,0.75,0.5))
     l.blend(50, "hue")

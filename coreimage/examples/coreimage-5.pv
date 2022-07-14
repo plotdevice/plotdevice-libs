@@ -1,11 +1,5 @@
-import importlib
+import coreimage
 # Coffee dynamics.
-
-try: 
-    coreimage = ximport("coreimage")
-except:
-    coreimage = ximport("__init__")
-    importlib.reload(coreimage)
 
 size(500, 500)
 speed(30)
@@ -23,7 +17,7 @@ def draw():
     
     # A canvas of layers with the same size as the NodeBox window.
     canvas = coreimage.canvas(WIDTH, HEIGHT)
-    
+
     # The bottom layer is a brownish fill color.
     l = canvas.append(color(0.07,0.05,0))
 
@@ -36,7 +30,7 @@ def draw():
     else:
         # During the next frames of the animation,
         # take a screenshot of the text layer.
-        copy = copy.render()
+        # copy = copy.render()
         copy = canvas.append(copy)
 
     # Each frame, apply some twirl filters to the text layer.
