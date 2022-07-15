@@ -1,11 +1,6 @@
-import importlib
 # PERCEPTION BROWSER
 
-try:
-    perception = ximport("perception")
-except ImportError:
-    perception = ximport("__init__")
-    importlib.reload(perception)
+import perception
 
 g = None
 def load(node):

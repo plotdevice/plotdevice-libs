@@ -5,12 +5,7 @@
 
 query = "bird"
 
-try:
-    graph = ximport("graph")
-except ImportError:
-    graph = ximport("__init__")
-    importlib.reload(graph)
-
+import graph
 import en
 from random import shuffle
 import importlib

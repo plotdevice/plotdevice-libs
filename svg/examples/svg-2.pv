@@ -1,16 +1,9 @@
-import importlib
 # SVG as layers in Core Image.
 
 size(500, 500)
 
-try:
-    svg = ximport("svg")
-except:
-    svg = ximport("__init__")
-    importlib.reload(svg)
-
-# We'll need the Core Image library.
-coreimage = ximport("coreimage")
+import svg
+import coreimage
 
 canvas = coreimage.canvas(WIDTH, HEIGHT)
 canvas.append(color(0.1, 0, 0.1))

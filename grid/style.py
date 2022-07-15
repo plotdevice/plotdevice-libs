@@ -415,7 +415,7 @@ def draw_background(style, grob, path, x, y, width, height):
     # If a background gradient is defined, attempt to import the Colors library.
     if style.background.gradient:
         try:
-            colors = style._ctx.ximport("colors")
+            import colors
             g = style.background.gradient
             clr1   = g[0]
             clr2   = g[1]
@@ -446,7 +446,8 @@ def draw_content(style, grob, x, y, width, height):
 
     # hack the local redefs of alignment args back to plotdevice's values
     from plotdevice.gfx import LEFT, RIGHT, CENTER, JUSTIFY
-    style._ctx.align([LEFT, RIGHT, CENTER, JUSTIFY][style.horizontal])
+    print("TO", style.horizontal, alignment(style.horizontal))
+    style._ctx.align([LEFT, RIGHT, CENTER, JUSTIFY][alignment(style.horizontal)])
     # style._ctx.align(alignment(style.horizontal))
 
     # Content rotation.

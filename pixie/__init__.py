@@ -85,7 +85,7 @@ def border(x, y, width, pt=20, slant=0.5):
         f = f*glyphwidth*pt - glyphwidth*pt
         f = f/2
 
-        _ctx.font("Pixie-Dingbats", pt)
+        _ctx.font("Pixie", pt, variant="Dingbats")
         _ctx.text(glyph, x+f, y, width)
 
         _ctx.pop()
@@ -118,7 +118,7 @@ def mistake(txt, x, y, pt=20, slant=0.5):
     _ctx.push()
     _ctx.scale(width/(pt*2.5), random(0.7, 1.3))
     _ctx.rotate(random(-3,3))
-    _ctx.font("Pixie-Dingbats")
+    _ctx.font("Pixie", variant="Dingbats")
     _ctx.text(glyph, x-dx, y)
     _ctx.pop()
 
@@ -153,7 +153,7 @@ def underline(x, y, width, pt=20):
     to underline a paragraph of text, just as Tom does.
     """
 
-    _ctx.font("Pixie-Dingbats", pt)
+    _ctx.font("Pixie", pt, variant="Dingbats")
 
     y += random(pt*0.5)
 
@@ -248,10 +248,10 @@ def paragraph(txt, x, y, width, pt=20, slant=0.5, line=False, serif=False):
 
         #Draw the current character in txt in the given fontsize.
         #Use a bold font for text in a border (see below).
-        fonts = ("Pixie","Pixie-SemiBold")
-        if serif: fonts += ("Pixie-Light",)
-        _ctx.font(choice(fonts), pt)
-        if i <= keyword_end: _ctx.font("Pixie-Bold", pt)
+        wgts = ("Regular","Semibold")
+        if serif: fonts += ("Light",)
+        _ctx.font("Pixie", pt, choice(wgts))
+        if i <= keyword_end: _ctx.font("Pixie", "Bold", pt)
         try: _ctx.text(txt[i].upper(), dx, dy+random(slant*pt*0.1))
         except: pass
 
@@ -338,7 +338,7 @@ def heading(txt, x, y, width, pt=30, slant=0.0):
         _ctx.fill(c, m, y, k+random(-0.0,0.3))
 
         #Draw the current character in txt in the given fontsize.
-        _ctx.font("Pixie-Fat", pt)
+        _ctx.font("Pixie", "Fat", pt)
         _ctx.text(txt[i], dx, dy, width)
 
         #Advance the cursor to the next character in txt.
@@ -405,7 +405,7 @@ def list(title, list, x, y, width, pt=20, slant=0.5):
         f = random(1.0,1.5)
         _ctx.scale(f, max(1,f/2))
 
-        _ctx.font("Pixie-Dingbats", pt)
+        _ctx.font("Pixie", pt, variant="Dingbats")
         _ctx.text(glyph, pt/3, pt*0.35)
         _ctx.pop()
 
@@ -448,7 +448,8 @@ def sprite(x, y, pt=40):
     #Draw a body.
     _ctx.rotate(random(-20,20))
     _ctx.skew(random(-20,20),random(-20,20))
-    _ctx.font("Pixie-Dingbats", pt * random(0.8,1.4))
+    _ctx.font("Pixie", pt * random(0.8,1.4), variant="Dingbats")
+
     _ctx.text(body, x, y)
     _ctx.reset()
 
@@ -457,7 +458,7 @@ def sprite(x, y, pt=40):
     #Draw a face.
     _ctx.rotate(random(-20,20))
     _ctx.skew(random(-20,20),random(-20,20))
-    _ctx.font("Pixie-Dingbats", pt * random(0.8,1.4))
+    _ctx.font("Pixie", pt * random(0.8,1.4), variant="Dingbats")
     _ctx.text(face, x, y)
     _ctx.reset()
 
@@ -465,7 +466,7 @@ def sprite(x, y, pt=40):
 
     #Draw legs.
     _ctx.rotate(random(-20,20))
-    _ctx.font("Pixie-Dingbats", pt * random(0.9,1.5))
+    _ctx.font("Pixie", pt * random(0.9,1.5), variant="Dingbats")
     _ctx.text(legs, x, y)
     _ctx.reset()
 
@@ -476,7 +477,7 @@ def sprite(x, y, pt=40):
         #Draw balloon text.
         if random(100)>90:
             _ctx.rotate(random(-20,20))
-            _ctx.font("Pixie-Dingbats", pt * random(0.9,1.5))
+            _ctx.font("Pixie", pt * random(0.9,1.5), variant="Dingbats")
             _ctx.text(balloons, x, y)
             _ctx.reset()
 
@@ -503,7 +504,7 @@ def line(x1, y1, x2, y2):
     #This ensures that lines of different lengths
     #have more or less a same thickness after scaling them.
     pt = 30
-    _ctx.font("Pixie-Dingbats", pt)
+    _ctx.font("Pixie", pt, variant="Dingbats")
     if c < 150:
         glyphs = ("S","T")
         glyphwidth = 1.5*pt
@@ -550,7 +551,7 @@ def node(x, y, d):
     _ctx.fill(cc, mc, yc, kc+random(-0.2,0.2))
 
     pt = 30
-    _ctx.font("Pixie-Dingbats", pt)
+    _ctx.font("Pixie", pt, variant="Dingbats")
     glyphs = ("P","Q","R")
 
     #Scale the glyph to diameter d.

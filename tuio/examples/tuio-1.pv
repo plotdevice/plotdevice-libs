@@ -1,4 +1,4 @@
-tuio = ximport("tuio")
+import tuio
 
 size(640, 480)
 speed(30)

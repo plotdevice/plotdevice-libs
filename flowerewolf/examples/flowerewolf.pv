@@ -1,7 +1,7 @@
 # Note: you'll also need the NodeBox English Linguistics library:
 # http://nodebox.net/code/index.php/Linguistics
 
-flowerewolf = ximport("__init__")
+import flowerewolf
 
 var("topic", TEXT, "kiss")
 size(600,700)

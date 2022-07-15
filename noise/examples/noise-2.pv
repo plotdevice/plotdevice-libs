@@ -1,15 +1,5 @@
-import importlib
-# CLOUDSCAPE
-
-# We're going to put perlin noise as a texture
-# into Core Image.
-coreimage = ximport("coreimage")
-
-try:
-    noise = ximport("noise")
-except:
-    noise = ximport("__init__")
-    importlib.reload(noise)
+import noise
+import coreimage
 
 size(400,400)
 

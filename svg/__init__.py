@@ -12,7 +12,7 @@ __license__   = "GPL"
 from . import arc
 import xml.dom.minidom as parser
 import re
-import md5
+from hashlib import md5
 from plotdevice.gfx import RGB, MOVETO
 from plotdevice.lib import register
 _ctx = register(__name__)
@@ -25,9 +25,7 @@ class cache(dict):
     """
 
     def id(self, svg):
-        hash = md5.new()
-        hash.update(str(_ctx)+svg)
-        return hash.digest()
+        return md5((str(_ctx)+svg).encode('utf-8')).digest()
 
     def save(self, id, paths):
         self[id] = paths
@@ -185,7 +183,7 @@ def parse_polygon(e):
         _ctx.autoclosepath(False)
 
     _ctx.beginpath(points[0], points[1])
-    for i in range(len(points)/2):
+    for i in range(len(points)//2):
         _ctx.lineto(points[i*2], points[i*2+1])
     p = _ctx.endpath(draw=False)
     return p
@@ -244,7 +242,7 @@ def parse_path(e):
         # Absolute MOVETO.
         # Move the current point to the new coordinates.
         if command == "M":
-            for i in range(len(points)/2):
+            for i in range(len(points)//2):
                 _ctx.moveto(points[i*2], points[i*2+1])
                 dx = points[i*2]
                 dy = points[i*2+1]
@@ -254,7 +252,7 @@ def parse_path(e):
         # Relative MOVETO.
         # Offset from the current point.
         elif command == "m":
-            for i in range(len(points)/2):
+            for i in range(len(points)//2):
                 _ctx.moveto(dx+points[i*2], dy+points[i*2+1])
                 dx += points[i*2]
                 dy += points[i*2+1]
@@ -264,7 +262,7 @@ def parse_path(e):
         # Absolute LINETO.
         # Draw a line from the current point to the new coordinate.
         elif command == "L":
-            for i in range(len(points)/2):
+            for i in range(len(points)//2):
                 _ctx.lineto(points[i*2], points[i*2+1])
                 dx = points[i*2]
                 dy = points[i*2+1]
@@ -272,7 +270,7 @@ def parse_path(e):
         # Relative LINETO.
         # Offset from the current point.
         elif command == "l":
-            for i in range(len(points)/2):
+            for i in range(len(points)//2):
                 _ctx.lineto(dx+points[i*2], dy+points[i*2+1])
                 dx += points[i*2]
                 dy += points[i*2+1]
@@ -308,7 +306,7 @@ def parse_path(e):
         # Absolute CURVETO.
         # Draw a bezier with given control handles and destination.
         elif command == "C":
-            for i in range(len(points)/6):
+            for i in range(len(points)//6):
                 _ctx.curveto(points[i*6],   points[i*6+1],
                              points[i*6+2], points[i*6+3],
                              points[i*6+4], points[i*6+5])
@@ -320,7 +318,7 @@ def parse_path(e):
         # Relative CURVETO.
         # Offset from the current point.
         elif command == "c":
-            for i in range(len(points)/6):
+            for i in range(len(points)//6):
                 _ctx.curveto(dx+points[i*6],   dy+points[i*6+1],
                              dx+points[i*6+2], dy+points[i*6+3],
                              dx+points[i*6+4], dy+points[i*6+5])
@@ -333,7 +331,7 @@ def parse_path(e):
         # Only the second control handle is given,
         # the first is the reflexion of the previous handle.
         elif command == "S":
-            for i in range(len(points)/4):
+            for i in range(len(points)//4):
                 if previous_command not in ["C", "c", "S", "s"]:
                     dhx = dx
                     dhy = dy
@@ -351,7 +349,7 @@ def parse_path(e):
         # Relative reflexive CURVETO.
         # Offset from the current point.
         elif command == "s":
-            for i in range(len(points)/4):
+            for i in range(len(points)//4):
                 if previous_command not in ["C", "c", "S", "s"]:
                     dhx = dx
                     dhy = dy

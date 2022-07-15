@@ -1,11 +1,6 @@
-import importlib
 # IMAGE GRID
 
-try: 
-    grid = ximport("grid")
-except:
-    grid = ximport("__init__")
-    importlib.reload(grid)
+import grid
 
 # Play around with the rows, columns, width and height.
 # With the g.styles.fit = True defined below,

@@ -26,14 +26,15 @@ _ctx = register(__name__)
 ######################################################################################################
 
 import os
-import md5
 import glob
 from re import sub
+from hashlib import md5
 from socket import setdefaulttimeout
 from urllib.request import urlopen
 import pickle as pickle
 from random import random
 
+import wordnet
 import graph
 from graph.cluster import sorted, unique
 
@@ -41,7 +42,7 @@ from graph.cluster import sorted, unique
 # "range" is the name of the class instance.
 def range_(start, stop=None, step=1):
     if stop is None:
-    	stop, start = start, 0
+        stop, start = start, 0
     cur = start
     while cur < stop:
         yield cur
@@ -51,18 +52,18 @@ def range_(start, stop=None, step=1):
 # Those we think can easily be translated visually.
 
 basic_properties = [
-	"angular",  "round",      "large",    "small",
-	"long",     "short",      "bright",   "dark",
-	"calm",     "wild",       "chaotic",  "structured",
-	"clean",    "dirty",      "cold",     "hot",
-	"cool",     "warm",       "sharp",    "soft",
-	"complex",  "simple",     "deep",     "shallow",
-	"dynamic",  "static",     "fast",     "slow",
-	"fluid",    "solid",      "hard",     "soft",
-	"heavy",    "light",      "loud",     "quiet",
-	"natural",  "artificial", "old",      "new",
-	"elegant",  "raw",        "strong",   "weak",
-	"tangible", "abstract",   "thick",    "thin", "repetitive"
+    "angular",  "round",      "large",    "small",
+    "long",     "short",      "bright",   "dark",
+    "calm",     "wild",       "chaotic",  "structured",
+    "clean",    "dirty",      "cold",     "hot",
+    "cool",     "warm",       "sharp",    "soft",
+    "complex",  "simple",     "deep",     "shallow",
+    "dynamic",  "static",     "fast",     "slow",
+    "fluid",    "solid",      "hard",     "soft",
+    "heavy",    "light",      "loud",     "quiet",
+    "natural",  "artificial", "old",      "new",
+    "elegant",  "raw",        "strong",   "weak",
+    "tangible", "abstract",   "thick",    "thin", "repetitive"
 ]
 
 #### CACHE ###########################################################################################
@@ -71,7 +72,7 @@ basic_properties = [
 CACHE = os.path.join(os.path.dirname(__file__), "cache")
 
 def _path(key):
-    return os.path.join(CACHE, md5.new(key).hexdigest()+".txt")
+    return os.path.join(CACHE, md5(key.encode('utf8')).hexdigest()+".txt")
 
 def cache(key, value):
     open(_path(key), "w").write(value)
@@ -92,7 +93,7 @@ def clear_cache():
 
 AUTHOR = ""
 def is_robot(author):
-	return author == "robots@nodebox.net"
+    return author == "robots@nodebox.net"
 
 def normalize(str):
     """ Returns lowercase version of string with accents removed.
@@ -136,44 +137,44 @@ class Rule:
 
 class Rules(list):
 
-	def _concepts(self):
-		""" Returns a dictionary of concepts to number of occurences in the ruleset.
-		"""
-		rank = {}
-		for rule in self:
-			if not rule.concept1 in rank: rank[rule.concept1] = 0
-			if not rule.concept2 in rank: rank[rule.concept2] = 0
-			rank[rule.concept1] += 1
-			rank[rule.concept2] += 1
-		return rank
+    def _concepts(self):
+        """ Returns a dictionary of concepts to number of occurences in the ruleset.
+        """
+        rank = {}
+        for rule in self:
+            if not rule.concept1 in rank: rank[rule.concept1] = 0
+            if not rule.concept2 in rank: rank[rule.concept2] = 0
+            rank[rule.concept1] += 1
+            rank[rule.concept2] += 1
+        return rank
 
-	concepts = property(_concepts)
+    concepts = property(_concepts)
 
-	def disambiguate(self, root=None):
-		""" Disambiguate case-sensitive concepts (e.g. "god" or "God").
-		Opt for what occurs most in the ruleset, this avoids unconnected graphs.
-		The selected case for the given root concept is returned.
-		"""
-		if root == None: return root
-		self._root = root
-		def _vote(concept, rank):
-			lower = concept.lower()
-			if lower in rank and rank[lower] >= rank[concept]:
-				return lower
-			if lower == self._root:
-				self._root = concept
-			return concept
-		rank = self.concepts
-		for rule in self:
-			rule.concept1 = _vote(rule.concept1, rank)
-			rule.concept2 = _vote(rule.concept2, rank)
-		# A search for "schrodinger" yields a cluster with "Schrödinger" as root.
-		if self._root not in rank:
-			for concept in list(rank.keys()):
-				if normalize(concept) == self._root.lower():
-					self._root = concept
-					break
-		return self._root
+    def disambiguate(self, root=None):
+        """ Disambiguate case-sensitive concepts (e.g. "god" or "God").
+        Opt for what occurs most in the ruleset, this avoids unconnected graphs.
+        The selected case for the given root concept is returned.
+        """
+        if root == None: return root
+        self._root = root
+        def _vote(concept, rank):
+            lower = concept.lower()
+            if lower in rank and rank[lower] >= rank[concept]:
+                return lower
+            if lower == self._root:
+                self._root = concept
+            return concept
+        rank = self.concepts
+        for rule in self:
+            rule.concept1 = _vote(rule.concept1, rank)
+            rule.concept2 = _vote(rule.concept2, rank)
+        # A search for "schrodinger" yields a cluster with "Schrödinger" as root.
+        if self._root not in rank:
+            for concept in list(rank.keys()):
+                if normalize(concept) == self._root.lower():
+                    self._root = concept
+                    break
+        return self._root
 
 def query(concept, relation=None, context=None, author=None, depth=1, max=None, wait=10):
 
@@ -360,23 +361,23 @@ def style(graph, relation=True):
     """
     try: __ctx = _ctx
     except:
-    	return
+        return
     graph.styles.background     = _ctx.color(0.36, 0.36, 0.34)
     graph.styles.root.text      = _ctx.color(1)
     graph.styles.dark.fill      = _ctx.color(0, 0.2)
     graph.styles.important.fill = _ctx.color(0, 0.2)
     if relation:
-	    # Associative nodes are green.
-	    s = graph.styles.create("related")
-	    s.fill = _ctx.color(0.5, 0.7, 0.1, 0.6)
-	    graph.styles.guide.append("related", lambda g, n: n.is_related)
-	    # Properties are blue.
-	    s = graph.styles.create("property")
-	    s.fill = _ctx.color(0.25, 0.5, 0.7, 0.7)
-	    graph.styles.guide.append("property", lambda g, n: n.is_property)
-	    # Ensure that the root node is styled last.
-	    graph.styles.guide.order.remove("root")
-	    graph.styles.guide.order += ["related", "property", "root"]
+        # Associative nodes are green.
+        s = graph.styles.create("related")
+        s.fill = _ctx.color(0.5, 0.7, 0.1, 0.6)
+        graph.styles.guide.append("related", lambda g, n: n.is_related)
+        # Properties are blue.
+        s = graph.styles.create("property")
+        s.fill = _ctx.color(0.25, 0.5, 0.7, 0.7)
+        graph.styles.guide.append("property", lambda g, n: n.is_property)
+        # Ensure that the root node is styled last.
+        graph.styles.guide.order.remove("root")
+        graph.styles.guide.order += ["related", "property", "root"]
 
 # Edge weight increases as more users describe the same rule.
 VOTE = 0.05
@@ -400,8 +401,8 @@ def add_rule(graph, concept1, relation, concept2, context="", author="",
         weight -= 0.25
     e = graph.edge(concept1, concept2)
     if e and e.relation == relation:# and e.context == context:
-    	v = VOTE
-    	if is_robot(author): v *= 0.5
+        v = VOTE
+        if is_robot(author): v *= 0.5
         e.weight += v
     else:
         e = graph.add_edge(concept1, concept2, weight, length, label)
@@ -419,7 +420,7 @@ def cluster(concept, relation=None, context=None, author=None, depth=2, max=None
     """
     try: graph._ctx = _ctx
     except:
-    	pass
+        pass
     rules = query(concept, relation, context, author, depth, max, wait)
     concept = rules.disambiguate(concept)
     g = graph.create()
@@ -436,7 +437,7 @@ def cluster(concept, relation=None, context=None, author=None, depth=2, max=None
             weight = 0.5 + VOTE*(rule.weight-1)
         )
         if e and labeled:
-        	e.label = rule.relation
+            e.label = rule.relation
     return g
 
 #--- CLUSTER HEURISTICS ------------------------------------------------------------------------------
@@ -457,8 +458,8 @@ def neighbors(node, nodes=None, distance=2, heuristic=None):
     A heuristic can furthermore encourage or discourage specific waypoints.
     """
     def _is_nearby(n):
-    	path = node.graph.shortest_path(node.id, n.id, heuristic)
-    	return path != None and len(path) <= 1+distance
+        path = node.graph.shortest_path(node.id, n.id, heuristic)
+        return path != None and len(path) <= 1+distance
     if nodes == None:
         nodes = node.graph.nodes
     return [n for n in nodes if _is_nearby(n)]
@@ -610,7 +611,7 @@ class _range(dict):
             return sorted(g.keys())
         elif a == "basic properties" \
           or a == "basic_properties":
-          	return basic_properties
+            return basic_properties
         else:
             a = a.replace("_", " ")
             return self._hyponyms(a, None, 2, False)
@@ -640,7 +641,7 @@ class _index(dict):
         self._name = v
         self._file = os.path.join(INDEX, v)
         if os.path.exists(self._file):
-        	dict.__init__(self, pickle.load(open(self._file)))
+            dict.__init__(self, pickle.load(open(self._file, 'rb'), encoding='utf-8'))
         else:
             dict.__init__(self, {})
     name = property(_get_name, _set_name)
@@ -664,8 +665,8 @@ class _index(dict):
                 if concept1 not in index: index[concept1] = {}
                 if concept2 not in index: index[concept2] = {}
                 if path:
-                	index[concept1][concept2] = path[1:-1]
-                	index[concept2][concept1] = list(reversed(path[1:-1]))
+                    index[concept1][concept2] = path[1:-1]
+                    index[concept2][concept1] = list(reversed(path[1:-1]))
         f = open(os.path.join(INDEX, self.name), "w")
         pickle.dump(index, f)
         f.close()
@@ -674,7 +675,7 @@ class _index(dict):
         """ Returns the shortest path between the given concepts (or None).
         """
         if concept1 == concept2:
-        	return [concept2]
+            return [concept2]
         if concept1 in self and \
            concept2 in self[concept1]:
             return [concept1] + self[concept1][concept2] + [concept2]
@@ -722,13 +723,13 @@ def add_method(name, method):
 graph.add_method = add_method
 
 def score(list, m=0.5):
-	""" Returns the sum of the list, where each item is increasingly dampened.
-	"""
-	n = 0
-	for x in list:
-		n += x*m
-		m = m**2
-	return n
+    """ Returns the sum of the list, where each item is increasingly dampened.
+    """
+    n = 0
+    for x in list:
+        n += x*m
+        m = m**2
+    return n
 
 # Cache the results from concept cluster graphs.
 _SOLVER_CACHE = {}
@@ -760,15 +761,15 @@ class _solver:
 
     def _retrieve(self, concept, depth=3, cached=True):
 
-		""" Creates a concept cluster graph and returns the results from self.method.
-		For example => cluster("sun").properties()
-		The results are cached for faster retrieval.
-		"""
+        """ Creates a concept cluster graph and returns the results from self.method.
+        For example => cluster("sun").properties()
+        The results are cached for faster retrieval.
+        """
 
-		if not (cached and concept in _SOLVER_CACHE):
-			g = cluster(concept, depth=depth)
-			_SOLVER_CACHE[concept] = [n.id for n in getattr(g, self.method)()]
-		return _SOLVER_CACHE[concept]
+        if not (cached and concept in _SOLVER_CACHE):
+            g = cluster(concept, depth=depth)
+            _SOLVER_CACHE[concept] = [n.id for n in getattr(g, self.method)()]
+        return _SOLVER_CACHE[concept]
 
     def sort_by_relevance(self, root, concepts, threshold=0, weighted=False):
 
@@ -795,37 +796,37 @@ class _solver:
         self._prepare()
         candidates = []
         for concept in concepts:
-			# Create a cluster of related concepts.
-			# Find the [properties] that best describe the concept.
-			# Find paths to the root for each [property].
-			# The length of the paths at the start of the list is important.
-			if concept == root:
-				S = [[] for i in range_(100)]
-			else:
-				S = self._retrieve(concept, depth=3, cached=True)
-				S = [index.shortest_path(n, root) for n in S]
-				S = [path for path in S if path != None]
-			if len(S) > threshold: # We can filter out poorly described concepts here.
-				self.analysis[concept] = S # Cache the paths for later analysis.
-				S = [len(path) for path in S]
-				candidates.append((concept, S))
+            # Create a cluster of related concepts.
+            # Find the [properties] that best describe the concept.
+            # Find paths to the root for each [property].
+            # The length of the paths at the start of the list is important.
+            if concept == root:
+                S = [[] for i in range_(100)]
+            else:
+                S = self._retrieve(concept, depth=3, cached=True)
+                S = [index.shortest_path(n, root) for n in S]
+                S = [path for path in S if path != None]
+            if len(S) > threshold: # We can filter out poorly described concepts here.
+                self.analysis[concept] = S # Cache the paths for later analysis.
+                S = [len(path) for path in S]
+                candidates.append((concept, S))
 
         if len(candidates) == 0:
-        	return []
+            return []
 
-		# Find the concept with the least [properties]:
-		# this is the maximum amount of paths we can compare to find the best candidate.
+        # Find the concept with the least [properties]:
+        # this is the maximum amount of paths we can compare to find the best candidate.
         n = min([len(paths) for concept, paths in candidates])
         candidates = [(score(paths[:n], self.m), concept)  for concept, paths in candidates]
         # Best candidates will be at the front of the list.
         candidates.sort()
         if not weighted:
-	        candidates = [concept for x, concept in candidates]
+            candidates = [concept for x, concept in candidates]
 
         # The analysis dictionary contains an overview of the thought process.
         # How each concept travels to the given root.
         for key in self.analysis:
-        	self.analysis[key] = self.analysis[key][:n]
+            self.analysis[key] = self.analysis[key][:n]
 
         return candidates
 
@@ -847,22 +848,22 @@ class _analogy:
         self.m = 0.9 # score dampener
 
     def _best_first(self, list, candidates=[]):
-    	""" Returns a list copy with items that appear in candidates at the head.
-    	We use this to implement common sense.
-    	Example: assume we want a color analogy for "water".
-    	- Properties for water: cool, clean, wet, transparent, slow, ..., blue, ...
-    	- Color concepts: black, blue, green, red, yellow, ...
-    	- Obviously, "blue" makes an excellent candidate.
-    	- However, the "blue" property is too far down the list to score highly.
-    	- Therefore, we sort the water properties to available colors, putting blue at the front.
-    	"""
-    	list = [item for item in list]
-    	candidates = [item for item in list if item in candidates]
-    	for item in reversed(candidates):
-    		if item in list:
-    			list.remove(item)
-    			list.insert(0, item)
-    	return list
+        """ Returns a list copy with items that appear in candidates at the head.
+        We use this to implement common sense.
+        Example: assume we want a color analogy for "water".
+        - Properties for water: cool, clean, wet, transparent, slow, ..., blue, ...
+        - Color concepts: black, blue, green, red, yellow, ...
+        - Obviously, "blue" makes an excellent candidate.
+        - However, the "blue" property is too far down the list to score highly.
+        - Therefore, we sort the water properties to available colors, putting blue at the front.
+        """
+        list = [item for item in list]
+        candidates = [item for item in list if item in candidates]
+        for item in reversed(candidates):
+            if item in list:
+                list.remove(item)
+                list.insert(0, item)
+        return list
 
     def __call__(self, object, concepts, properties=[], threshold=0, weighted=False):
 
@@ -887,7 +888,7 @@ class _analogy:
             for concept in A:
                 A[concept] = [len(path) for path in A[concept]]
                 A[concept] = score(A[concept], self.m)
-			# Keep track of the scores of all the properties of the given object.
+            # Keep track of the scores of all the properties of the given object.
             for concept in A:
                 S[concept][property] = A[concept] * self.m**i
 
@@ -914,171 +915,171 @@ analogy = _analogy()
 #### SEARCH-MATCH-PARSE ##############################################################################
 
 def search_match_parse(query, pattern, parse=lambda x: x, service="google", cached=True, n=10,):
-	""" Parses words from search engine queries that match a given syntactic pattern.
-	query   : a Google/Yahoo query. Google queries can include * wildcards.
-	pattern : an en.sentence.find() pattern, e.g. as big as * NN
-	parse   : a function that filters data from a tagged sentence.
-	"""
-	import web
-	import en
-	matches = []
-	if service == "google": n = min(n, 4)
-	if service == "yahoo" : n = min(n, 10)
-	for i in range_(n):
-		if service == "google":
-			search = web.google.search(query, start=i*4, cached=cached)
-		if service == "yahoo":
-			search = web.yahoo.search(query, cached=cached, start=i*100, count=100)
-		for result in search:
-			if result.description:
-				result.description = result.description.replace(",",", ").replace("  "," ")
-				match = en.sentence.find(result.description.lower(), pattern)
-				if len(match) > 0 and len(match[0]) > 0:
-					x = parse(match[0])
-					matches.append(x)
-	return matches
+    """ Parses words from search engine queries that match a given syntactic pattern.
+    query   : a Google/Yahoo query. Google queries can include * wildcards.
+    pattern : an en.sentence.find() pattern, e.g. as big as * NN
+    parse   : a function that filters data from a tagged sentence.
+    """
+    import web
+    import en
+    matches = []
+    if service == "google": n = min(n, 4)
+    if service == "yahoo" : n = min(n, 10)
+    for i in range_(n):
+        if service == "google":
+            search = web.google.search(query, start=i*4, cached=cached)
+        if service == "yahoo":
+            search = web.yahoo.search(query, cached=cached, start=i*100, count=100)
+        for result in search:
+            if result.description:
+                result.description = result.description.replace(",",", ").replace("  "," ")
+                match = en.sentence.find(result.description.lower(), pattern)
+                if len(match) > 0 and len(match[0]) > 0:
+                    x = parse(match[0])
+                    matches.append(x)
+    return matches
 
 def count(list):
-	""" Returns a dictionary with the list items as keys and their count as values.
-	"""
-	d = {}
-	for v in list: d[v]  = 0
-	for v in list: d[v] += 1
-	return d
+    """ Returns a dictionary with the list items as keys and their count as values.
+    """
+    d = {}
+    for v in list: d[v]  = 0
+    for v in list: d[v] += 1
+    return d
 
 def clean(word):
-	word = word.strip(",;:.?!'`\"-[()]")
-	word = word.strip("‘“")
-	if word.endswith( "'s"): word = word[:-2]
-	if word.endswith("’s"): word = word[:-2]
-	return word.strip()
+    word = word.strip(",;:.?!'`\"-[()]")
+    word = word.strip("‘“")
+    if word.endswith( "'s"): word = word[:-2]
+    if word.endswith("’s"): word = word[:-2]
+    return word.strip()
 
 #--- SIMILE ------------------------------------------------------------------------------------------
 
 def suggest_properties(noun, cached=True):
-	""" Learning to Understand Figurative Language:
-		From Similes to Metaphors to Irony,
-		Tony Veale, Yanfen Hao
-		http://afflatus.ucd.ie/Papers/LearningFigurative_CogSci07.pdf
+    """ Learning to Understand Figurative Language:
+        From Similes to Metaphors to Irony,
+        Tony Veale, Yanfen Hao
+        http://afflatus.ucd.ie/Papers/LearningFigurative_CogSci07.pdf
 
-	Uses simile to retrieve properties of nouns.
-	For example: troll -> "as ugly as a troll" -> ugly is-property-of troll.
-	Requires the Web and Linguistics libraries.
-	Returns a dictionary of properties linked to count.
-	"""
-	import en
-	noun = en.noun.article(noun)
-	matches = search_match_parse(
-		"\"as * as " + noun + "\"",
-		"as * as " + noun,
-		lambda chunk_: clean(chunk_[1][0]), # as A as a house -> A
-		service="google",
-		cached=cached
-	)
-	matches = [word for word in matches if word not in ("well", "much")]
-	return count(matches)
+    Uses simile to retrieve properties of nouns.
+    For example: troll -> "as ugly as a troll" -> ugly is-property-of troll.
+    Requires the Web and Linguistics libraries.
+    Returns a dictionary of properties linked to count.
+    """
+    import en
+    noun = en.noun.article(noun)
+    matches = search_match_parse(
+        "\"as * as " + noun + "\"",
+        "as * as " + noun,
+        lambda chunk_: clean(chunk_[1][0]), # as A as a house -> A
+        service="google",
+        cached=cached
+    )
+    matches = [word for word in matches if word not in ("well", "much")]
+    return count(matches)
 
 def suggest_objects(adjective, cached=True):
-	""" With the reverse logic we can find objects.
-	For example: blue -> as blue as the sky -> sky has-property blue.
-	"""
-	import en
-	def _parse(chunk_):
-		# as deep as the oceans -> ocean
-		noun = clean(chunk_[-1][0])
-		if chunk_[-2][0] == "the" and en.is_noun(en.noun.singular(noun)):
-			return en.noun.singular(noun)
-		return noun
-	matches = []
-	for adverb in ("a", "an", "the"):
-		matches += search_match_parse(
-			"\"as " + adjective + " as " + adverb + " *\"",
-			"as " + adjective + " as * NN",
-			_parse,
-			service="google",
-			cached=cached
-		)
-	matches = [word for word in matches if len(word) > 1 and word not in ("****")]
-	return count(matches)
+    """ With the reverse logic we can find objects.
+    For example: blue -> as blue as the sky -> sky has-property blue.
+    """
+    import en
+    def _parse(chunk_):
+        # as deep as the oceans -> ocean
+        noun = clean(chunk_[-1][0])
+        if chunk_[-2][0] == "the" and en.is_noun(en.noun.singular(noun)):
+            return en.noun.singular(noun)
+        return noun
+    matches = []
+    for adverb in ("a", "an", "the"):
+        matches += search_match_parse(
+            "\"as " + adjective + " as " + adverb + " *\"",
+            "as " + adjective + " as * NN",
+            _parse,
+            service="google",
+            cached=cached
+        )
+    matches = [word for word in matches if len(word) > 1 and word not in ("****")]
+    return count(matches)
 
 #--- COMPARATIVE -------------------------------------------------------------------------------------
 
 class compare_concepts(list):
 
-	def __init__(self, relation, cached=True, n=10):
-		""" Comparative search heuristic in the form of: concept1 is-more-important-than concept2.
-		Returns a list of (concept1, concept2)-tuples.
-		Suggested patterns: "is-more-important-than", "is-bigger-than", "is-the-new", ...
-		Requires the Web, Linguistics and Graph libraries.
-		T. De Smedt, F. De Bleser
-		"""
-		matches = search_match_parse(
-			"\"" + relation.replace("-"," ") + "\"",
-			"NN " + relation.replace("-"," ") + " (a) (an) (JJ) NN",
-			lambda chunk_: (clean(chunk_[0][0]), clean(chunk_[-1][0])), # A is bigger than B --> (A, B)
-			service="yahoo",
-			cached=cached,
-			n=n
-		)
-		self.relation = relation.replace(" ","-")
-		list.__init__(self, matches)
+    def __init__(self, relation, cached=True, n=10):
+        """ Comparative search heuristic in the form of: concept1 is-more-important-than concept2.
+        Returns a list of (concept1, concept2)-tuples.
+        Suggested patterns: "is-more-important-than", "is-bigger-than", "is-the-new", ...
+        Requires the Web, Linguistics and Graph libraries.
+        T. De Smedt, F. De Bleser
+        """
+        matches = search_match_parse(
+            "\"" + relation.replace("-"," ") + "\"",
+            "NN " + relation.replace("-"," ") + " (a) (an) (JJ) NN",
+            lambda chunk_: (clean(chunk_[0][0]), clean(chunk_[-1][0])), # A is bigger than B --> (A, B)
+            service="yahoo",
+            cached=cached,
+            n=n
+        )
+        self.relation = relation.replace(" ","-")
+        list.__init__(self, matches)
 
-	def graph(self):
-		""" Returns a graph with edges connecting concepts.
-		Different unconnected clusters will be present in the graph.
-		"""
-		try: graph._ctx = _ctx
-		except:
-			pass
-		g = graph.create()
-		for a, b in self:
-			e = g.edge(b, a)
-			if not e:
-				e = g.add_edge(b, a)
-			else:
-				e.weight += 1
-			if e: e.relation = self.relation.replace(" ", "-")
-		style(g, relation=False)
-		return g
+    def graph(self):
+        """ Returns a graph with edges connecting concepts.
+        Different unconnected clusters will be present in the graph.
+        """
+        try: graph._ctx = _ctx
+        except:
+            pass
+        g = graph.create()
+        for a, b in self:
+            e = g.edge(b, a)
+            if not e:
+                e = g.add_edge(b, a)
+            else:
+                e.weight += 1
+            if e: e.relation = self.relation.replace(" ", "-")
+        style(g, relation=False)
+        return g
 
-	def rank(self, graph=None):
-		""" Returns a list of (concept1, [concept2, ...])-tuples sorted by weight.
-		The weight is calculated according to nodes' eigenvalue in a graph.
-		Be aware that tuples with the same weight may shuffle.
-		For example:
-		cmp = perception.compare_objects("is more important than")
-		for concept1, comparisons in cmp.rank():
-			for concept2 in comparisons:
-				print concept1, cmp.comparison, concept2
-		>>> life is more important than money
-		>>> life is more important than kindness
-		>>> ...
-		"""
-		# Nodes with the highest weight are at the front of the list.
-		eigensort = lambda graph, id1, id2: (graph.node(id1).weight < graph.node(id2).weight)*2-1
-		if graph == None:
-			graph = self.graph()
-		r = []
-		for node in graph.nodes:
-			# Get the id's of all the nodes that point to this node.
-			# Sort them according to weight.
-		    links = [n.id for n in node.links if node.links.edge(n).node1 == n]
-		    links.sort(cmp=lambda a, b: eigensort(graph, a, b))
-		    r.append((node.id, links))
-		r.sort(cmp=lambda a, b: eigensort(graph, a[0], b[0]))
-		return r
+    def rank(self, graph=None):
+        """ Returns a list of (concept1, [concept2, ...])-tuples sorted by weight.
+        The weight is calculated according to nodes' eigenvalue in a graph.
+        Be aware that tuples with the same weight may shuffle.
+        For example:
+        cmp = perception.compare_objects("is more important than")
+        for concept1, comparisons in cmp.rank():
+            for concept2 in comparisons:
+                print concept1, cmp.comparison, concept2
+        >>> life is more important than money
+        >>> life is more important than kindness
+        >>> ...
+        """
+        # Nodes with the highest weight are at the front of the list.
+        eigensort = lambda graph, id1, id2: (graph.node(id1).weight < graph.node(id2).weight)*2-1
+        if graph == None:
+            graph = self.graph()
+        r = []
+        for node in graph.nodes:
+            # Get the id's of all the nodes that point to this node.
+            # Sort them according to weight.
+            links = [n.id for n in node.links if node.links.edge(n).node1 == n]
+            links.sort(cmp=lambda a, b: eigensort(graph, a, b))
+            r.append((node.id, links))
+        r.sort(cmp=lambda a, b: eigensort(graph, a[0], b[0]))
+        return r
 
 def suggest_comparisons(concept1, concept2, cached=True):
-	""" With the reverse logic we can find relations between concepts.
-	"""
-	matches = search_match_parse(
-		"\""+concept1+" is * than "+concept2+"\"",
-		"is (*) * than",
-		lambda chunk_: " ".join(x[0] for x in chunk_[1:-1]), # A is bigger than B --> bigger
-		service="google",
-		cached=cached
-	)
-	return count(matches)
+    """ With the reverse logic we can find relations between concepts.
+    """
+    matches = search_match_parse(
+        "\""+concept1+" is * than "+concept2+"\"",
+        "is (*) * than",
+        lambda chunk_: " ".join(x[0] for x in chunk_[1:-1]), # A is bigger than B --> bigger
+        service="google",
+        cached=cached
+    )
+    return count(matches)
 
 ######################################################################################################
 

@@ -170,13 +170,13 @@ def split(txt, width, height, widows=1, orphans=1, forward=True):
 
     # Splitter parameters.
     d = 1.6
-    if _ctx.fontsize > 20: d = 1.15
+    if _ctx.font().size > 20: d = 1.15
 
     # Approximate by cutting in large chunks a few times.
     # When it gets down to chunks increasing or decreasing by 10 characters,
     # proceed from word to word.
     h = _ctx.textheight(txt[:i], width)
-    while abs(h - height) > _ctx.fontsize():
+    while abs(h - height) > _ctx.font().size:
         if abs(i/m) < 10: break # Increase or decrease becomes too small.
         if h >  height: i -= i/m; m *= d
         if h <= height: i += i/m
@@ -230,8 +230,8 @@ def legible_width(txt, chars=70):
     Assumes an optimal of 70 characters per line at fontsize 10pt.
     Smaller lineheight furthermore decreases the width.
     """
-    fs = _ctx.fontsize()
-    _ctx.fontsize(10)
+    fs = _ctx.font().size
+    _ctx.font(size=10)
     str = ""
     for i in range(chars):
         str += choice("abcdefghijklmnopqrstuvwxyz ")
@@ -240,7 +240,7 @@ def legible_width(txt, chars=70):
     w *= _ctx.lineheight() / 1.2
     if txt == txt.upper():
         w *= 1.5
-    _ctx.fontsize(fs)
+    _ctx.font(size=fs)
     return w
 
 #### FIT FONTSIZE ####################################################################################
@@ -252,19 +252,19 @@ def fit_fontsize(str, width, height):
     # E.g. if a word contains no descenders (Goo vs. goo) there is more room at the bottom to scale.
     def increase(str, width, height, factor):
         while _ctx.textheight(str, width) < height:
-            _ctx.fontsize(_ctx.fontsize()+factor)
+            _ctx.font(size=_ctx.font().size + factor)
     def decrease(str, width, height, factor):
-        while _ctx.textheight(str, width) > height and _ctx.fontsize() > 0:
-            _ctx.fontsize(_ctx.fontsize()-factor)
+        while _ctx.textheight(str, width) > height and _ctx.font().size > 0:
+            _ctx.font(size = _ctx.fontsize() - factor)
     if str == "" or width < 1 or height < 1:
         return 0.0001
-    fs = _ctx.fontsize()
+    fs = _ctx.font().size
     increase(str, width, height, 10)
     decrease(str, width, height, 3)
     increase(str, width, height, 1)
     decrease(str, width, height, 1)
-    x = _ctx.fontsize()
-    _ctx.fontsize(fs)
+    x = _ctx.font().size
+    _ctx.font(size=fs)
     return max(x, 0.0001)
 
 def fit_lineheight(str, width, height):
@@ -278,7 +278,7 @@ def fit_lineheight(str, width, height):
             _ctx.lineheight(_ctx.lineheight()-factor)
     if _ctx.textheight(str, width) <= _ctx.textheight(" ") \
     or _ctx.textheight(str, width) <= 1 \
-    or _ctx.fontsize() < 1:
+    or _ctx.font().size < 1:
         return _ctx.lineheight()
     if str == "" or width < 1 or height < 1:
         return 0.0001

@@ -1,14 +1,4 @@
-import importlib
-# Import the library
-try:
-    # This is the statement you normally use.
-    graph = ximport("graph")
-except ImportError:
-    # But since these examples are "inside" the library
-    # we may need to try something different when
-    # the library is not located in /Application Support
-    graph = ximport("__init__")
-    importlib.reload(graph)
+import graph
 
 size(500, 500)
 

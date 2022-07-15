@@ -72,8 +72,12 @@ class proportion(list):
         
         """
         
+        print('N', n)
         r = max(1, self.repetition)
-        
+        print('R',r)
+        n = float(n)
+        r = float(r)
+
         if isinstance(n, list):
             list.__init__(self, n)
         elif n <= 0:
@@ -81,12 +85,12 @@ class proportion(list):
         elif n == 1:
             list.__init__(self, [1.0])
         elif self.distribution == PROPORTION_RANDOM:
-            list.__init__(self, [random() for i in range(n/r)])
+            list.__init__(self, [random() for i in range(int(n//r))])
         elif self.distribution in (PROPORTION_EVEN):
-            list.__init__(self, [1.0/n for i in range(n/r)])
+            list.__init__(self, [1.0/float(n) for i in range(int(n//r))])
         elif self.distribution in (PROPORTION_FIBONACCI, PROPORTION_FIB):
             # Values distributed according to the golden ratio.
-            list.__init__(self, [self.fib(i) for i in range(2,(n/r)+2)])  
+            list.__init__(self, [self.fib(i) for i in range(2,(int(n//r))+2)])
         elif self.distribution == PROPORTION_CONTRAST:
             # Split the range: 80% are 0.05-0.15 value and 20% are 0.85-1.0 values.
             i = max(1, int(round((n/r) * 0.2)))
@@ -97,8 +101,8 @@ class proportion(list):
                 self.append(random()*0.1+0.05)
         
         # Repeat the range and assert that the list has n elements.
-        self *= r
-        for i in range(n-len(self)):
+        self *= int(r)
+        for i in range(int(n)-len(self)):
             self.append(self[i])
         
         self.relativize()
